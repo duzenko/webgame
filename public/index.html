@@ -1,28 +1,48 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Empty project</title>
-        <meta charset="utf-8">
-        <link rel="icon" href="data:,">
-    </head>
-    <body>
-        <canvas id="canvas"></canvas>
-        <style>
-            body {
-                width:100vw;
-                height:100vh;
-                overflow: hidden;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-            canvas {
-                width: 90vw;
-                height: 90vh;
-                margin: auto;
-                display: block;
-            }
-        </style>
-        <script src="bundle.js"></script>
-    </body>
+
+<head>
+    <title>Empty project</title>
+    <meta charset="utf-8">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+    <style>
+        body {
+            margin: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            background-color: black;
+            color: white;
+            position: absolute;
+            font-size: 1.2em;
+        }
+
+        canvas {
+            width: 100vw;
+            height: 90vh;
+        }
+
+        .bottom {
+            width: 100vw;
+            height: 5vh;
+            bottom: 0;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+
+            align-items: center;
+        }
+    </style>
+    <canvas id="canvas"></canvas>
+    <div class="bottom">
+        <span class="hint">Hint: hover mouse over cells to preview unit path</span>
+    </div>
+    <script src="bundle.js"></script>
+</body>
+
 </html>

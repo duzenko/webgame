@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Attach to Chrome",
+            "port": 9229,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
             "command": "npm run serve",
             "name": "Serve",
             "request": "launch",
