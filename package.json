@@ -1,18 +1,24 @@
 {
-  "name": "empty-project",
+  "name": "webgame",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "url": "git+https://github.com/duzenko/webgame.git"
+  },
   "scripts": {
     "clean": "rm dist/bundle.js",
     "serve": "webpack serve --mode development",
     "build-dev": "webpack --mode development",
-    "build-prod": "webpack --mode production"
+    "build-prod": "webpack --mode production",
+    "predeploy": "npm run build-prod",
+    "deploy": "gh-pages -d public"
   },
   "devDependencies": {
+    "gh-pages": "^5.0.0",
     "ts-loader": "^9.4.2",
     "typescript": "^5.0.4",
     "webpack": "^5.79.0",
