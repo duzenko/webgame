@@ -19,6 +19,11 @@ export abstract class Unit {
         this.image.src = './img/unit/' + this.getImageName()
     }
 
+    canMoveTo(cell: GridCell): boolean {
+        const path = this.position.pathTo(cell)
+        return path.length < this.actionPoints
+    }
+
     moveTo(cell: GridCell) {
         this.position = cell
     }
@@ -69,7 +74,7 @@ class Arena {
         if (this.activeUnit.isEnemy) {
             this.makeEnemyMove()
         } else {
-            logText(`It's ${this.activeUnit.name}'s move`)
+            logText(`${this.activeUnit.name}'s move`)
         }
     }
 
@@ -94,13 +99,17 @@ class Arena {
 
     endMove() {
         if (!this.units.find(u => u.isAlive && !u.isEnemy)) {
-            alert('You lost! Game will restart now')
-            setTimeout(() => window.open('/', '_self'), 99);
+            setTimeout(() => {
+                alert('You lost! Game will restart now')
+                window.open('/', '_self')
+            }, 99);
             return
         }
         if (!this.units.find(u => u.isAlive && u.isEnemy)) {
-            alert('You won! Game will restart now')
-            setTimeout(() => window.open('/', '_self'), 99);
+            setTimeout(() => {
+                alert('You won! Game will restart now')
+                window.open('/', '_self')
+            }, 99);
             return
         }
         do {
@@ -115,6 +124,10 @@ class Arena {
 
     getUnitAt(destination: GridCell) {
         return this.units.find(u => u.isAlive && u.position.isSameAs(destination))
+    }
+
+    isCellValid(cell: GridCell): boolean {
+        return cell.isValid && cell.isInRange(this.columns, this.rows)
     }
 }
 

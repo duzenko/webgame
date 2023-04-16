@@ -15,7 +15,7 @@ function cellToScreen(cell: GridCell): Point {
     return new Point(x, y)
 }
 
-export function screenToCell(p: Point): GridCell | undefined {
+export function screenToCell(p: Point): GridCell {
     let x0 = Math.floor((p.x - canvas.width / 2) / cellStepX)
     let y0 = Math.floor((p.y - canvas.height / 2) / cellStepY)
     const corners = [
@@ -29,10 +29,10 @@ export function screenToCell(p: Point): GridCell | undefined {
     })
     measured.sort((a, b) => a.d - b.d)
     for (const m of measured) {
-        if (m.p.isValid())
+        if (m.p.isValid)
             return m.p
     }
-    return undefined
+    throw null
 }
 
 export function checkSize() {
@@ -103,5 +103,56 @@ function drawBadge(x: number, y: number, unit: Unit) {
     context.font = `${fontSize}px sans-serif`
     context.fillStyle = 'white'
     context.textAlign = 'center'
-    context.fillText(index.toString(), x, y + fontSize);
+    context.fillText(index.toString(), x, y + fontSize * 0.95);
+}
+
+export function drawPossiblePath() {
+    const destination = arena.selectedCell
+    if (!destination) {
+        return
+    }
+    context.save()
+    context.globalAlpha = 0.3
+    context.fillStyle = "black"
+    const canMoveTo = arena.activeUnit.canMoveTo(destination)
+    if (!arena.activeUnit.isEnemy && canMoveTo) {
+        const path = arena.activeUnit.position.pathTo(destination)
+        for (const cell of path) {
+            drawHexagon(cell, true)
+        }
+    }
+    if (!canMoveTo) {
+        context.fillStyle = "brown"
+    }
+    drawHexagon(destination, true)
+    context.restore()
+}
+
+export function drawMoveableCells() {
+    const unit = arena.activeUnit
+    if (unit.isEnemy || arena.animation) return
+    context.save()
+    context.globalAlpha = 0.3
+    context.fillStyle = "black"
+    for (let y = -unit.speed; y <= unit.speed; y++) {
+        for (let x = -2 * unit.speed; x <= 2 * unit.speed; x++) {
+            const cell = new GridCell(unit.position.x + x, unit.position.y + y)
+            if (!arena.isCellValid(cell)) continue
+            if (!unit.canMoveTo(cell)) continue
+            drawHexagon(cell, true)
+        }
+    }
+    context.restore()
+}
+
+export function drawGrid() {
+    context.strokeStyle = "white"
+    for (const y of arena.rows) {
+        for (const x of arena.columns) {
+            const cell = new GridCell(x, y)
+            if (cell.isValid) {
+                drawHexagon(cell, false)
+            }
+        }
+    }
 }

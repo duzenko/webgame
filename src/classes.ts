@@ -22,7 +22,7 @@ function isValidCell(x: number, y: number): boolean {
 
 export class GridCell extends Point {
 
-    isValid(): boolean {
+    get isValid(): boolean {
         return isValidCell(this.x, this.y)
     }
 

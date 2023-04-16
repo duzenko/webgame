@@ -15,3 +15,4 @@ node_modules/
 ehthumbs.db
 Thumbs.db
 public/bundle.js
+public/bundle.js.map
