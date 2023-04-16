@@ -1,6 +1,6 @@
 import { canvas, checkSize, context, drawHexagon, drawUnit, screenToCell } from "./canvas"
 import { GridCell, Point } from "./classes"
-import { arena } from "./objects";
+import { arena } from "./arena";
 
 export let debugLines: { color: string, p1: Point, p2: Point }[] = [];
 
@@ -17,18 +17,19 @@ function present() {
 function drawAll() {
     context.fillStyle = "green"
     context.fillRect(0, 0, canvas.width, canvas.height)
-    if (arena.endCell) {
+    if (arena.selectedCell) {
         context.fillStyle = "red"
-        drawHexagon(arena.endCell, true)
+        drawHexagon(arena.selectedCell, true)
         context.fillStyle = "brown"
-        const path = arena.peasant.position.pathTo(arena.endCell)
+        const path = arena.peasant.position.pathTo(arena.selectedCell)
         for (const location of path) {
             drawHexagon(location, true);
         }
     }
-    context.fillStyle = "black"
+    context.fillStyle = 'rgba(0,0,0,' + Math.abs(Math.sin(new Date().getTime() * 1e-3)) + ')'
     drawHexagon(arena.peasant.position, true)
     drawUnit(arena.peasant)
+    drawUnit(arena.wolf)
     context.strokeStyle = "white";
     for (const y of arena.rows) {
         for (const x of arena.columns) {
@@ -49,18 +50,20 @@ function drawAll() {
 }
 
 function onMouseMove(ev: MouseEvent) {
+    if (arena.animation) return
     const cell = screenToCell(new Point(ev.offsetX, ev.offsetY))
     if (cell && cell.isInRange(arena.columns, arena.rows)) {
-        arena.endCell = cell
+        arena.selectedCell = cell
     } else {
-        arena.endCell = undefined
+        arena.selectedCell = undefined
     }
 }
 
 function onMouseDown(ev: MouseEvent) {
+    if (arena.animation) return
     const cell = screenToCell(new Point(ev.offsetX, ev.offsetY))
     if (!cell?.isInRange(arena.columns, arena.rows)) {
         return
     }
-    arena.peasant.moveTo(cell)
+    arena.moveUnit(arena.peasant, cell)
 }

@@ -1,5 +1,5 @@
 import { Point, GridCell } from "./classes"
-import { Unit } from "./objects"
+import { Unit } from "./arena"
 
 export const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement
 export const context = canvas.getContext("2d") as CanvasRenderingContext2D
@@ -69,9 +69,13 @@ export function drawHexagon(cell: GridCell, fill: boolean) {
 
 export function drawUnit(unit: Unit) {
     const center = cellToScreen(unit.position)
-    context.save();
+    const image = unit.image
+    const imageScale = Math.max(cellStepX / image.width, cellRadius / image.height)
+    const width = image.width * imageScale
+    const height = image.height * imageScale
+    context.save()
     doHexagonPath(center)
-    context.clip();
-    context.drawImage(unit.image, center.x - cellStepX, center.y + cellRadius - 2 * cellStepX, 2 * cellStepX, 2 * cellStepX)
-    context.restore();
+    context.clip()
+    context.drawImage(image, center.x - width, center.y - height, 2 * width, 2 * height)
+    context.restore()
 }
