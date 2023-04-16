@@ -11,6 +11,9 @@ export class Point {
         return (this.x - p.x) * (this.x - p.x) + (this.y - p.y) * (this.y - p.y)
     }
 
+    isSameAs(cell: Point): boolean {
+        return this.x == cell.x && this.y == cell.y
+    }
 }
 
 function isValidCell(x: number, y: number): boolean {
@@ -18,10 +21,6 @@ function isValidCell(x: number, y: number): boolean {
 }
 
 export class GridCell extends Point {
-
-    isSameAs(cell: GridCell): boolean {
-        return this.x == cell.x && this.y == cell.y
-    }
 
     isValid(): boolean {
         return isValidCell(this.x, this.y)

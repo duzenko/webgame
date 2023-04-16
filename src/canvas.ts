@@ -1,12 +1,13 @@
 import { Point, GridCell } from "./classes"
-import { Unit } from "./arena"
+import { Unit, arena } from "./arena"
 
 export const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement
 export const context = canvas.getContext("2d") as CanvasRenderingContext2D
 
-const cellRadius = 48
-const cellStepX = cellRadius * Math.sin(Math.PI / 3)
-const cellStepY = cellRadius * 1.5
+let cellRadius: number
+let cellStepX: number
+let cellStepY: number
+let arenaZoom = 1
 
 function cellToScreen(cell: GridCell): Point {
     const x = cell.x * cellStepX + canvas.width / 2
@@ -40,9 +41,13 @@ export function checkSize() {
     const width = Math.round(canvas.clientWidth)
     const height = Math.round(canvas.clientHeight)
     if (canvas.width != width || canvas.height != height) {
-        console.log("Resize canvas from", canvas.width, 'x', canvas.height, "to", width, 'x', height)
-        canvas.width = width;
-        canvas.height = height;
+        arenaZoom = 1 / Math.max((arena.columns.length + 3) * Math.sin(Math.PI / 3) / width, (arena.rows.length * 1.5 + 1) / height)
+        console.log("Resize canvas from", canvas.width, 'x', canvas.height, "to", width, 'x', height, 'and zoom to', arenaZoom)
+        canvas.width = width
+        canvas.height = height
+        cellRadius = arenaZoom
+        cellStepX = cellRadius * Math.sin(Math.PI / 3)
+        cellStepY = cellRadius * 1.5
     }
 }
 
