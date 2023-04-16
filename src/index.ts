@@ -21,15 +21,15 @@ function drawAll() {
         context.fillStyle = "red"
         drawHexagon(arena.selectedCell, true)
         context.fillStyle = "brown"
-        const path = arena.peasant.position.pathTo(arena.selectedCell)
+        const path = arena.activeUnit.position.pathTo(arena.selectedCell)
         for (const location of path) {
             drawHexagon(location, true);
         }
     }
     context.fillStyle = 'rgba(0,0,0,' + Math.abs(Math.sin(new Date().getTime() * 1e-3)) + ')'
-    drawHexagon(arena.peasant.position, true)
-    drawUnit(arena.peasant)
-    drawUnit(arena.wolf)
+    drawHexagon(arena.activeUnit.position, true)
+    arena.units.filter(u => !u.alive).forEach(drawUnit)
+    arena.units.filter(u => u.alive).forEach(drawUnit)
     context.strokeStyle = "white";
     for (const y of arena.rows) {
         for (const x of arena.columns) {
@@ -65,5 +65,5 @@ function onMouseDown(ev: MouseEvent) {
     if (!cell?.isInRange(arena.columns, arena.rows)) {
         return
     }
-    arena.moveUnit(arena.peasant, cell)
+    arena.moveUnit(arena.activeUnit, cell)
 }

@@ -19,6 +19,10 @@ function isValidCell(x: number, y: number): boolean {
 
 export class GridCell extends Point {
 
+    isSameAs(cell: GridCell): boolean {
+        return this.x == cell.x && this.y == cell.y
+    }
+
     isValid(): boolean {
         return isValidCell(this.x, this.y)
     }

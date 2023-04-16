@@ -7,6 +7,7 @@ function range(start: number, end: number) {
 
 export abstract class Unit {
     position: GridCell
+    alive = true
     image = new Image()
 
     constructor(position: GridCell) {
@@ -37,13 +38,17 @@ class Wolf extends Unit {
 class Arena {
     columns = range(-9, 9)
     rows = range(-3, 3)
-    peasant = new Peasant(new GridCell(-8, 0))
-    wolf = new Wolf(new GridCell(8, 0))
+    units = [new Peasant(new GridCell(-8, 0)), new Wolf(new GridCell(8, 0))]
     selectedCell?: GridCell
     animation?: GameAnimation
+    activeUnit = this.units[0]
 
     moveUnit(unit: Unit, destination: GridCell) {
         this.animation = UnitMoveAnimation.create(unit, destination)
+    }
+
+    getUnitAt(destination: GridCell) {
+        return this.units.find(u => u.alive && u.position.isSameAs(destination))
     }
 }
 
@@ -70,7 +75,12 @@ class UnitMoveAnimation extends GameAnimation {
         if (frameNo < this.path.length) {
             this.unit.moveTo(this.path[frameNo])
         } else {
-            this.unit.moveTo(this.destination)
+            const enemy = arena.getUnitAt(this.destination)
+            if (enemy) {
+                enemy.alive = false
+            } else {
+                this.unit.moveTo(this.destination)
+            }
         }
     }
 

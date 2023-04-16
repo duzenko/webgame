@@ -74,6 +74,9 @@ export function drawUnit(unit: Unit) {
     const width = image.width * imageScale
     const height = image.height * imageScale
     context.save()
+    if (!unit.alive) {
+        context.globalAlpha = 0.5
+    }
     doHexagonPath(center)
     context.clip()
     context.drawImage(image, center.x - width, center.y - height, 2 * width, 2 * height)
