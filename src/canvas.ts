@@ -1,15 +1,16 @@
 import { Point, GridCell } from "./classes"
+import { Unit } from "./objects"
 
 export const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement
 export const context = canvas.getContext("2d") as CanvasRenderingContext2D
 
-const radius = 48
-const cellStepX = radius * Math.sin(Math.PI / 3)
-const cellStepY = radius * 1.5
+const cellRadius = 48
+const cellStepX = cellRadius * Math.sin(Math.PI / 3)
+const cellStepY = cellRadius * 1.5
 
 function cellToScreen(cell: GridCell): Point {
     const x = cell.x * cellStepX + canvas.width / 2
-    const y = cell.y * radius * 1.5 + canvas.height / 2
+    const y = cell.y * cellRadius * 1.5 + canvas.height / 2
     return new Point(x, y)
 }
 
@@ -45,19 +46,32 @@ export function checkSize() {
     }
 }
 
-export function drawHexagon(cell: GridCell, fill: boolean) {
+function doHexagonPath(cellCenter: Point) {
     const angle = 2 * Math.PI / 6
-    const p = cellToScreen(cell)
     context.beginPath()
     for (let i = 0; i < 6; i++) {
-        const xx = p.x + radius * Math.sin(angle * i)
-        const yy = p.y + radius * Math.cos(angle * i)
+        const xx = cellCenter.x + cellRadius * Math.sin(angle * i)
+        const yy = cellCenter.y + cellRadius * Math.cos(angle * i)
         context.lineTo(xx, yy)
     }
     context.closePath()
+}
+
+export function drawHexagon(cell: GridCell, fill: boolean) {
+    const p = cellToScreen(cell)
+    doHexagonPath(p)
     if (fill) {
         context.fill()
     } else {
         context.stroke()
     }
+}
+
+export function drawUnit(unit: Unit) {
+    const center = cellToScreen(unit.position)
+    context.save();
+    doHexagonPath(center)
+    context.clip();
+    context.drawImage(unit.image, center.x - cellStepX, center.y + cellRadius - 2 * cellStepX, 2 * cellStepX, 2 * cellStepX)
+    context.restore();
 }
