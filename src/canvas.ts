@@ -1,7 +1,7 @@
 import { Point, GridCell } from "./classes"
 import { Unit, arena } from "./arena"
 
-export const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement
+export const canvas = document.getElementById("canvas") as HTMLCanvasElement
 export const context = canvas.getContext("2d") as CanvasRenderingContext2D
 
 let cellRadius: number
@@ -42,7 +42,7 @@ export function checkSize() {
     const height = Math.round(canvas.clientHeight)
     if (canvas.width != width || canvas.height != height) {
         arenaZoom = 1 / Math.max((arena.columns.length + 3) * Math.sin(Math.PI / 3) / width, (arena.rows.length * 1.5 + 1) / height)
-        console.log("Resize canvas from", canvas.width, 'x', canvas.height, "to", width, 'x', height, 'and zoom to', arenaZoom)
+        console.log(`Resize canvas from ${canvas.width}x${canvas.height} to ${width}x${height}, zoom to ${arenaZoom}`)
         canvas.width = width
         canvas.height = height
         cellRadius = arenaZoom
@@ -79,7 +79,7 @@ export function drawUnit(unit: Unit) {
     const width = image.width * imageScale
     const height = image.height * imageScale
     context.save()
-    if (!unit.alive) {
+    if (!unit.isAlive) {
         context.globalAlpha = 0.5
     }
     doHexagonPath(center)

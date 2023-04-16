@@ -27,20 +27,32 @@
             height: 90vh;
         }
 
+        .top {
+            width: 100%;
+            height: 5vh;
+            top: 0;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .bottom {
-            width: 100vw;
+            width: 100%;
             height: 5vh;
             bottom: 0;
             position: absolute;
             display: flex;
             justify-content: center;
-
             align-items: center;
         }
     </style>
+    <div class="top">
+        <span class="hint">Hint: hover mouse over cells to preview unit path, click to move</span>
+    </div>
     <canvas id="canvas"></canvas>
     <div class="bottom">
-        <span class="hint">Hint: hover mouse over cells to preview unit path, click to move</span>
+        <span class="hint" id="log"></span>
     </div>
     <script src="bundle.js"></script>
 </body>

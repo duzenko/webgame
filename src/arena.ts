@@ -1,5 +1,6 @@
 import { GameAnimation } from "./animation"
 import { GridCell } from "./classes"
+import { logText } from "./log"
 
 function range(start: number, end: number) {
     return Array.apply(null, Array(end - start + 1)).map((v, i) => i + start)
@@ -7,7 +8,10 @@ function range(start: number, end: number) {
 
 export abstract class Unit {
     position: GridCell
-    alive = true
+    isAlive = true
+    isEnemy = false
+    speed = 2
+    actionPoints = 0
     image = new Image()
 
     constructor(position: GridCell) {
@@ -19,7 +23,15 @@ export abstract class Unit {
         this.position = cell
     }
 
+    resetActionPoints() {
+        this.actionPoints = this.speed
+    }
+
     abstract getImageName(): string;
+
+    get name() {
+        return this.constructor.name
+    }
 }
 
 class Peasant extends Unit {
@@ -30,6 +42,9 @@ class Peasant extends Unit {
 
 
 class Wolf extends Unit {
+    isEnemy = true
+    speed = 3
+
     getImageName(): string {
         return 'wolf.png'
     }
@@ -38,21 +53,56 @@ class Wolf extends Unit {
 class Arena {
     columns = range(-9, 9)
     rows = range(-3, 3)
-    units = [new Peasant(new GridCell(-8, 0)), new Wolf(new GridCell(8, 0))]
+    units = [new Wolf(new GridCell(8, 0)), new Peasant(new GridCell(-8, 0))]
     selectedCell?: GridCell
     animation?: GameAnimation
     activeUnit = this.units[0]
+
+    constructor() {
+        logText('Battle has started!')
+        this.nextMove()
+    }
+
+    nextMove() {
+        this.activeUnit = this.units[0]
+        this.activeUnit.resetActionPoints()
+        if (this.activeUnit.isEnemy) {
+            this.makeEnemyMove()
+        } else {
+            logText(`It's ${this.activeUnit.name}'s move`)
+        }
+    }
+
+    makeEnemyMove() {
+        if (!this.activeUnit.isAlive) {
+            this.endMove()
+        }
+        const target = this.units.find(u => !u.isEnemy && u.isAlive)
+        if (!target) {
+            this.endMove()
+        }
+        const path = this.activeUnit.position.pathTo(target!.position)
+        let destination = target!.position
+        logText(this.activeUnit.name + ' targets ' + target?.name)
+        while (this.activeUnit.actionPoints < path.length + 1) {
+            destination = path.pop()!
+        }
+        this.animation = UnitMoveAnimation.create(this.activeUnit, destination)
+    }
+
+    endMove() {
+        this.units.push(this.units.shift()!)
+        this.nextMove()
+    }
 
     moveUnit(unit: Unit, destination: GridCell) {
         this.animation = UnitMoveAnimation.create(unit, destination)
     }
 
     getUnitAt(destination: GridCell) {
-        return this.units.find(u => u.alive && u.position.isSameAs(destination))
+        return this.units.find(u => u.isAlive && u.position.isSameAs(destination))
     }
 }
-
-export const arena = new Arena()
 
 class UnitMoveAnimation extends GameAnimation {
     unit: Unit
@@ -77,7 +127,7 @@ class UnitMoveAnimation extends GameAnimation {
         } else {
             const enemy = arena.getUnitAt(this.destination)
             if (enemy) {
-                enemy.alive = false
+                enemy.isAlive = false
             } else {
                 this.unit.moveTo(this.destination)
             }
@@ -87,6 +137,9 @@ class UnitMoveAnimation extends GameAnimation {
     ended(): void {
         arena.animation = undefined
         arena.selectedCell = undefined
+        arena.endMove()
     }
 
 }
+
+export const arena = new Arena()

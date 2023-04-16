@@ -28,9 +28,9 @@ function drawAll() {
     }
     context.fillStyle = 'rgba(0,0,0,' + Math.abs(Math.sin(new Date().getTime() * 1e-3)) + ')'
     drawHexagon(arena.activeUnit.position, true)
-    arena.units.filter(u => !u.alive).forEach(drawUnit)
-    arena.units.filter(u => u.alive).forEach(drawUnit)
-    context.strokeStyle = "white";
+    arena.units.filter(u => !u.isAlive).forEach(drawUnit)
+    arena.units.filter(u => u.isAlive).forEach(drawUnit)
+    context.strokeStyle = "white"
     for (const y of arena.rows) {
         for (const x of arena.columns) {
             const cell = new GridCell(x, y)
