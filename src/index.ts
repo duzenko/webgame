@@ -17,9 +17,6 @@ function present() {
 function drawAll() {
     context.fillStyle = "green"
     context.fillRect(0, 0, canvas.width, canvas.height)
-    context.fillStyle = "black"
-    drawHexagon(arena.peasant.position, true)
-    drawUnit(arena.peasant)
     if (arena.endCell) {
         context.fillStyle = "red"
         drawHexagon(arena.endCell, true)
@@ -29,6 +26,9 @@ function drawAll() {
             drawHexagon(location, true);
         }
     }
+    context.fillStyle = "black"
+    drawHexagon(arena.peasant.position, true)
+    drawUnit(arena.peasant)
     context.strokeStyle = "white";
     for (const y of arena.rows) {
         for (const x of arena.columns) {

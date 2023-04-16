@@ -13,10 +13,14 @@ export class Point {
 
 }
 
+function isValidCell(x: number, y: number): boolean {
+    return (x & 1) == (y & 1)
+}
+
 export class GridCell extends Point {
 
     isValid(): boolean {
-        return (this.x & 1) == (this.y & 1)
+        return isValidCell(this.x, this.y)
     }
 
     pathTo(end: GridCell): GridCell[] {
@@ -29,6 +33,9 @@ export class GridCell extends Point {
             } else {
                 y += Math.sign(end.y - y)
                 x += Math.sign(end.x - x)
+            }
+            if (end.x == x && !isValidCell(x, y)) {
+                x++
             }
             if (x == end.x && y == end.y) break
             path.push(new GridCell(x, y))
