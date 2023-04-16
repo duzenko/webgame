@@ -101,14 +101,14 @@ class Arena {
         if (!this.units.find(u => u.isAlive && !u.isEnemy)) {
             setTimeout(() => {
                 alert('You lost! Game will restart now')
-                window.open('/', '_self')
+                window.location.reload()
             }, 99);
             return
         }
         if (!this.units.find(u => u.isAlive && u.isEnemy)) {
             setTimeout(() => {
                 alert('You won! Game will restart now')
-                window.open('/', '_self')
+                window.location.reload()
             }, 99);
             return
         }
