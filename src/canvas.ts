@@ -86,4 +86,22 @@ export function drawUnit(unit: Unit) {
     context.clip()
     context.drawImage(image, center.x - width, center.y - height, 2 * width, 2 * height)
     context.restore()
+    drawBadge(center.x, center.y + cellRadius * 0.7, unit)
+}
+
+function drawBadge(x: number, y: number, unit: Unit) {
+    const index = arena.units.filter(u => u.isAlive).indexOf(unit) + 1
+    if (index < 1) return
+    const fontSize = Math.round(cellRadius / 16) * 4
+    context.beginPath()
+    context.rect(x - fontSize * 0.8, y, fontSize * 1.6, fontSize * 1.2);
+    context.fillStyle = unit.isEnemy ? 'Crimson' : 'Blue';
+    context.fill();
+    context.strokeStyle = 'white';
+    context.stroke();
+    context.closePath()
+    context.font = `${fontSize}px sans-serif`
+    context.fillStyle = 'white'
+    context.textAlign = 'center'
+    context.fillText(index.toString(), x, y + fontSize);
 }

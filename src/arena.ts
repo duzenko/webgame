@@ -76,10 +76,12 @@ class Arena {
     makeEnemyMove() {
         if (!this.activeUnit.isAlive) {
             this.endMove()
+            return
         }
         const target = this.units.find(u => !u.isEnemy && u.isAlive)
         if (!target) {
             this.endMove()
+            return
         }
         const path = this.activeUnit.position.pathTo(target!.position)
         let destination = target!.position
@@ -91,8 +93,20 @@ class Arena {
     }
 
     endMove() {
-        this.units.push(this.units.shift()!)
-        this.nextMove()
+        if (!this.units.find(u => u.isAlive && !u.isEnemy)) {
+            alert('You lost! Game will restart now')
+            setTimeout(() => window.open('/', '_self'), 99);
+            return
+        }
+        if (!this.units.find(u => u.isAlive && u.isEnemy)) {
+            alert('You won! Game will restart now')
+            setTimeout(() => window.open('/', '_self'), 99);
+            return
+        }
+        do {
+            this.units.push(this.units.shift()!)
+        } while (!this.units[0].isAlive)
+        setTimeout(() => this.nextMove(), 1)
     }
 
     moveUnit(unit: Unit, destination: GridCell) {
@@ -128,6 +142,7 @@ class UnitMoveAnimation extends GameAnimation {
             const enemy = arena.getUnitAt(this.destination)
             if (enemy) {
                 enemy.isAlive = false
+                logText(`${enemy.name} eliminated!`)
             } else {
                 this.unit.moveTo(this.destination)
             }

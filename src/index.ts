@@ -28,8 +28,6 @@ function drawAll() {
     }
     context.fillStyle = 'rgba(0,0,0,' + Math.abs(Math.sin(new Date().getTime() * 1e-3)) + ')'
     drawHexagon(arena.activeUnit.position, true)
-    arena.units.filter(u => !u.isAlive).forEach(drawUnit)
-    arena.units.filter(u => u.isAlive).forEach(drawUnit)
     context.strokeStyle = "white"
     for (const y of arena.rows) {
         for (const x of arena.columns) {
@@ -38,7 +36,8 @@ function drawAll() {
                 drawHexagon(cell, false)
             }
         }
-    }
+    } arena.units.filter(u => !u.isAlive).forEach(drawUnit)
+    arena.units.filter(u => u.isAlive).forEach(drawUnit)
     for (let debugLine of debugLines) {
         context.beginPath()
         context.moveTo(debugLine.p1.x, debugLine.p1.y)
