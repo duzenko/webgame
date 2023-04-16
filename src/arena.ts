@@ -13,6 +13,7 @@ export abstract class Unit {
     speed = 2
     actionPoints = 0
     image = new Image()
+    name = 'Unknown'
 
     constructor(position: GridCell) {
         this.position = position
@@ -33,22 +34,20 @@ export abstract class Unit {
     }
 
     abstract getImageName(): string;
-
-    get name() {
-        return this.constructor.name
-    }
 }
 
 class Peasant extends Unit {
+    name = 'Peasant'
+
     getImageName(): string {
         return 'peasant.png'
     }
 }
 
-
 class Wolf extends Unit {
     isEnemy = true
     speed = 3
+    name = 'Wolf'
 
     getImageName(): string {
         return 'wolf.png'
