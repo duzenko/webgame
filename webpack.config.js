@@ -7,8 +7,13 @@ const config = (env, argv) => {
   return {
     entry: './src/index.ts',
     devtool: argv.mode == 'production' ? 'source-map' : 'eval-source-map',
+    devServer: {
+      devMiddleware: {
+        writeToDisk: true,
+      },
+    },
     output: {
-      path: path.resolve(__dirname, 'public'),
+      path: path.resolve(__dirname, 'public/js'),
       filename: 'bundle.js'
     },
     module: {

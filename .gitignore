@@ -14,5 +14,5 @@ node_modules/
 .Trashes
 ehthumbs.db
 Thumbs.db
-public/bundle.js
-public/bundle.js.map
+public/js/bundle.js.map
+public/js/bundle.js
