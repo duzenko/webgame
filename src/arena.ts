@@ -2,6 +2,8 @@ import { GameAnimation } from "./animation"
 import { GridCell } from "./classes"
 import { logText } from "./log"
 
+/* commentary to test git */
+
 function range(start: number, end: number) {
     return Array.apply(null, Array(end - start + 1)).map((v, i) => i + start)
 }
@@ -57,7 +59,7 @@ class Wolf extends Unit {
 class Arena {
     columns = range(-9, 9)
     rows = range(-3, 3)
-    units = [new Wolf(new GridCell(8, 0)), new Peasant(new GridCell(-8, 0))]
+    units = [new Wolf(new GridCell(8, 0)), new Peasant(new GridCell(-8, 0)), new Wolf(new GridCell(8, 2)), new Peasant(new GridCell(-8, 2))]
     selectedCell?: GridCell
     animation?: GameAnimation
     activeUnit = this.units[0]
