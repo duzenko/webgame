@@ -43,8 +43,17 @@
             bottom: 0;
             position: absolute;
             display: flex;
-            justify-content: center;
+            justify-content: right;
             align-items: center;
+        }
+
+        .bottom>span {
+            padding-right: 1em;
+            flex-shrink: 0;
+        }
+
+        #logN {
+            color: gray;
         }
     </style>
     <div class="top">
@@ -52,7 +61,8 @@
     </div>
     <canvas id="canvas"></canvas>
     <div class="bottom">
-        <span class="hint" id="log"></span>
+        <span id="logN"></span>
+        <span id="log"></span>
     </div>
     <script src="js/bundle.js"></script>
 </body>
