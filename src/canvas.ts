@@ -1,5 +1,7 @@
 import { Point, GridCell } from "./classes"
-import { Unit, arena } from "./arena"
+import { arena } from "./arena"
+import { Unit } from "./unit"
+import { getImageForUnit } from "./image"
 
 export const canvas = document.getElementById("canvas") as HTMLCanvasElement
 export const context = canvas.getContext("2d") as CanvasRenderingContext2D
@@ -75,22 +77,27 @@ export function strokeHexagon(cell: GridCell, scale: number = 1) {
 }
 
 export function drawUnit(unit: Unit) {
-    context.save()
-    if (unit == arena.activeUnit) {
-        context.lineWidth = 3
-        context.strokeStyle = 'yellow'
-        strokeHexagon(arena.activeUnit.position, 0.9)
-    }
     const center = cellToScreen(unit.position)
-    const image = unit.image
-    const imageScale = 2 * Math.max(cellStepX / image.width, cellRadius / image.height)
-    const width = image.width * imageScale
-    const height = image.height * imageScale
-    if (!unit.isAlive) {
-        context.globalAlpha = 0.5
+    context.save()
+    try {
+        if (unit == arena.activeUnit) {
+            context.lineWidth = 3
+            context.strokeStyle = 'yellow'
+            strokeHexagon(arena.activeUnit.position, 0.9)
+        }
+        const image = getImageForUnit(unit)
+        if (image) {
+            const imageScale = 2 * Math.max(cellStepX / image.width, cellRadius / image.height)
+            const width = image.width * imageScale
+            const height = image.height * imageScale
+            if (!unit.isAlive) {
+                context.globalAlpha = 0.5
+            }
+            context.drawImage(image, center.x - width / 2, center.y + cellRadius - height, width, height)
+        }
+    } finally {
+        context.restore()
     }
-    context.drawImage(image, center.x - width / 2, center.y + cellRadius - height, width, height)
-    context.restore()
     drawBadge(center.x, center.y + cellRadius * 0.7, unit)
 }
 

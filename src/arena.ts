@@ -1,6 +1,7 @@
 import { GameAnimation } from "./animation"
 import { GridCell } from "./classes"
 import { logText } from "./log"
+import { Unit, testUnits } from "./unit"
 
 /* commentary to test git */
 
@@ -8,58 +9,10 @@ function range(start: number, end: number) {
     return Array.apply(null, Array(end - start + 1)).map((v, i) => i + start)
 }
 
-export abstract class Unit {
-    position: GridCell
-    isAlive = true
-    isEnemy = false
-    speed = 2
-    actionPoints = 0
-    image = new Image()
-    name = 'Unknown'
-
-    constructor(position: GridCell) {
-        this.position = position
-        this.image.src = './img/unit/' + this.getImageName()
-    }
-
-    canMoveTo(cell: GridCell): boolean {
-        const path = this.position.pathTo(cell)
-        return path.length < this.actionPoints
-    }
-
-    moveTo(cell: GridCell) {
-        this.position = cell
-    }
-
-    resetActionPoints() {
-        this.actionPoints = this.speed
-    }
-
-    abstract getImageName(): string;
-}
-
-class Peasant extends Unit {
-    name = 'Peasant'
-
-    getImageName(): string {
-        return 'peasant.png'
-    }
-}
-
-class Wolf extends Unit {
-    isEnemy = true
-    speed = 3
-    name = 'Wolf'
-
-    getImageName(): string {
-        return 'wolf.png'
-    }
-}
-
 class Arena {
     columns = range(-9, 9)
     rows = range(-3, 3)
-    units = [new Wolf(new GridCell(8, 0)), new Peasant(new GridCell(-8, 0)), new Wolf(new GridCell(8, 2)), new Peasant(new GridCell(-8, 2))]
+    units = testUnits
     selectedCell?: GridCell
     animation?: GameAnimation
     activeUnit = this.units[0]
