@@ -1,6 +1,7 @@
-import { canvas, checkSize, context, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell } from "./canvas"
+import { canvas, checkSize, context, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell, drawBackground } from "./canvas"
 import { Point } from "./classes"
 import { arena } from "./arena";
+import { getImageByName } from "./image";
 
 export let debugLines: { color: string, p1: Point, p2: Point }[] = [];
 
@@ -15,8 +16,7 @@ function present() {
 }
 
 function drawAll() {
-    context.fillStyle = "green"
-    context.fillRect(0, 0, canvas.width, canvas.height)
+    drawBackground()
     drawPossiblePath()
     drawMoveableCells()
     drawGrid()

@@ -1,7 +1,7 @@
 import { Point, GridCell } from "./classes"
 import { arena } from "./arena"
 import { Unit } from "./unit"
-import { getImageForUnit } from "./image"
+import { getImageByName, getImageForUnit } from "./image"
 
 export const canvas = document.getElementById("canvas") as HTMLCanvasElement
 export const context = canvas.getContext("2d") as CanvasRenderingContext2D
@@ -166,5 +166,18 @@ export function drawGrid() {
                 strokeHexagon(cell)
             }
         }
+    }
+}
+
+export function drawBackground() {
+    const backgroundImage = getImageByName('field/green-terrain.jpg')
+    if (backgroundImage) {
+        const cell = new GridCell(arena.columns[0] - 3, arena.rows[0] - 2)
+        // const scale = 1 / Math.max((arena.columns.length + 3) * Math.sin(Math.PI / 3) / backgroundImage.width, (arena.rows.length * 1.5 + 1) / backgroundImage.height)
+        const point = cellToScreen(cell)
+        context.drawImage(backgroundImage, point.x, point.y, canvas.width - 2 * point.x, canvas.height - 2 * point.y)
+    } else {
+        context.fillStyle = "black"
+        context.fillRect(0, 0, canvas.width, canvas.height)
     }
 }
