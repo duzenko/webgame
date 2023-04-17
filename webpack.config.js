@@ -3,18 +3,17 @@ const path = require('path');
 
 
 const config = (env, argv) => {
-  console.log(`This is the Webpack 4 'mode': ${argv.mode}`);
   return {
     entry: './src/index.ts',
     devtool: argv.mode == 'production' ? 'source-map' : 'eval-source-map',
     devServer: {
       devMiddleware: {
-        writeToDisk: true,
+        // writeToDisk: true,
       },
     },
     output: {
-      path: path.resolve(__dirname, 'public/js'),
-      filename: 'bundle.js'
+      path: path.resolve(__dirname, 'public'),
+      filename: 'js/bundle.js',
     },
     module: {
       rules: [

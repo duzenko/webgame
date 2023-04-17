@@ -10,11 +10,11 @@
     "url": "git+https://github.com/duzenko/webgame.git"
   },
   "scripts": {
-    "clean": "rm dist/js/bundle.js",
-    "serve": "webpack serve --mode development",
+    "clean": "rm -f dist/js/bundle.js*",
+    "serve": "npm run clean && webpack serve --mode development",
     "build-dev": "webpack --mode development",
-    "build-prod": "webpack --mode production",
-    "predeploy": "npm run build-prod",
+    "build": "webpack --mode production",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d public"
   },
   "devDependencies": {

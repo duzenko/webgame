@@ -51,40 +51,45 @@ export function checkSize() {
     }
 }
 
-function doHexagonPath(cellCenter: Point) {
+function doHexagonPath(cellCenter: Point, scale: number = 1) {
     const angle = 2 * Math.PI / 6
     context.beginPath()
     for (let i = 0; i < 6; i++) {
-        const xx = cellCenter.x + cellRadius * Math.sin(angle * i)
-        const yy = cellCenter.y + cellRadius * Math.cos(angle * i)
+        const xx = cellCenter.x + cellRadius * Math.sin(angle * i) * scale
+        const yy = cellCenter.y + cellRadius * Math.cos(angle * i) * scale
         context.lineTo(xx, yy)
     }
     context.closePath()
 }
 
-export function drawHexagon(cell: GridCell, fill: boolean) {
+export function fillHexagon(cell: GridCell) {
     const p = cellToScreen(cell)
     doHexagonPath(p)
-    if (fill) {
-        context.fill()
-    } else {
-        context.stroke()
-    }
+    context.fill()
+}
+
+export function strokeHexagon(cell: GridCell, scale: number = 1) {
+    const p = cellToScreen(cell)
+    doHexagonPath(p, scale)
+    context.stroke()
 }
 
 export function drawUnit(unit: Unit) {
+    context.save()
+    if (unit == arena.activeUnit) {
+        context.lineWidth = 3
+        context.strokeStyle = 'yellow'
+        strokeHexagon(arena.activeUnit.position, 0.9)
+    }
     const center = cellToScreen(unit.position)
     const image = unit.image
-    const imageScale = Math.max(cellStepX / image.width, cellRadius / image.height)
+    const imageScale = 2 * Math.max(cellStepX / image.width, cellRadius / image.height)
     const width = image.width * imageScale
     const height = image.height * imageScale
-    context.save()
     if (!unit.isAlive) {
         context.globalAlpha = 0.5
     }
-    doHexagonPath(center)
-    context.clip()
-    context.drawImage(image, center.x - width, center.y - height, 2 * width, 2 * height)
+    context.drawImage(image, center.x - width / 2, center.y + cellRadius - height, width, height)
     context.restore()
     drawBadge(center.x, center.y + cellRadius * 0.7, unit)
 }
@@ -97,7 +102,7 @@ function drawBadge(x: number, y: number, unit: Unit) {
     context.rect(x - fontSize * 0.8, y, fontSize * 1.6, fontSize * 1.2);
     context.fillStyle = unit.isEnemy ? 'Crimson' : 'Blue';
     context.fill();
-    context.strokeStyle = 'white';
+    context.strokeStyle = 'white'
     context.stroke();
     context.closePath()
     context.font = `${fontSize}px sans-serif`
@@ -118,13 +123,13 @@ export function drawPossiblePath() {
     if (!arena.activeUnit.isEnemy && canMoveTo) {
         const path = arena.activeUnit.position.pathTo(destination)
         for (const cell of path) {
-            drawHexagon(cell, true)
+            fillHexagon(cell)
         }
     }
     if (!canMoveTo) {
         context.fillStyle = "brown"
     }
-    drawHexagon(destination, true)
+    fillHexagon(destination)
     context.restore()
 }
 
@@ -139,7 +144,7 @@ export function drawMoveableCells() {
             const cell = new GridCell(unit.position.x + x, unit.position.y + y)
             if (!arena.isCellValid(cell)) continue
             if (!unit.canMoveTo(cell)) continue
-            drawHexagon(cell, true)
+            fillHexagon(cell)
         }
     }
     context.restore()
@@ -151,7 +156,7 @@ export function drawGrid() {
         for (const x of arena.columns) {
             const cell = new GridCell(x, y)
             if (cell.isValid) {
-                drawHexagon(cell, false)
+                strokeHexagon(cell)
             }
         }
     }

@@ -1,4 +1,4 @@
-import { canvas, checkSize, context, drawGrid, drawHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell } from "./canvas"
+import { canvas, checkSize, context, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell } from "./canvas"
 import { Point } from "./classes"
 import { arena } from "./arena";
 
@@ -18,8 +18,6 @@ function drawAll() {
     context.fillStyle = "green"
     context.fillRect(0, 0, canvas.width, canvas.height)
     drawPossiblePath()
-    context.fillStyle = 'rgba(0,0,0,' + Math.abs(Math.sin(new Date().getTime() * 1e-3)) + ')'
-    drawHexagon(arena.activeUnit.position, true)
     drawMoveableCells()
     drawGrid()
     arena.units.filter(u => !u.isAlive).forEach(drawUnit)
