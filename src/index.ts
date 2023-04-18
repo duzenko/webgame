@@ -1,7 +1,6 @@
-import { canvas, checkSize, context, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell, drawBackground } from "./canvas"
-import { Point } from "./classes"
-import { arena } from "./arena";
-import { getImageByName } from "./image";
+import { canvas, checkSize, context, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell, drawBackground } from "./graphics/canvas"
+import { arena } from "./game/arena";
+import { Point } from "./util/classes"
 
 export let debugLines: { color: string, p1: Point, p2: Point }[] = [];
 

@@ -1,24 +1,19 @@
+import { GridCell } from "../util/classes"
+import { range } from "../util/functions"
+import { toGameLog } from "../util/log"
 import { GameAnimation } from "./animation"
-import { GridCell } from "./classes"
-import { logText } from "./log"
 import { Unit, testUnits } from "./unit"
-
-/* commentary to test git */
-
-function range(start: number, end: number) {
-    return Array.apply(null, Array(end - start + 1)).map((v, i) => i + start)
-}
 
 class Arena {
     columns = range(-9, 9)
-    rows = range(-3, 3)
+    rows = range(-4, 4)
     units = testUnits
     selectedCell?: GridCell
     animation?: GameAnimation
     activeUnit = this.units[0]
 
     constructor() {
-        logText('Battle has started!')
+        toGameLog('Battle has started!')
         this.nextMove()
     }
 
@@ -28,7 +23,7 @@ class Arena {
         if (this.activeUnit.isEnemy) {
             this.makeEnemyMove()
         } else {
-            logText(`${this.activeUnit.name}'s move`)
+            toGameLog(`${this.activeUnit.name}'s move`)
         }
     }
 
@@ -44,7 +39,7 @@ class Arena {
         }
         const path = this.activeUnit.position.pathTo(target!.position)
         let destination = target!.position
-        logText(this.activeUnit.name + ' targets ' + target?.name)
+        toGameLog(this.activeUnit.name + ' targets ' + target?.name)
         while (this.activeUnit.actionPoints < path.length + 1) {
             destination = path.pop()!
         }
@@ -109,7 +104,7 @@ class UnitMoveAnimation extends GameAnimation {
             const enemy = arena.getUnitAt(this.destination)
             if (enemy) {
                 enemy.isAlive = false
-                logText(`${enemy.name} eliminated!`)
+                toGameLog(`${enemy.name} eliminated!`)
             } else {
                 this.unit.moveTo(this.destination)
             }

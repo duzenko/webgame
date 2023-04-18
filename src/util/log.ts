@@ -3,7 +3,7 @@ const logN = document.getElementById("logN") as HTMLSpanElement
 
 const lastMessages: string[] = []
 
-export function logText(msg: string) {
+export function toGameLog(msg: string) {
     setText(msg)
 }
 

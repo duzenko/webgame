@@ -1,4 +1,4 @@
-import { GridCell } from "./classes"
+import { GridCell } from "../util/classes"
 
 export abstract class Unit {
     position: GridCell

@@ -1,6 +1,6 @@
-import { Point, GridCell } from "./classes"
-import { arena } from "./arena"
-import { Unit } from "./unit"
+import { Point, GridCell } from "../util/classes"
+import { arena } from "../game/arena"
+import { Unit } from "../game/unit"
 import { getImageByName, getImageForUnit } from "./image"
 
 export const canvas = document.getElementById("canvas") as HTMLCanvasElement
@@ -9,11 +9,12 @@ export const context = canvas.getContext("2d") as CanvasRenderingContext2D
 let cellRadius: number
 let cellStepX: number
 let cellStepY: number
+const isometricAspect = 0.7
 let arenaZoom = 1
 
 function cellToScreen(cell: GridCell): Point {
     const x = cell.x * cellStepX + canvas.width / 2
-    const y = cell.y * cellRadius * 1.5 + canvas.height / 2
+    const y = cell.y * cellRadius * 1.5 * isometricAspect + canvas.height / 2
     return new Point(x, y)
 }
 
@@ -44,12 +45,12 @@ export function checkSize() {
     const height = Math.round(canvas.clientHeight)
     if (canvas.width != width || canvas.height != height) {
         arenaZoom = 1 / Math.max((arena.columns.length + 3) * Math.sin(Math.PI / 3) / width, (arena.rows.length * 1.5 + 1) / height)
-        console.log(`Resize canvas from ${canvas.width}x${canvas.height} to ${width}x${height}, zoom to ${arenaZoom}`)
+        console.log(`Resize canvas from ${canvas.width}x${canvas.height} to ${width}x${height}, scale to ${arenaZoom.toFixed()}`)
         canvas.width = width
         canvas.height = height
         cellRadius = arenaZoom
         cellStepX = cellRadius * Math.sin(Math.PI / 3)
-        cellStepY = cellRadius * 1.5
+        cellStepY = cellRadius * 1.5 * isometricAspect
     }
 }
 
@@ -58,7 +59,7 @@ function doHexagonPath(cellCenter: Point, scale: number = 1) {
     context.beginPath()
     for (let i = 0; i < 6; i++) {
         const xx = cellCenter.x + cellRadius * Math.sin(angle * i) * scale
-        const yy = cellCenter.y + cellRadius * Math.cos(angle * i) * scale
+        const yy = cellCenter.y + cellRadius * isometricAspect * Math.cos(angle * i) * scale
         context.lineTo(xx, yy)
     }
     context.closePath()
@@ -87,18 +88,18 @@ export function drawUnit(unit: Unit) {
         }
         const image = getImageForUnit(unit)
         if (image) {
-            const imageScale = 2 * Math.max(cellStepX / image.width, cellRadius / image.height)
+            const imageScale = 2 * Math.max(cellStepX / image.width, cellRadius * isometricAspect / image.height)
             const width = image.width * imageScale
             const height = image.height * imageScale
             if (!unit.isAlive) {
                 context.globalAlpha = 0.5
             }
-            context.drawImage(image, center.x - width / 2, center.y + cellRadius - height, width, height)
+            context.drawImage(image, center.x - width / 2, center.y + cellRadius * isometricAspect - height, width, height)
         }
     } finally {
         context.restore()
     }
-    drawBadge(center.x, center.y + cellRadius * 0.7, unit)
+    drawBadge(center.x, center.y + cellRadius * isometricAspect * 0.7, unit)
 }
 
 function drawBadge(x: number, y: number, unit: Unit) {
@@ -172,10 +173,10 @@ export function drawGrid() {
 export function drawBackground() {
     const backgroundImage = getImageByName('field/green-terrain.jpg')
     if (backgroundImage) {
-        const cell = new GridCell(arena.columns[0] - 3, arena.rows[0] - 2)
-        // const scale = 1 / Math.max((arena.columns.length + 3) * Math.sin(Math.PI / 3) / backgroundImage.width, (arena.rows.length * 1.5 + 1) / backgroundImage.height)
-        const point = cellToScreen(cell)
-        context.drawImage(backgroundImage, point.x, point.y, canvas.width - 2 * point.x, canvas.height - 2 * point.y)
+        const p = cellToScreen(new GridCell(arena.columns[0], 0))
+        const w = (canvas.width / 2 - p.x) * 1.6
+        const h = backgroundImage.height * w / backgroundImage.width
+        context.drawImage(backgroundImage, canvas.width / 2 - w, canvas.height / 2 - h, 2 * w, 2 * h)
     } else {
         context.fillStyle = "black"
         context.fillRect(0, 0, canvas.width, canvas.height)

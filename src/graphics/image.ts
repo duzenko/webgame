@@ -1,4 +1,4 @@
-import { Unit } from "./unit";
+import { Unit } from "../game/unit";
 
 const loadingImages = new Map(), loadedImages = new Map()
 
