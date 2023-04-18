@@ -44,7 +44,7 @@ export function checkSize() {
     const width = Math.round(canvas.clientWidth)
     const height = Math.round(canvas.clientHeight)
     if (canvas.width != width || canvas.height != height) {
-        arenaZoom = 1 / Math.max((arena.columns.length + 3) * Math.sin(Math.PI / 3) / width, (arena.rows.length * 1.5 + 1) / height)
+        arenaZoom = 1 / Math.max((arena.columns.length + 3) * Math.sin(Math.PI / 3) / width, (arena.rows.length + 1) * 1.5 * isometricAspect / height)
         console.log(`Resize canvas from ${canvas.width}x${canvas.height} to ${width}x${height}, scale to ${arenaZoom.toFixed()}`)
         canvas.width = width
         canvas.height = height
