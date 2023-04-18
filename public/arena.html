@@ -33,8 +33,9 @@
             top: 0;
             position: absolute;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
+            padding: 0 1em;
         }
 
         .bottom {
@@ -55,9 +56,17 @@
         #logN {
             color: gray;
         }
+
+        a:link,
+        a:visited {
+            color: inherit;
+            text-decoration: none;
+        }
     </style>
     <div class="top">
+        <a href='.'>☰</a>
         <span class="hint">Hint: hover mouse over cells to preview unit path, click to move</span>
+        <a></a>
     </div>
     <canvas id="canvas"></canvas>
     <div class="bottom">
