@@ -1,0 +1,39 @@
+/*artifika - font for basic text*/
+
+@font-face {
+    font-family: 'Artifika';
+    src: url('/fonts/artifika/Artifika-Regular.ttf');
+}
+
+/*best_christmas - font for headers*/
+
+@font-face {
+    font-family: 'BestChristmas';
+    src: url('/fonts/best_christmas/Best Christmas - Personal Use.otf');
+}
+
+
+/*white_lotus- script font for illustrations*/
+
+@font-face {
+    font-family: 'WhiteLotus';
+    src: url('/fonts/white_lotus/WhiteLotus_PERSONAL_USE_ONLY.otf');
+}
+
+body{
+    font-family: Artifika;
+}
+
+h1, h2, h3, h4, h5, h6{
+    font-family: BestChristmas;
+    font-weight: normal;
+}
+h1{
+    font-size: 400%;
+}
+h2{
+    font-size: 300%;
+}
+h3, h4, h5, h6{
+    font-size: 200%;
+}
