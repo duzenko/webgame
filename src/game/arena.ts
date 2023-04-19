@@ -67,6 +67,14 @@ class Arena {
         setTimeout(() => this.nextMove(), 1)
     }
 
+    animationEnded() {
+        arena.animation = undefined
+        arena.selectedCell = undefined
+        if (!arena.activeUnit.actionPoints || arena.activeUnit.isEnemy) {
+            arena.endMove()
+        }
+    }
+
     moveUnit(unit: Unit, destination: GridCell) {
         this.animation = UnitMoveAnimation.create(unit, destination)
     }
@@ -127,12 +135,14 @@ class UnitMoveAnimation extends GameAnimation {
     }
 
     frame(frameNo: number): void {
+        this.unit.actionPoints--
         if (frameNo < this.path.length) {
             this.unit.moveTo(this.path[frameNo])
         } else {
             const enemy = arena.getUnitAt(this.destination)
             if (enemy) {
                 enemy.isAlive = false
+                this.unit.actionPoints = 0
                 toGameLog(`${enemy.name} eliminated!`)
             } else {
                 this.unit.moveTo(this.destination)
@@ -141,9 +151,7 @@ class UnitMoveAnimation extends GameAnimation {
     }
 
     ended(): void {
-        arena.animation = undefined
-        arena.selectedCell = undefined
-        arena.endMove()
+        arena.animationEnded()
     }
 
 }
