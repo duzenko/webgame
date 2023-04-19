@@ -7,8 +7,12 @@ const config = (env, argv) => {
     entry: './src/index.ts',
     devtool: argv.mode == 'production' ? 'source-map' : 'eval-source-map',
     devServer: {
-      devMiddleware: {
-        // writeToDisk: true,
+      historyApiFallback: {
+        rewrites: [
+          { from: /^\/arena$/, to: '/arena.html' },
+          { from: /^\/subpage/, to: '/views/subpage.html' },
+          { from: /./, to: '/views/404.html' },
+        ],
       },
     },
     output: {

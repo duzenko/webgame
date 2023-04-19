@@ -11,7 +11,7 @@
   },
   "scripts": {
     "clean": "rm -f public/js/bundle.js*",
-    "serve": "npm run clean && webpack serve --mode development",
+    "serve": "webpack serve --mode development",
     "build-dev": "webpack --mode development",
     "build": "webpack --mode production",
     "predeploy": "npm run build",
