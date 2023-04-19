@@ -9,8 +9,8 @@ export const context = canvas.getContext("2d") as CanvasRenderingContext2D
 let cellRadius: number
 let cellStepX: number
 let cellStepY: number
-const isometricAspect = 0.7
-let arenaZoom = 1
+let isometricAspect: number
+let arenaZoom: number
 
 function cellToScreen(cell: GridCell): Point {
     const x = cell.x * cellStepX + canvas.width / 2
@@ -44,7 +44,16 @@ export function checkSize() {
     const width = Math.round(canvas.clientWidth)
     const height = Math.round(canvas.clientHeight)
     if (canvas.width != width || canvas.height != height) {
-        arenaZoom = 1 / Math.max((arena.columns.length + 3) * Math.sin(Math.PI / 3) / width, (arena.rows.length + 1) * 1.5 * isometricAspect / height)
+        let xScale = width / (arena.columns.length + 3) / Math.sin(Math.PI / 3)
+        let yScale = height / (arena.rows.length + 1) / 1.5
+        if (yScale < xScale) {
+            xScale = Math.min(yScale / 0.7, xScale)
+            isometricAspect = yScale / xScale
+            yScale = xScale
+        } else {
+            isometricAspect = 1
+        }
+        arenaZoom = Math.min(xScale, yScale)
         console.log(`Resize canvas from ${canvas.width}x${canvas.height} to ${width}x${height}, scale to ${arenaZoom.toFixed()}`)
         canvas.width = width
         canvas.height = height
@@ -88,24 +97,24 @@ export function drawUnit(unit: Unit) {
         }
         const image = getImageForUnit(unit)
         if (image) {
-            const imageScale = 2 * Math.max(cellStepX / image.width, cellRadius * isometricAspect / image.height)
+            const imageScale = 2 * cellStepX / image.width
             const width = image.width * imageScale
             const height = image.height * imageScale
             if (!unit.isAlive) {
                 context.globalAlpha = 0.5
             }
-            context.drawImage(image, center.x - width / 2, center.y + cellRadius * isometricAspect - height, width, height)
+            context.drawImage(image, center.x - width / 2, center.y + cellRadius - height, width, height)
         }
     } finally {
         context.restore()
     }
-    drawBadge(center.x, center.y + cellRadius * isometricAspect * 0.7, unit)
+    drawBadge(center.x, center.y + cellRadius * isometricAspect * 0.3, unit)
 }
 
 function drawBadge(x: number, y: number, unit: Unit) {
     const index = arena.units.filter(u => u.isAlive).indexOf(unit) + 1
     if (index < 1) return
-    const fontSize = Math.round(cellRadius / 16) * 4
+    const fontSize = Math.round(cellRadius * isometricAspect / 16) * 4
     context.beginPath()
     context.rect(x - fontSize * 0.8, y, fontSize * 1.6, fontSize * 1.2);
     context.fillStyle = unit.isEnemy ? 'Crimson' : 'Blue';
@@ -113,7 +122,7 @@ function drawBadge(x: number, y: number, unit: Unit) {
     context.strokeStyle = 'white'
     context.stroke();
     context.closePath()
-    context.font = `${fontSize}px sans-serif`
+    context.font = `${fontSize}px Artifika`
     context.fillStyle = 'white'
     context.textAlign = 'center'
     context.fillText(index.toString(), x, y + fontSize * 0.95);
@@ -173,9 +182,10 @@ export function drawGrid() {
 export function drawBackground() {
     const backgroundImage = getImageByName('field/green-terrain.jpg')
     if (backgroundImage) {
-        const p = cellToScreen(new GridCell(arena.columns[0], 0))
+        const p = cellToScreen(new GridCell(arena.columns[0], arena.rows[0]))
         const w = (canvas.width / 2 - p.x) * 1.6
-        const h = backgroundImage.height * w / backgroundImage.width
+        // const h = backgroundImage.height * w / backgroundImage.width
+        const h = (canvas.height / 2 - p.y) * 1.3
         context.drawImage(backgroundImage, canvas.width / 2 - w, canvas.height / 2 - h, 2 * w, 2 * h)
     } else {
         context.fillStyle = "black"
