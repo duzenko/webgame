@@ -50,4 +50,7 @@ export class GridCell extends Point {
         return rangeX.includes(this.x) && rangeY.includes(this.y)
     }
 
+    getNeighbors(): GridCell[] {
+        return [[-2, 0], [2, 0], [-1, -1], [-1, 1], [1, -1], [1, 1]].map(xy => new GridCell(this.x + xy[0], this.y + xy[1]))
+    }
 }

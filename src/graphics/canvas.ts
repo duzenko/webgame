@@ -136,9 +136,9 @@ export function drawPossiblePath() {
     context.save()
     context.globalAlpha = 0.3
     context.fillStyle = "black"
-    const canMoveTo = arena.activeUnit.canMoveTo(destination)
+    const canMoveTo = arena.unitCanMoveTo(arena.activeUnit, destination)
     if (!arena.activeUnit.isEnemy && canMoveTo) {
-        const path = arena.activeUnit.position.pathTo(destination)
+        const path = arena.getPathForUnit(arena.activeUnit, destination)
         for (const cell of path) {
             fillHexagon(cell)
         }
@@ -156,13 +156,10 @@ export function drawMoveableCells() {
     context.save()
     context.globalAlpha = 0.3
     context.fillStyle = "black"
-    for (let y = -unit.speed; y <= unit.speed; y++) {
-        for (let x = -2 * unit.speed; x <= 2 * unit.speed; x++) {
-            const cell = new GridCell(unit.position.x + x, unit.position.y + y)
-            if (!arena.isCellValid(cell)) continue
-            if (!unit.canMoveTo(cell)) continue
-            fillHexagon(cell)
-        }
+    const cells = arena.getMovesForUnit(unit)
+    for (const cell of cells) {
+        if (!arena.isCellValid(cell)) continue
+        fillHexagon(cell)
     }
     context.restore()
 }

@@ -78,6 +78,35 @@ class Arena {
     isCellValid(cell: GridCell): boolean {
         return cell.isValid && cell.isInRange(this.columns, this.rows)
     }
+
+    getMovesForUnit(unit: Unit): GridCell[] {
+        const cells = [unit.position]
+        for (let i = 0; i < unit.actionPoints; i++) {
+            for (const cell of [...cells]) {
+                const unitInCell = arena.getUnitAt(cell)
+                if (unitInCell && unitInCell != unit) continue
+                cells.push(...cell.getNeighbors())
+            }
+        }
+        return cells.reduce<GridCell[]>((unique, o) => {
+            if (!unique.some((c: GridCell) => c.isSameAs(o))) {
+                unique.push(o)
+            }
+            return unique
+        }, []);
+    }
+
+
+    getPathForUnit(unit: Unit, destination: GridCell): GridCell[] {
+        return unit.position.pathTo(destination)
+    }
+
+    unitCanMoveTo(unit: Unit, destination: GridCell): GridCell[] | null {
+        const moves = this.getMovesForUnit(unit)
+        if (!moves.some(c => c.isSameAs(destination))) return null
+        return this.getPathForUnit(unit, destination)
+    }
+
 }
 
 class UnitMoveAnimation extends GameAnimation {

@@ -44,7 +44,7 @@ function onMouseMove(ev: MouseEvent) {
 function onMouseDown(ev: MouseEvent) {
     if (arena.animation) return
     const cell = screenToCell(new Point(ev.offsetX, ev.offsetY))
-    if (!arena.isCellValid(cell) || !arena.activeUnit.canMoveTo(cell)) {
+    if (!arena.isCellValid(cell) || !arena.unitCanMoveTo(arena.activeUnit, cell)) {
         return
     }
     arena.moveUnit(arena.activeUnit, cell)

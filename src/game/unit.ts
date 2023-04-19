@@ -11,12 +11,6 @@ export abstract class Unit {
 
     constructor(x: number, y: number) {
         this.position = new GridCell(x, y)
-        // this.image.src = './img/unit/' + this.imageName
-    }
-
-    canMoveTo(cell: GridCell): boolean {
-        const path = this.position.pathTo(cell)
-        return path.length < this.actionPoints
     }
 
     moveTo(cell: GridCell) {
