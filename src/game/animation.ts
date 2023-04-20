@@ -7,12 +7,25 @@ import { Unit } from "./unit";
 export abstract class GameAnimation {
 
     constructor(length: number, interval: number) {
-        let frameNo = 0;
+        if (length < 1) return
+        setTimeout(() => this.firstFrame(length, interval))
+    }
+
+    private firstFrame(length: number, interval: number) {
+        let frameNo = 0
+        try {
+            this.frame(frameNo++)
+        } finally {
+            if (frameNo >= length) {
+                this.ended()
+                return
+            }
+        }
         const id = setInterval(() => {
             try {
-                this.frame(frameNo)
+                this.frame(frameNo++)
             } finally {
-                if (++frameNo >= length) {
+                if (frameNo >= length) {
                     clearInterval(id)
                     this.ended()
                 }
@@ -21,6 +34,7 @@ export abstract class GameAnimation {
     }
 
     abstract frame(frameNo: number): void
+
     ended() { }
 }
 
@@ -28,9 +42,7 @@ export class UnitMoveAnimation extends GameAnimation {
     unit: Unit
     destination: GridCell
     path: GridCell[]
-
-    static readonly cellTime = 300
-    static readonly smoothFrames = 30
+    static readonly cellMoveTime = 300
 
     static create(unit: Unit, destination: GridCell): UnitMoveAnimation {
         const path = arena.getPathForUnit(unit, destination)!
@@ -38,7 +50,7 @@ export class UnitMoveAnimation extends GameAnimation {
     }
 
     constructor(unit: Unit, destination: GridCell, path: GridCell[]) {
-        super(path.length + 1, UnitMoveAnimation.cellTime)
+        super(path.length + 1, UnitMoveAnimation.cellMoveTime)
         this.path = path
         this.unit = unit
         this.destination = destination
@@ -63,19 +75,31 @@ export class UnitMoveAnimation extends GameAnimation {
     }
 
     smoothMove(from: GridCell, to: GridCell) {
-        const unit = this.unit
-        new class extends GameAnimation {
-            frame(frameNo: number): void {
-                const alpha = (frameNo + 1) / UnitMoveAnimation.smoothFrames
-                unit.position = new GridCell(lerp(from.x, to.x, alpha), lerp(from.y, to.y, alpha))
-            }
-            ended(): void {
-            }
-        }(UnitMoveAnimation.smoothFrames, UnitMoveAnimation.cellTime / UnitMoveAnimation.smoothFrames);
+        new SmoothMoveAnimation(this.unit, from, to)
     }
 
     ended(): void {
         arena.animationEnded()
     }
 
+}
+
+class SmoothMoveAnimation extends GameAnimation {
+    static readonly smoothFrames = 30
+
+    unit: Unit
+    from: GridCell
+    to: GridCell
+
+    constructor(unit: Unit, from: GridCell, to: GridCell) {
+        super(SmoothMoveAnimation.smoothFrames, UnitMoveAnimation.cellMoveTime / SmoothMoveAnimation.smoothFrames)
+        this.unit = unit
+        this.from = from
+        this.to = to
+    }
+
+    frame(frameNo: number): void {
+        const alpha = (frameNo + 1) / SmoothMoveAnimation.smoothFrames
+        this.unit.position = new GridCell(lerp(this.from.x, this.to.x, alpha), lerp(this.from.y, this.to.y, alpha))
+    }
 }
