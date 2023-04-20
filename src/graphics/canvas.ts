@@ -165,6 +165,8 @@ export function drawMoveableCells() {
 }
 
 export function drawGrid() {
+    context.save()
+    context.globalAlpha = 0.5
     context.strokeStyle = "white"
     for (const y of arena.rows) {
         for (const x of arena.columns) {
@@ -174,6 +176,7 @@ export function drawGrid() {
             }
         }
     }
+    context.restore()
 }
 
 export function drawBackground() {
