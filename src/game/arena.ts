@@ -1,7 +1,7 @@
 import { GridCell } from "../util/classes"
 import { range } from "../util/functions"
 import { toGameLog } from "../util/log"
-import { GameAnimation } from "./animation"
+import { GameAnimation, UnitMoveAnimation } from "./animation"
 import { Unit, testUnits } from "./unit"
 
 class Arena {
@@ -64,7 +64,7 @@ class Arena {
         do {
             this.units.push(this.units.shift()!)
         } while (!this.units[0].isAlive)
-        setTimeout(() => this.nextMove(), 1)
+        setTimeout(() => this.nextMove())
     }
 
     animationEnded() {
@@ -89,19 +89,23 @@ class Arena {
 
     getMovesForUnit(unit: Unit): GridCell[] {
         const cells = [unit.position]
+        let lastBatch = cells
         for (let i = 0; i < unit.actionPoints; i++) {
-            for (const cell of [...cells]) {
-                const unitInCell = arena.getUnitAt(cell)
+            const nextBatch: GridCell[] = []
+            for (const lastCell of lastBatch) {
+                const unitInCell = arena.getUnitAt(lastCell)
                 if (unitInCell && unitInCell != unit) continue
-                cells.push(...cell.getNeighbors())
+                for (const nextCell of lastCell.getNeighbors()) {
+                    if (!arena.isCellValid(nextCell)) continue
+                    if (nextBatch.some(c => c.isSameAs(nextCell))) continue
+                    if (cells.some(c => c.isSameAs(nextCell))) continue
+                    nextBatch.push(nextCell)
+                }
             }
+            cells.push(...nextBatch)
+            lastBatch = nextBatch
         }
-        return cells.reduce<GridCell[]>((unique, o) => {
-            if (!unique.some((c: GridCell) => c.isSameAs(o))) {
-                unique.push(o)
-            }
-            return unique
-        }, []);
+        return cells
     }
 
 
@@ -117,43 +121,6 @@ class Arena {
 
 }
 
-class UnitMoveAnimation extends GameAnimation {
-    unit: Unit
-    destination: GridCell
-    path: GridCell[]
 
-    static create(unit: Unit, destination: GridCell): UnitMoveAnimation {
-        const path = unit.position.pathTo(destination)
-        return new UnitMoveAnimation(unit, destination, path)
-    }
-
-    constructor(unit: Unit, destination: GridCell, path: GridCell[]) {
-        super(path.length + 1, 333)
-        this.path = path
-        this.unit = unit
-        this.destination = destination
-    }
-
-    frame(frameNo: number): void {
-        this.unit.actionPoints--
-        if (frameNo < this.path.length) {
-            this.unit.moveTo(this.path[frameNo])
-        } else {
-            const enemy = arena.getUnitAt(this.destination)
-            if (enemy) {
-                enemy.isAlive = false
-                this.unit.actionPoints = 0
-                toGameLog(`${enemy.name} eliminated!`)
-            } else {
-                this.unit.moveTo(this.destination)
-            }
-        }
-    }
-
-    ended(): void {
-        arena.animationEnded()
-    }
-
-}
 
 export const arena = new Arena()

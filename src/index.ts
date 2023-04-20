@@ -6,6 +6,7 @@ export let debugLines: { color: string, p1: Point, p2: Point }[] = [];
 
 canvas.addEventListener('mousemove', onMouseMove, false)
 canvas.addEventListener('mousedown', onMouseDown, false)
+window.addEventListener('keydown', onKeyDown, false)
 window.addEventListener('resize', present, false)
 window.setInterval(present, 8)
 
@@ -48,4 +49,10 @@ function onMouseDown(ev: MouseEvent) {
         return
     }
     arena.moveUnit(arena.activeUnit, cell)
+}
+
+function onKeyDown(ev: KeyboardEvent) {
+    if (arena.animation) return
+    if (arena.activeUnit.isEnemy) return
+    if (ev.key == ' ') arena.endMove()
 }

@@ -36,9 +36,9 @@ export class Wolf extends Unit {
 }
 
 export const testUnits = [
+    new Peasant(-9, 1),
     new Wolf(8, 0),
     new Peasant(-8, 0),
-    new Wolf(8, 2),
-    new Peasant(-8, 2)
+    new Wolf(9, 1),
 ]
 
