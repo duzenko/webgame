@@ -138,7 +138,7 @@ export function drawPossiblePath() {
     context.fillStyle = "black"
     const canMoveTo = arena.unitCanMoveTo(arena.activeUnit, destination)
     if (!arena.activeUnit.isEnemy && canMoveTo) {
-        const path = arena.getPathForUnit(arena.activeUnit, destination)
+        const path = arena.getPathForUnit(arena.activeUnit, destination)!
         for (const cell of path) {
             fillHexagon(cell)
         }

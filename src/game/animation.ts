@@ -4,12 +4,8 @@ import { arena } from "./arena";
 import { Unit } from "./unit";
 
 export abstract class GameAnimation {
-    private length: number
-    private interval: number
 
     constructor(length: number, interval: number) {
-        this.length = length
-        this.interval = interval
         let frameNo = 0;
         const id = setInterval(() => {
             try {
@@ -33,7 +29,7 @@ export class UnitMoveAnimation extends GameAnimation {
     path: GridCell[]
 
     static create(unit: Unit, destination: GridCell): UnitMoveAnimation {
-        const path = unit.position.pathTo(destination)
+        const path = arena.getPathForUnit(unit, destination)!
         return new UnitMoveAnimation(unit, destination, path)
     }
 

@@ -26,26 +26,6 @@ export class GridCell extends Point {
         return isValidCell(this.x, this.y)
     }
 
-    pathTo(end: GridCell): GridCell[] {
-        const path = []
-        var x = this.x
-        var y = this.y
-        while (path.length < 33) {
-            if (Math.abs(end.x - x) > Math.abs(end.y - y)) {
-                x += Math.sign(end.x - x) * 2
-            } else {
-                y += Math.sign(end.y - y)
-                x += Math.sign(end.x - x)
-            }
-            if (end.x == x && !isValidCell(x, y)) {
-                x++
-            }
-            if (x == end.x && y == end.y) break
-            path.push(new GridCell(x, y))
-        }
-        return path
-    }
-
     isInRange(rangeX: number[], rangeY: number[]): boolean {
         return rangeX.includes(this.x) && rangeY.includes(this.y)
     }

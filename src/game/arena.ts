@@ -37,7 +37,11 @@ class Arena {
             this.endMove()
             return
         }
-        const path = this.activeUnit.position.pathTo(target!.position)
+        const path = this.getPathForUnit(this.activeUnit, target.position)
+        if (!path) {
+            this.endMove()
+            return
+        }
         let destination = target!.position
         toGameLog(this.activeUnit.name + ' targets ' + target?.name)
         while (this.activeUnit.actionPoints < path.length + 1) {
@@ -109,8 +113,18 @@ class Arena {
     }
 
 
-    getPathForUnit(unit: Unit, destination: GridCell): GridCell[] {
-        return unit.position.pathTo(destination)
+    getPathForUnit(unit: Unit, destination: GridCell): GridCell[] | null {
+        const path: GridCell[] = []
+        let nextCell = new GridCell(unit.position.x, unit.position.y)
+        while (path.length < 33) {
+            const neighbors = nextCell.getNeighbors().filter(c => c.isSameAs(destination) || !this.getUnitAt(c))
+            if (!neighbors.length) return null
+            neighbors.sort((a, b) => a.squareDistanceTo(destination) - b.squareDistanceTo(destination))
+            nextCell = neighbors[0]
+            if (nextCell.isSameAs(destination)) return path
+            path.push(nextCell)
+        }
+        return null
     }
 
     unitCanMoveTo(unit: Unit, destination: GridCell): GridCell[] | null {
