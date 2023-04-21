@@ -14,15 +14,16 @@
     "serve": "webpack serve --mode development",
     "build-dev": "webpack --mode development",
     "build": "webpack --mode production",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d public && npm run clean"
+    "deploy": "npm run clean && npm run build && node ftp-deploy"
   },
   "devDependencies": {
-    "gh-pages": "^5.0.0",
+    "dotenv": "^16.0.3",
+    "ftp-deploy": "^2.4.3",
     "ts-loader": "^9.4.2",
     "typescript": "^5.0.4",
     "webpack": "^5.79.0",
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.13.2"
-  }
+  },
+  "dependencies": {}
 }
