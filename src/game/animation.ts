@@ -17,7 +17,7 @@ export abstract class GameAnimation {
             this.frame(frameNo++)
         } finally {
             if (frameNo >= length) {
-                this.ended()
+                this.onFinish()
                 return
             }
         }
@@ -27,7 +27,7 @@ export abstract class GameAnimation {
             } finally {
                 if (frameNo >= length) {
                     clearInterval(id)
-                    this.ended()
+                    this.onFinish()
                 }
             }
         }, interval)
@@ -35,7 +35,7 @@ export abstract class GameAnimation {
 
     abstract frame(frameNo: number): void
 
-    ended() { }
+    onFinish() { }
 }
 
 export class UnitMoveAnimation extends GameAnimation {
@@ -78,10 +78,9 @@ export class UnitMoveAnimation extends GameAnimation {
         new SmoothMoveAnimation(this.unit, from, to)
     }
 
-    ended(): void {
-        arena.animationEnded()
+    onFinish(): void {
+        setTimeout(() => arena.animationEnded(), UnitMoveAnimation.cellMoveTime);
     }
-
 }
 
 class SmoothMoveAnimation extends GameAnimation {
@@ -102,4 +101,5 @@ class SmoothMoveAnimation extends GameAnimation {
         const alpha = (frameNo + 1) / SmoothMoveAnimation.smoothFrames
         this.unit.position = new GridCell(lerp(this.from.x, this.to.x, alpha), lerp(this.from.y, this.to.y, alpha))
     }
+
 }

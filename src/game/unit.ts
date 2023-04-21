@@ -28,6 +28,11 @@ export class Peasant extends Unit {
     imageName = 'peasant.png'
 }
 
+export class Swordsman extends Unit {
+    name = 'Swordsman'
+    imageName = 'swordsman.png'
+}
+
 export class Wolf extends Unit {
     isEnemy = true
     speed = 3
@@ -36,9 +41,11 @@ export class Wolf extends Unit {
 }
 
 export const testUnits = [
-    new Peasant(-9, 1),
     new Wolf(8, 0),
-    new Peasant(-8, 0),
     new Wolf(9, 1),
-]
+    new Wolf(9, -1),
+    new Swordsman(-8, 0),
+    new Peasant(-9, 1),
+    new Peasant(-9, -1),
+].sort((a, b) => b.speed - a.speed)
 

@@ -10,15 +10,17 @@ class Arena {
     units = testUnits
     selectedCell?: GridCell
     animation?: GameAnimation
-    activeUnit = this.units[0]
+
+    get activeUnit() {
+        return this.units[0]
+    }
 
     constructor() {
         toGameLog('Battle has started!')
-        this.nextMove()
+        setTimeout(() => this.nextMove())
     }
 
     nextMove() {
-        this.activeUnit = this.units[0]
         this.activeUnit.resetActionPoints()
         if (this.activeUnit.isEnemy) {
             this.makeEnemyMove()
@@ -134,7 +136,5 @@ class Arena {
     }
 
 }
-
-
 
 export const arena = new Arena()
