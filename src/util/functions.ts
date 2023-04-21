@@ -7,3 +7,7 @@ export function range(start: number, end: number) {
 export function lerp(a: number, b: number, alpha: number): number {
     return a + alpha * (b - a)
 }
+
+export function addTime(msec: number, date: Date | null = null): Date {
+    return new Date((date ?? new Date()).getTime() + msec)
+}

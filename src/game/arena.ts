@@ -1,7 +1,7 @@
 import { GridCell } from "../util/classes"
 import { range } from "../util/functions"
 import { toGameLog } from "../util/log"
-import { GameAnimation, UnitMoveAnimation } from "./animation"
+import { AbstractAnimation, UnitMoveAnimation } from "./animation"
 import { Unit, testUnits } from "./unit"
 
 class Arena {
@@ -9,7 +9,7 @@ class Arena {
     rows = range(-4, 4)
     units = testUnits
     selectedCell?: GridCell
-    animation?: GameAnimation
+    animation?: AbstractAnimation
 
     get activeUnit() {
         return this.units[0]
@@ -76,7 +76,6 @@ class Arena {
 
     animationEnded() {
         arena.animation = undefined
-        arena.selectedCell = undefined
         if (!arena.activeUnit.actionPoints || arena.activeUnit.isEnemy) {
             arena.endMove()
         }

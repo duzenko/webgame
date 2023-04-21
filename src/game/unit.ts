@@ -48,5 +48,9 @@ export const testUnits = [
     new Swordsman(-8, 0),
     new Peasant(-9, 1),
     new Peasant(-9, -1),
-].sort((a, b) => b.speed - a.speed)
+].sort((a, b) => {
+    const r = b.speed - a.speed
+    if (r) return r
+    return b.position.y - a.position.y
+})
 

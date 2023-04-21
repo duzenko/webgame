@@ -1,6 +1,7 @@
 import { canvas, checkSize, context, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell, drawBackground } from "./graphics/canvas"
 import { arena } from "./game/arena";
 import { Point } from "./util/classes"
+import { VSyncAnimation } from "./game/animation";
 
 export let debugLines: { color: string, p1: Point, p2: Point }[] = [];
 
@@ -16,6 +17,7 @@ function present() {
 }
 
 function drawAll() {
+    VSyncAnimation.runAllFrames()
     drawBackground()
     drawPossiblePath()
     drawMoveableCells()
