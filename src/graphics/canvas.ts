@@ -39,6 +39,7 @@ export function screenToCell(p: Point): GridCell {
 }
 
 export function checkSize() {
+    // TODO support hi-dpi screens
     // const width = Math.round(window.devicePixelRatio * canvas.clientWidth)
     // const height = Math.round(window.devicePixelRatio * canvas.clientHeight)
     const width = Math.round(canvas.clientWidth)
@@ -46,7 +47,7 @@ export function checkSize() {
     if (canvas.width != width || canvas.height != height) {
         let xScale = width / (arena.columns.length + 3) / Math.sin(Math.PI / 3)
         let yScale = height / (arena.rows.length + 1) / 1.5
-        if (yScale < xScale) {
+        if (yScale < xScale) { // dynamic aspect ratio
             xScale = Math.min(yScale / 0.7, xScale)
             isometricAspect = yScale / xScale
             yScale = xScale
@@ -130,53 +131,72 @@ function drawBadge(x: number, y: number, unit: Unit) {
 
 export function drawPossiblePath() {
     const destination = arena.selectedCell
-    if (!destination) {
-        return
-    }
+    if (!destination) return
     context.save()
-    context.globalAlpha = 0.3
-    context.fillStyle = "black"
-    const canMoveTo = arena.unitCanMoveTo(arena.activeUnit, destination)
-    if (!arena.activeUnit.isEnemy && canMoveTo) {
-        const path = arena.getPathForUnit(arena.activeUnit, destination)!
-        for (const cell of path) {
-            fillHexagon(cell)
+    try {
+        context.globalAlpha = 0.3
+        context.fillStyle = "black"
+        const canMoveTo = arena.unitCanMoveTo(arena.activeUnit, destination)
+        if (!arena.activeUnit.isEnemy && canMoveTo) {
+            const path = arena.getPathForUnit(arena.activeUnit, destination)!
+            for (const cell of path) {
+                fillHexagon(cell)
+            }
         }
+        if (!canMoveTo) {
+            context.fillStyle = "brown"
+        }
+        fillHexagon(destination)
+    } finally {
+        context.restore()
     }
-    if (!canMoveTo) {
-        context.fillStyle = "brown"
-    }
-    fillHexagon(destination)
-    context.restore()
 }
 
 export function drawMoveableCells() {
-    const unit = arena.activeUnit
-    if (unit.isEnemy || arena.animation) return
+    if (arena.animation) return
     context.save()
-    context.globalAlpha = 0.3
-    context.fillStyle = "black"
-    const cells = arena.getMovesForUnit(unit)
-    for (const cell of cells) {
-        if (!arena.isCellValid(cell)) continue
-        fillHexagon(cell)
+    try {
+        const unit = arena.activeUnit
+        if (arena.selectedCell && !arena.selectedCell.isSameAs(arena.activeUnit.position)) {
+            const selectedUnit = arena.getUnitAt(arena.selectedCell)
+            if (selectedUnit) {
+                context.globalAlpha = 0.2
+                context.fillStyle = selectedUnit.isEnemy ? 'Indigo' : 'Navy'
+                const cells = arena.getMovesForUnit(selectedUnit)
+                for (const cell of cells) {
+                    fillHexagon(cell)
+                }
+            }
+        }
+        if (!unit.isEnemy && !arena.animation) {
+            context.globalAlpha = 0.3
+            context.fillStyle = "black"
+            const cells = arena.getMovesForUnit(unit)
+            for (const cell of cells) {
+                fillHexagon(cell)
+            }
+        }
+    } finally {
+        context.restore()
     }
-    context.restore()
 }
 
 export function drawGrid() {
     context.save()
-    context.globalAlpha = 0.5
-    context.strokeStyle = "white"
-    for (const y of arena.rows) {
-        for (const x of arena.columns) {
-            const cell = new GridCell(x, y)
-            if (cell.isValid) {
-                strokeHexagon(cell)
+    try {
+        context.globalAlpha = 0.5
+        context.strokeStyle = "white"
+        for (const y of arena.rows) {
+            for (const x of arena.columns) {
+                const cell = new GridCell(x, y)
+                if (cell.isValid) {
+                    strokeHexagon(cell)
+                }
             }
         }
+    } finally {
+        context.restore()
     }
-    context.restore()
 }
 
 export function drawBackground() {
@@ -184,7 +204,6 @@ export function drawBackground() {
     if (backgroundImage) {
         const p = cellToScreen(new GridCell(arena.columns[0], arena.rows[0]))
         const w = (canvas.width / 2 - p.x) * 1.6
-        // const h = backgroundImage.height * w / backgroundImage.width
         const h = (canvas.height / 2 - p.y) * 1.3
         context.drawImage(backgroundImage, canvas.width / 2 - w, canvas.height / 2 - h, 2 * w, 2 * h)
     } else {

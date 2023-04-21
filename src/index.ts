@@ -33,7 +33,6 @@ function drawAll() {
 }
 
 function onMouseMove(ev: MouseEvent) {
-    if (arena.animation) return
     const cell = screenToCell(new Point(ev.offsetX, ev.offsetY))
     if (arena.isCellValid(cell)) {
         arena.selectedCell = cell

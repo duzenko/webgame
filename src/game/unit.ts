@@ -31,6 +31,7 @@ export class Peasant extends Unit {
 export class Swordsman extends Unit {
     name = 'Swordsman'
     imageName = 'swordsman.png'
+    speed = 3
 }
 
 export class Wolf extends Unit {

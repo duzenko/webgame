@@ -18,10 +18,10 @@ class Arena {
     constructor() {
         toGameLog('Battle has started!')
         setTimeout(() => this.nextMove())
+        this.units.forEach(u => u.resetActionPoints())
     }
 
     nextMove() {
-        this.activeUnit.resetActionPoints()
         if (this.activeUnit.isEnemy) {
             this.makeEnemyMove()
         } else {
@@ -67,9 +67,10 @@ class Arena {
             }, 99);
             return
         }
+        this.activeUnit.resetActionPoints()
         do {
             this.units.push(this.units.shift()!)
-        } while (!this.units[0].isAlive)
+        } while (!this.activeUnit.isAlive)
         setTimeout(() => this.nextMove())
     }
 
@@ -129,10 +130,11 @@ class Arena {
         return null
     }
 
-    unitCanMoveTo(unit: Unit, destination: GridCell): GridCell[] | null {
+    unitCanMoveTo(unit: Unit, destination: GridCell): GridCell[] | false {
+        if (destination.isSameAs(unit.position)) return false
         const moves = this.getMovesForUnit(unit)
-        if (!moves.some(c => c.isSameAs(destination))) return null
-        return this.getPathForUnit(unit, destination)
+        if (!moves.some(c => c.isSameAs(destination))) return false
+        return this.getPathForUnit(unit, destination) ?? false
     }
 
 }
