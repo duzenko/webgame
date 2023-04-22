@@ -1,36 +1,29 @@
 import { GridCell } from "../util/classes"
+import { UnitStack } from "./unit-stack"
 
 export abstract class Unit {
-    position: GridCell
-    isAlive = true
-    isEnemy = false
     speed = 2
-    actionPoints = 0
+    health = 1
     name = 'none'
     imageName = 'none'
 
-    constructor(x: number, y: number) {
-        this.position = new GridCell(x, y)
-    }
+    constructor() { }
 
-    moveTo(cell: GridCell) {
-        this.position = cell
+    get damage(): number {
+        return this.health / 3
     }
-
-    resetActionPoints() {
-        this.actionPoints = this.speed
-    }
-
 }
 
 export class Peasant extends Unit {
     name = 'Peasant'
     imageName = 'peasant.png'
+    health = 6
 }
 
 export class Swordsman extends Unit {
     name = 'Swordsman'
     imageName = 'swordsman.png'
+    health = 35
     speed = 3
 }
 
@@ -38,19 +31,23 @@ export class Wolf extends Unit {
     isEnemy = true
     speed = 3
     name = 'Wolf'
+    health = 24
     imageName = 'wolf.png'
 }
 
-export const testUnits = [
-    new Wolf(8, 0),
-    new Wolf(9, 1),
-    new Wolf(9, -1),
-    new Swordsman(-8, 0),
-    new Peasant(-9, 1),
-    new Peasant(-9, -1),
-].sort((a, b) => {
-    const r = b.speed - a.speed
+const playerArmy = [
+    new UnitStack(Swordsman, 1),
+    new UnitStack(Peasant, 1),
+    new UnitStack(Peasant, 1),
+]
+const enemyArmy = [
+    new UnitStack(Wolf, 1),
+    new UnitStack(Wolf, 1),
+    new UnitStack(Wolf, 1),
+]
+export const arenaStacks = [...playerArmy, ...enemyArmy].sort((a, b) => {
+    const r = b.type.speed - a.type.speed
     if (r) return r
     return b.position.y - a.position.y
 })
-
+arenaStacks.forEach(us => us.onPlayerTeam = playerArmy.includes(us))

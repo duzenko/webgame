@@ -34,3 +34,18 @@ export class GridCell extends Point {
         return [[-2, 0], [2, 0], [-1, -1], [-1, 1], [1, -1], [1, 1]].map(xy => new GridCell(this.x + xy[0], this.y + xy[1]))
     }
 }
+
+declare global {
+    interface Array<T> {
+        first(): T
+        last(): T
+    }
+}
+
+Array.prototype.first = function () {
+    return this[0]
+}
+
+Array.prototype.last = function () {
+    return this[this.length - 1]
+}

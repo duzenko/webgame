@@ -2,30 +2,48 @@ import { GridCell } from "../util/classes"
 import { range } from "../util/functions"
 import { toGameLog } from "../util/log"
 import { AbstractAnimation, UnitMoveAnimation } from "./animation"
-import { Unit, testUnits } from "./unit"
+import { Unit, arenaStacks } from "./unit"
+import { UnitStack } from "./unit-stack"
 
 class Arena {
     columns = range(-9, 9)
     rows = range(-4, 4)
-    units = testUnits
+    stacks = arenaStacks
     selectedCell?: GridCell
     animation?: AbstractAnimation
 
     get activeUnit() {
-        return this.units[0]
+        return this.stacks.first()
     }
 
     constructor() {
         toGameLog('Battle has started!')
+        arenaStacks.forEach((us) => this.setDefaultPosition(us))
         setTimeout(() => this.nextMove())
-        this.units.forEach(u => u.resetActionPoints())
+        this.stacks.forEach(u => u.resetActionPoints())
+    }
+
+    setDefaultPosition(stack: UnitStack) {
+        const mates = arenaStacks.filter((us) => this.isCellValid(us.position) && us.onPlayerTeam == stack.onPlayerTeam)
+        if (!mates.length) {
+            stack.position.x = stack.onPlayerTeam ? this.columns.first() : this.columns.last()
+            stack.position.y = 0
+            if (!this.isCellValid(stack.position)) {
+                stack.position.x -= Math.sign(stack.position.x)
+            }
+            return
+        }
+        const possibleCells = mates.map(us => us.position.getNeighbors().filter(cell => {
+            return this.isCellValid(cell) && !this.getUnitAt(cell)
+        })).flat().sort((a, b) => a.x - b.x)
+        stack.position = stack.onPlayerTeam ? possibleCells.first() : possibleCells.last()
     }
 
     nextMove() {
         if (this.activeUnit.isEnemy) {
             this.makeEnemyMove()
         } else {
-            toGameLog(`${this.activeUnit.name}'s move`)
+            toGameLog(`${this.activeUnit.type.name}'s move`)
         }
     }
 
@@ -34,7 +52,7 @@ class Arena {
             this.endMove()
             return
         }
-        const target = this.units.find(u => !u.isEnemy && u.isAlive)
+        const target = this.stacks.find(u => !u.isEnemy && u.isAlive)
         if (!target) {
             this.endMove()
             return
@@ -45,7 +63,7 @@ class Arena {
             return
         }
         let destination = target!.position
-        toGameLog(this.activeUnit.name + ' targets ' + target?.name)
+        toGameLog(this.activeUnit.type.name + ' targets ' + target.type.name)
         while (this.activeUnit.actionPoints < path.length + 1) {
             destination = path.pop()!
         }
@@ -53,14 +71,14 @@ class Arena {
     }
 
     endMove() {
-        if (!this.units.find(u => u.isAlive && !u.isEnemy)) {
+        if (!this.stacks.find(u => u.isAlive && !u.isEnemy)) {
             setTimeout(() => {
                 alert('You lost! Game will restart now')
                 window.location.reload()
             }, 99);
             return
         }
-        if (!this.units.find(u => u.isAlive && u.isEnemy)) {
+        if (!this.stacks.find(u => u.isAlive && u.isEnemy)) {
             setTimeout(() => {
                 alert('You won! Game will restart now')
                 window.location.reload()
@@ -69,7 +87,7 @@ class Arena {
         }
         this.activeUnit.resetActionPoints()
         do {
-            this.units.push(this.units.shift()!)
+            this.stacks.push(this.stacks.shift()!)
         } while (!this.activeUnit.isAlive)
         setTimeout(() => this.nextMove())
     }
@@ -81,19 +99,19 @@ class Arena {
         }
     }
 
-    moveUnit(unit: Unit, destination: GridCell) {
+    moveUnit(unit: UnitStack, destination: GridCell) {
         this.animation = UnitMoveAnimation.create(unit, destination)
     }
 
     getUnitAt(destination: GridCell) {
-        return this.units.find(u => u.isAlive && u.position.isSameAs(destination))
+        return this.stacks.find(u => u.isAlive && u.position.isSameAs(destination))
     }
 
     isCellValid(cell: GridCell): boolean {
         return cell.isValid && cell.isInRange(this.columns, this.rows)
     }
 
-    getMovesForUnit(unit: Unit): GridCell[] {
+    getMovesForUnit(unit: UnitStack): GridCell[] {
         const cells = [unit.position]
         let lastBatch = cells
         for (let i = 0; i < unit.actionPoints; i++) {
@@ -115,7 +133,7 @@ class Arena {
     }
 
 
-    getPathForUnit(unit: Unit, destination: GridCell): GridCell[] | null {
+    getPathForUnit(unit: UnitStack, destination: GridCell): GridCell[] | null {
         const path: GridCell[] = []
         let nextCell = new GridCell(unit.position.x, unit.position.y)
         while (path.length < 33) {
@@ -129,7 +147,7 @@ class Arena {
         return null
     }
 
-    unitCanMoveTo(unit: Unit, destination: GridCell): GridCell[] | false {
+    unitCanMoveTo(unit: UnitStack, destination: GridCell): GridCell[] | false {
         if (destination.isSameAs(unit.position)) return false
         const moves = this.getMovesForUnit(unit)
         if (!moves.some(c => c.isSameAs(destination))) return false

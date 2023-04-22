@@ -22,8 +22,8 @@ function drawAll() {
     drawPossiblePath()
     drawMoveableCells()
     drawGrid()
-    arena.units.filter(u => !u.isAlive).forEach(drawUnit)
-    arena.units.filter(u => u.isAlive).forEach(drawUnit)
+    arena.stacks.filter(u => !u.isAlive).forEach(drawUnit)
+    arena.stacks.filter(u => u.isAlive).forEach(drawUnit)
     for (let debugLine of debugLines) {
         context.beginPath()
         context.moveTo(debugLine.p1.x, debugLine.p1.y)
