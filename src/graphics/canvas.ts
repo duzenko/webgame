@@ -136,18 +136,25 @@ export function drawPossiblePath() {
     if (!destination) return
     context.save()
     try {
-        context.globalAlpha = 0.3
-        context.fillStyle = "black"
+        context.globalAlpha = 0.75
+        context.fillStyle = "Khaki"
         const canMoveTo = arena.unitCanMoveTo(arena.activeUnit, destination)
         if (!arena.activeUnit.isEnemy && canMoveTo) {
             const path = arena.getPathForUnit(arena.activeUnit, destination)!
-            for (const cell of path) {
-                fillHexagon(cell)
+            for (const cell of [...path, destination]) {
+                // fillHexagon(cell)
+                const p = cellToScreen(cell)
+                context.beginPath()
+                context.ellipse(p.x, p.y, 0.2 * cellRadius * isometricAspect, 0.2 * cellRadius * isometricAspect, 0, 2 * Math.PI, 0)
+                context.closePath()
+                context.fill()
             }
         }
         if (!canMoveTo) {
             context.fillStyle = "brown"
         }
+        context.globalAlpha = 0.2
+        context.fillStyle = "black"
         fillHexagon(destination)
     } finally {
         context.restore()
@@ -158,21 +165,22 @@ export function drawMoveableCells() {
     if (arena.animation) return
     context.save()
     try {
+        context.fillStyle = "black"
+        context.globalAlpha = 0.2
         const unit = arena.activeUnit
         if (arena.selectedCell && !arena.selectedCell.isSameAs(arena.activeUnit.position)) {
             const selectedUnit = arena.getUnitAt(arena.selectedCell)
             if (selectedUnit) {
-                context.globalAlpha = 0.2
-                context.fillStyle = selectedUnit.isEnemy ? 'Indigo' : 'Navy'
                 const cells = arena.getMovesForUnit(selectedUnit)
                 for (const cell of cells) {
                     fillHexagon(cell)
+
                 }
             }
         }
+        context.fillStyle = "black"
+        context.globalAlpha = 0.3
         if (!unit.isEnemy && !arena.animation) {
-            context.globalAlpha = 0.3
-            context.fillStyle = "black"
             const cells = arena.getMovesForUnit(unit)
             for (const cell of cells) {
                 fillHexagon(cell)
@@ -215,7 +223,22 @@ export function drawBackground() {
 }
 
 export function drawCursor() {
-    const image = getImageByName('cursor/cursor-fight.png')
+    let cursorImage = 'not-allowed'
+    if (arena.animation) {
+        cursorImage = 'wait-' + (Math.round(new Date().getTime() / 200) % 6 + 1)
+    } else {
+        if (arena.selectedCell) {
+            if (arena.unitCanMoveTo(arena.activeUnit, arena.selectedCell)) {
+                cursorImage = arena.getUnitAt(arena.selectedCell) ? 'attack' : 'move'
+            }
+        }
+    }
+    const image = getImageByName(`cursors/${cursorImage}.png`)
     if (!image) return
     context.drawImage(image, cursorPosition.x - image.width / 2, cursorPosition.y - image.height / 2)
+}
+
+export function drawUnits() {
+    arena.stacks.filter(u => !u.isAlive).forEach(drawUnit)
+    arena.stacks.filter(u => u.isAlive).forEach(drawUnit)
 }

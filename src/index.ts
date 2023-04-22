@@ -1,4 +1,4 @@
-import { canvas, checkSize, context, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell, drawBackground, cursorPosition, drawCursor } from "./graphics/canvas"
+import { canvas, checkSize, context, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell, drawBackground, cursorPosition, drawCursor, drawUnits } from "./graphics/canvas"
 import { arena } from "./game/arena";
 import { Point } from "./util/classes"
 import { VSyncAnimation } from "./game/animation";
@@ -22,8 +22,7 @@ function drawAll() {
     drawPossiblePath()
     drawMoveableCells()
     drawGrid()
-    arena.stacks.filter(u => !u.isAlive).forEach(drawUnit)
-    arena.stacks.filter(u => u.isAlive).forEach(drawUnit)
+    drawUnits()
     for (let debugLine of debugLines) {
         context.beginPath()
         context.moveTo(debugLine.p1.x, debugLine.p1.y)
