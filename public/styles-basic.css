@@ -22,6 +22,7 @@
 
 body{
     font-family: Artifika;
+    cursor: url('cursors/cursor-fight.png'), pointer;
 }
 
 h1, h2, h3, h4, h5, h6{
