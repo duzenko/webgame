@@ -3,6 +3,7 @@ import { addTime, lerp } from "../util/functions";
 import { toGameLog } from "../util/log";
 import { arena } from "./arena";
 import { Unit } from "./unit";
+import { UnitStack } from "./unit-stack";
 
 export abstract class AbstractAnimation {
     length: number // in msec
@@ -76,20 +77,18 @@ export abstract class StepAnimation extends AbstractAnimation {
 }
 
 export class UnitMoveAnimation extends StepAnimation {
-    unit: Unit
     destination: GridCell
     path: GridCell[]
     static readonly cellMoveTime = 300
 
-    static create(unit: Unit, destination: GridCell): UnitMoveAnimation {
+    static create(unit: UnitStack, destination: GridCell): UnitMoveAnimation {
         const path = arena.getPathForUnit(unit, destination)!
         return new UnitMoveAnimation(unit, destination, path)
     }
 
-    constructor(unit: Unit, destination: GridCell, path: GridCell[]) {
+    constructor(private unit: UnitStack, destination: GridCell, path: GridCell[]) {
         super(path.length + 1, UnitMoveAnimation.cellMoveTime)
         this.path = path
-        this.unit = unit
         this.destination = destination
     }
 
@@ -100,10 +99,10 @@ export class UnitMoveAnimation extends StepAnimation {
             const enemy = arena.getUnitAt(this.destination)
             if (enemy) {
                 // TODO attack animation
-                enemy.isAlive = false
+                enemy.qty--
                 this.unit.actionPoints = 0
                 arena.animationEnded()
-                toGameLog(`${enemy.name} eliminated!`)
+                toGameLog(`${enemy.type.name} eliminated!`)
             } else {
                 this.smoothMove(this.unit.position, this.destination, true)
             }
@@ -122,11 +121,10 @@ export class UnitMoveAnimation extends StepAnimation {
 }
 
 class SmoothMoveAnimation extends VSyncAnimation {
-    unit: Unit
     from: GridCell
     to: GridCell
 
-    constructor(unit: Unit, from: GridCell, to: GridCell) {
+    constructor(private unit: UnitStack, from: GridCell, to: GridCell) {
         super(UnitMoveAnimation.cellMoveTime)
         this.unit = unit
         this.from = from

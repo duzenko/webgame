@@ -2,9 +2,11 @@ import { Point, GridCell } from "../util/classes"
 import { arena } from "../game/arena"
 import { Unit } from "../game/unit"
 import { getImageByName, getImageForUnit } from "./image"
+import { UnitStack } from "../game/unit-stack"
 
 export const canvas = document.getElementById("canvas") as HTMLCanvasElement
 export const context = canvas.getContext("2d") as CanvasRenderingContext2D
+export const cursorPosition = new Point(NaN, NaN)
 
 let cellRadius: number
 let cellStepX: number
@@ -87,7 +89,7 @@ export function strokeHexagon(cell: GridCell, scale: number = 1) {
     context.stroke()
 }
 
-export function drawUnit(unit: Unit) {
+export function drawUnit(unit: UnitStack) {
     const center = cellToScreen(unit.position)
     context.save()
     try {
@@ -96,7 +98,7 @@ export function drawUnit(unit: Unit) {
             context.strokeStyle = 'yellow'
             strokeHexagon(arena.activeUnit.position, 0.9)
         }
-        const image = getImageForUnit(unit)
+        const image = getImageForUnit(unit.type)
         if (image) {
             const imageScale = 2 * cellStepX / image.width
             const width = image.width * imageScale
@@ -112,8 +114,8 @@ export function drawUnit(unit: Unit) {
     drawBadge(center.x, center.y + cellRadius * isometricAspect * 0.3, unit)
 }
 
-function drawBadge(x: number, y: number, unit: Unit) {
-    const index = arena.units.filter(u => u.isAlive).indexOf(unit) + 1
+function drawBadge(x: number, y: number, unit: UnitStack) {
+    const index = arena.stacks.filter(u => u.isAlive).indexOf(unit) + 1
     if (index < 1) return
     const fontSize = Math.round(cellRadius * isometricAspect / 16) * 4
     context.beginPath()
@@ -210,4 +212,10 @@ export function drawBackground() {
         context.fillStyle = "black"
         context.fillRect(0, 0, canvas.width, canvas.height)
     }
+}
+
+export function drawCursor() {
+    const image = getImageByName('cursor/cursor-fight.png')
+    if (!image) return
+    context.drawImage(image, cursorPosition.x - image.width / 2, cursorPosition.y - image.height / 2)
 }

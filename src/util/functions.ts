@@ -1,6 +1,6 @@
 import { GridCell } from "./classes"
 
-export function range(start: number, end: number) {
+export function range(start: number, end: number): number[] {
     return Array.apply(null, Array(end - start + 1)).map((v, i) => i + start)
 }
 
