@@ -1,4 +1,4 @@
-import { canvas, checkSize, context, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell, drawBackground, cursorPosition, drawCursor, drawUnits } from "./graphics/canvas"
+import { canvas, checkSize, context, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell, drawBackground, cursorPosition, drawCursor, drawUnits, cellToScreen } from "./graphics/canvas"
 import { arena } from "./game/arena";
 import { Point } from "./util/classes"
 import { VSyncAnimation } from "./game/animation";
@@ -39,6 +39,10 @@ function onMouseMove(ev: MouseEvent) {
     cursorPosition.y = ev.offsetY
     const cell = screenToCell(cursorPosition)
     if (arena.isCellValid(cell)) {
+        const vector = cursorPosition.subtract(cellToScreen(cell)).normalize()
+        const angle = Math.acos(vector.x) / Math.PI * 3
+        const side = Math.round(angle)
+        arena.selectedCellSide = vector.y > 0 ? side : (6 - side) % 6
         arena.selectedCell = cell
     } else {
         arena.selectedCell = undefined

@@ -10,6 +10,7 @@ class Arena {
     rows = range(-4, 4)
     stacks = arenaStacks
     selectedCell?: GridCell
+    selectedCellSide = 0
     animation?: AbstractAnimation
 
     get activeUnit() {

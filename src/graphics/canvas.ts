@@ -14,7 +14,7 @@ let cellStepY: number
 let isometricAspect: number
 let arenaZoom: number
 
-function cellToScreen(cell: GridCell): Point {
+export function cellToScreen(cell: GridCell): Point {
     const x = cell.x * cellStepX + canvas.width / 2
     const y = cell.y * cellRadius * 1.5 * isometricAspect + canvas.height / 2
     return new Point(x, y)
@@ -229,12 +229,16 @@ export function drawBackground() {
 
 export function drawCursor() {
     let cursorImage = 'not-allowed'
+    const animationTick = Math.round(new Date().getTime() / 200)
     if (arena.animation || !arena.activeUnit.onPlayerTeam) {
-        cursorImage = 'wait-' + (Math.round(new Date().getTime() / 200) % 6 + 1)
+        cursorImage = 'wait-' + (animationTick % 6 + 1)
     } else {
         if (arena.selectedCell) {
             if (arena.unitCanMoveTo(arena.activeUnit, arena.selectedCell)) {
-                cursorImage = arena.getUnitAt(arena.selectedCell) ? 'attack' : 'move'
+                if (arena.getUnitAt(arena.selectedCell)) {
+                    cursorImage = `attack-${['w', 'nnw', 'nne', 'e', 'sse', 'ssw'][arena.selectedCellSide]}-${animationTick % 3 + 1}`
+                } else
+                    cursorImage = 'move'
             }
         }
     }

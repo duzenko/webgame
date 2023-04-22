@@ -18,6 +18,19 @@ export class Point {
     clone(): GridCell {
         return new GridCell(this.x, this.y)
     }
+
+    subtract(p: Point) {
+        return new GridCell(this.x - p.x, this.y - p.y)
+    }
+
+    normalize() {
+        const f = 1 / Math.sqrt(this.squareLength())
+        return new GridCell(this.x * f, this.y * f)
+    }
+
+    squareLength() {
+        return this.x * this.x + this.y * this.y
+    }
 }
 
 function isValidCell(x: number, y: number): boolean {
