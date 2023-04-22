@@ -162,19 +162,18 @@ export function drawPossiblePath() {
 }
 
 export function drawMoveableCells() {
-    if (arena.animation) return
+    const unit = arena.activeUnit
+    if (arena.animation || !unit.onPlayerTeam) return
     context.save()
     try {
         context.fillStyle = "black"
         context.globalAlpha = 0.2
-        const unit = arena.activeUnit
         if (arena.selectedCell && !arena.selectedCell.isSameAs(arena.activeUnit.position)) {
             const selectedUnit = arena.getUnitAt(arena.selectedCell)
             if (selectedUnit) {
                 const cells = arena.getMovesForUnit(selectedUnit)
                 for (const cell of cells) {
                     fillHexagon(cell)
-
                 }
             }
         }
@@ -224,7 +223,7 @@ export function drawBackground() {
 
 export function drawCursor() {
     let cursorImage = 'not-allowed'
-    if (arena.animation) {
+    if (arena.animation || !arena.activeUnit.onPlayerTeam) {
         cursorImage = 'wait-' + (Math.round(new Date().getTime() / 200) % 6 + 1)
     } else {
         if (arena.selectedCell) {

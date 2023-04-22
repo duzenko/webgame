@@ -25,6 +25,9 @@ export class UnitStack {
         return this.qty > 0
     }
 
+    /**
+     * @deprecated The method should not be used
+     */
     get isEnemy() {
         return !this.onPlayerTeam
     }
