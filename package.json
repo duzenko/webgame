@@ -12,9 +12,8 @@
   "scripts": {
     "clean": "rm -f public/js/bundle.js*",
     "serve": "webpack serve --mode development",
-    "build-dev": "webpack --mode development",
     "build": "webpack --mode production",
-    "deploy": "npm run clean && npm run build && node ftp-deploy"
+    "deploy": "npm run clean && npm run build && node ftp-deploy && npm run clean"
   },
   "devDependencies": {
     "dotenv": "^16.0.3",

@@ -5,6 +5,7 @@ import { getImageByName, getImageForUnit } from "./image"
 
 export const canvas = document.getElementById("canvas") as HTMLCanvasElement
 export const context = canvas.getContext("2d") as CanvasRenderingContext2D
+export const cursorPosition = new Point(NaN, NaN)
 
 let cellRadius: number
 let cellStepX: number
@@ -210,4 +211,10 @@ export function drawBackground() {
         context.fillStyle = "black"
         context.fillRect(0, 0, canvas.width, canvas.height)
     }
+}
+
+export function drawCursor() {
+    const image = getImageByName('cursor/cursor-fight.png')
+    if (!image) return
+    context.drawImage(image, cursorPosition.x - image.width / 2, cursorPosition.y - image.height / 2)
 }
