@@ -14,6 +14,10 @@ export class Point {
     isSameAs(cell: Point): boolean {
         return this.x == cell.x && this.y == cell.y
     }
+
+    clone(): GridCell {
+        return new GridCell(this.x, this.y)
+    }
 }
 
 function isValidCell(x: number, y: number): boolean {
@@ -43,9 +47,11 @@ declare global {
 }
 
 Array.prototype.first = function () {
+    if (!this.length) throw Error('Calling first() on empty array')
     return this[0]
 }
 
 Array.prototype.last = function () {
+    if (!this.length) throw Error('Calling last() on empty array')
     return this[this.length - 1]
 }

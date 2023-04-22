@@ -21,57 +21,73 @@
 }
 
 
-.cursor-attack{
-    cursor: url('cursors/attack.png') 40 0, pointer;
+.cursor-attack {
+    cursor: url('img/cursors/attack.png') 40 0, pointer;
 
 }
 
-.cursor-default{
-    cursor: url('cursors/default.png') 19 15, default;
+.cursor-default {
+    cursor: url('img/cursors/default.png') 19 15, default;
 
 }
 
-.cursor-pointer{
-    cursor: url('cursors/pointer.png') 17 10, pointer;
+.cursor-pointer {
+    cursor: url('img/cursors/pointer.png') 17 10, pointer;
 
 }
-.cursor-grab{
-    cursor: url('cursors/grab.png') 25 25, grab;
+
+.cursor-grab {
+    cursor: url('img/cursors/grab.png') 25 25, grab;
 
 }
-.cursor-grabbing{
-    cursor: url('cursors/grabbing.png') 25 25, grabbing;
+
+.cursor-grabbing {
+    cursor: url('img/cursors/grabbing.png') 25 25, grabbing;
 
 }
-.cursor-not-allowed{
-    cursor: url('cursors/not-allowed.png') 25 25, not-allowed;
-}
-.cursor-move{
-    cursor: url('cursors/move.png') 25 25, move;
+
+.cursor-not-allowed {
+    cursor: url('img/cursors/not-allowed.png') 25 25, not-allowed;
 }
 
-.cursor-wait{
-    cursor: url('cursors/wait-1.png') 25 25, wait; /*there are 6 slides wait-1 to wait-6*/
+.cursor-move {
+    cursor: url('img/cursors/move.png') 25 25, move;
+}
+
+.cursor-wait {
+    cursor: url('img/cursors/wait-1.png') 25 25, wait;
+    /*there are 6 slides wait-1 to wait-6*/
 }
 
 
 
 
 
-body{
+body {
     font-family: Artifika;
 }
 
-h1, h2, h3, h4, h5, h6{
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: BestChristmas;
     font-weight: normal;
 }
-h1{
+
+h1 {
     font-size: 400%;
 }
-h2{
+
+h2 {
     font-size: 300%;
 }
-h3, h4, h5, h6{
+
+h3,
+h4,
+h5,
+h6 {
     font-size: 200%;
 }

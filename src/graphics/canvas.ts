@@ -118,7 +118,7 @@ function drawUnitBadge(x: number, y: number, unit: UnitStack) {
     const index = arena.stacks.filter(u => u.isAlive).indexOf(unit) + 1
     if (index < 1) return
     context.fillStyle = 'DeepSkyBlue'
-    context.fillRect(x - cellRadius / 2, y - cellRadius * 0.12, cellRadius * unit.health / unit.type.health, cellRadius * 0.1)
+    context.fillRect(x - cellRadius / 2, y - cellRadius * 0.1, cellRadius * unit.health / unit.type.health, cellRadius * 0.08)
     context.fillStyle = 'Red'
     context.fillRect(x - cellRadius / 2 + cellRadius * unit.health / unit.type.health, y - cellRadius * 0.12, cellRadius * (1 - unit.health / unit.type.health), cellRadius * 0.1)
     const fontSize = Math.round(cellRadius * isometricAspect / 16) * 4

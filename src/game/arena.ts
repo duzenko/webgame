@@ -1,6 +1,6 @@
 import { GridCell } from "../util/classes"
 import { range } from "../util/functions"
-import { toGameLog } from "../util/log"
+import { setHintText, toGameLog } from "../util/log"
 import { AbstractAnimation, UnitMoveAnimation } from "./animation"
 import { Unit, arenaStacks } from "./unit"
 import { UnitStack } from "./unit-stack"
@@ -43,7 +43,7 @@ class Arena {
         if (this.activeUnit.isEnemy) {
             this.makeEnemyMove()
         } else {
-            toGameLog(`${this.activeUnit.name}'s move`)
+            setHintText(`${this.activeUnit.name}'s move`)
         }
     }
 
@@ -52,7 +52,7 @@ class Arena {
             this.endMove()
             return
         }
-        const target = this.stacks.find(u => !u.isEnemy && u.isAlive)
+        const target = this.stacks.find(u => u.onPlayerTeam && u.isAlive)
         if (!target) {
             this.endMove()
             return
@@ -94,7 +94,7 @@ class Arena {
 
     animationEnded() {
         arena.animation = undefined
-        if (!arena.activeUnit.actionPoints || arena.activeUnit.isEnemy) {
+        if (!arena.activeUnit.actionPoints || !arena.activeUnit.onPlayerTeam) {
             arena.endMove()
         }
     }

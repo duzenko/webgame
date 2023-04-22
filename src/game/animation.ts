@@ -98,14 +98,23 @@ export class UnitMoveAnimation extends StepAnimation {
         if (lastStep) {
             const enemy = arena.getUnitAt(this.destination)
             if (enemy) {
-                // TODO attack animation
-                this.unit.attack(enemy)
-                arena.animationEnded()
+                if (this.path.length) {
+                    this.unit.position = this.path.last()
+                }
+                this.meleeAttack(enemy)
             } else {
                 this.smoothMove(this.unit.position, this.destination, true)
             }
         } else {
             this.smoothMove(this.unit.position, this.path[stepNo], false)
+        }
+    }
+
+    meleeAttack(target: UnitStack) {
+        this.unit.actionPoints = 0
+        this.unit.attack(target)
+        new MeleeAttackAnimation(this.unit, target).onFinish = () => {
+            arena.animationEnded()
         }
     }
 
@@ -133,4 +142,25 @@ class SmoothMoveAnimation extends VSyncAnimation {
         const alpha = timeElapsed / UnitMoveAnimation.cellMoveTime
         this.unit.position = new GridCell(lerp(this.from.x, this.to.x, alpha), lerp(this.from.y, this.to.y, alpha))
     }
+}
+
+class MeleeAttackAnimation extends VSyncAnimation {
+    savedAttacker: GridCell
+    savedDefender: GridCell
+
+    constructor(private attacker: UnitStack, private defender: UnitStack) {
+        super(600)
+        this.savedAttacker = attacker.position.clone()
+        this.savedDefender = defender.position.clone()
+    }
+
+    frame(timeElapsed: number): void {
+        const lag = 200
+        const bumpLength = 0.2
+        const phase1 = Math.max(0, Math.sin(timeElapsed / (this.length - lag) * Math.PI)) * bumpLength
+        const phase2 = -Math.max(0, Math.sin((timeElapsed - lag) / (this.length - lag) * Math.PI)) * bumpLength
+        this.attacker.position = new GridCell(lerp(this.savedAttacker.x, this.savedDefender.x, phase1), lerp(this.savedAttacker.y, this.savedDefender.y, phase1))
+        this.defender.position = new GridCell(lerp(this.savedDefender.x, this.savedAttacker.x, phase2), lerp(this.savedDefender.y, this.savedAttacker.y, phase2))
+    }
+
 }
