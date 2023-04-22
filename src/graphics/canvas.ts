@@ -94,8 +94,8 @@ export function drawUnit(unit: UnitStack) {
     context.save()
     try {
         if (unit == arena.activeUnit) {
-            context.lineWidth = 3
-            context.strokeStyle = 'yellow'
+            context.lineWidth = 15
+            context.strokeStyle = 'rgba(232,253,1, 0.5)'
             strokeHexagon(arena.activeUnit.position, 0.9)
         }
         const image = getImageForUnit(unit.type)
