@@ -43,7 +43,7 @@ class Arena {
         if (this.activeUnit.isEnemy) {
             this.makeEnemyMove()
         } else {
-            toGameLog(`${this.activeUnit.type.name}'s move`)
+            toGameLog(`${this.activeUnit.name}'s move`)
         }
     }
 
@@ -63,7 +63,7 @@ class Arena {
             return
         }
         let destination = target!.position
-        toGameLog(this.activeUnit.type.name + ' targets ' + target.type.name)
+        // toGameLog(this.activeUnit.name + ' targets ' + target.name)
         while (this.activeUnit.actionPoints < path.length + 1) {
             destination = path.pop()!
         }

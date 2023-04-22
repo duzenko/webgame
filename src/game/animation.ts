@@ -99,10 +99,8 @@ export class UnitMoveAnimation extends StepAnimation {
             const enemy = arena.getUnitAt(this.destination)
             if (enemy) {
                 // TODO attack animation
-                enemy.qty--
-                this.unit.actionPoints = 0
+                this.unit.attack(enemy)
                 arena.animationEnded()
-                toGameLog(`${enemy.type.name} eliminated!`)
             } else {
                 this.smoothMove(this.unit.position, this.destination, true)
             }

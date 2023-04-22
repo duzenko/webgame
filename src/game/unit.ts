@@ -10,7 +10,7 @@ export abstract class Unit {
     constructor() { }
 
     get damage(): number {
-        return this.health / 3
+        return Math.ceil(this.health / 3)
     }
 }
 

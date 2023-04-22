@@ -111,20 +111,24 @@ export function drawUnit(unit: UnitStack) {
     } finally {
         context.restore()
     }
-    drawBadge(center.x, center.y + cellRadius * isometricAspect * 0.3, unit)
+    drawUnitBadge(center.x, center.y + cellRadius * isometricAspect * 0.3, unit)
 }
 
-function drawBadge(x: number, y: number, unit: UnitStack) {
+function drawUnitBadge(x: number, y: number, unit: UnitStack) {
     const index = arena.stacks.filter(u => u.isAlive).indexOf(unit) + 1
     if (index < 1) return
+    context.fillStyle = 'DeepSkyBlue'
+    context.fillRect(x - cellRadius / 2, y - cellRadius * 0.12, cellRadius * unit.health / unit.type.health, cellRadius * 0.1)
+    context.fillStyle = 'Red'
+    context.fillRect(x - cellRadius / 2 + cellRadius * unit.health / unit.type.health, y - cellRadius * 0.12, cellRadius * (1 - unit.health / unit.type.health), cellRadius * 0.1)
     const fontSize = Math.round(cellRadius * isometricAspect / 16) * 4
     context.beginPath()
     context.rect(x - fontSize * 0.8, y, fontSize * 1.6, fontSize * 1.2);
-    context.fillStyle = unit.isEnemy ? 'Crimson' : 'Blue';
-    context.fill();
-    context.strokeStyle = 'white'
-    context.stroke();
     context.closePath()
+    context.fillStyle = unit.onPlayerTeam ? 'Blue' : 'Crimson'
+    context.fill()
+    context.strokeStyle = 'white'
+    context.stroke()
     context.font = `${fontSize}px Artifika`
     context.fillStyle = 'white'
     context.textAlign = 'center'
