@@ -26,7 +26,7 @@ export class UnitStack {
     }
 
     /**
-     * @deprecated The method should not be used
+     * @deprecated use onPlayerTeam instead
      */
     get isEnemy() {
         return !this.onPlayerTeam

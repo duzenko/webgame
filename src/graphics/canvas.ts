@@ -210,13 +210,15 @@ export function drawGrid() {
 
 export function drawBackground() {
     const backgroundImage = getImageByName('field/green-terrain.jpg')
+    context.fillStyle = "black"
     if (backgroundImage) {
         const p = cellToScreen(new GridCell(arena.columns[0], arena.rows[0]))
         const w = (canvas.width / 2 - p.x) * 1.6
         const h = (canvas.height / 2 - p.y) * 1.3
         context.drawImage(backgroundImage, canvas.width / 2 - w, canvas.height / 2 - h, 2 * w, 2 * h)
+        context.fillRect(0, 0, canvas.width, canvas.height / 2 - h)
+        context.fillRect(0, canvas.height / 2 + h, canvas.width, canvas.height / 2 - h)
     } else {
-        context.fillStyle = "black"
         context.fillRect(0, 0, canvas.width, canvas.height)
     }
 }

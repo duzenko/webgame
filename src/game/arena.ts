@@ -132,7 +132,6 @@ class Arena {
         return cells
     }
 
-
     getPathForUnit(unit: UnitStack, destination: GridCell): GridCell[] | null {
         const path: GridCell[] = []
         let nextCell = new GridCell(unit.position.x, unit.position.y)
