@@ -22,25 +22,25 @@
 
 
 .cursor-attack{
-    cursor: url('cursors/attack.png') 50 0, pointer;
+    cursor: url('cursors/attack.png') 40 0, pointer;
 
 }
 
 .cursor-default{
-    cursor: url('cursors/default.png'), default;
+    cursor: url('cursors/default.png') 19 15, default;
 
 }
 
 .cursor-pointer{
-    cursor: url('cursors/pointer.png') 20 0, pointer;
+    cursor: url('cursors/pointer.png') 17 10, pointer;
 
 }
 .cursor-grab{
-    cursor: url('cursors/grab.png') 25 15, grab;
+    cursor: url('cursors/grab.png') 25 25, grab;
 
 }
 .cursor-grabbing{
-    cursor: url('cursors/grabbing.png') 25 15, grabbing;
+    cursor: url('cursors/grabbing.png') 25 25, grabbing;
 
 }
 .cursor-not-allowed{
