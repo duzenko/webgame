@@ -20,9 +20,46 @@
     src: url('/fonts/white_lotus/WhiteLotus_PERSONAL_USE_ONLY.otf');
 }
 
+
+.cursor-attack{
+    cursor: url('cursors/attack.png') 50 0, pointer;
+
+}
+
+.cursor-default{
+    cursor: url('cursors/default.png'), default;
+
+}
+
+.cursor-pointer{
+    cursor: url('cursors/pointer.png') 20 0, pointer;
+
+}
+.cursor-grab{
+    cursor: url('cursors/grab.png') 25 15, grab;
+
+}
+.cursor-grabbing{
+    cursor: url('cursors/grabbing.png') 25 15, grabbing;
+
+}
+.cursor-not-allowed{
+    cursor: url('cursors/not-allowed.png') 25 25, not-allowed;
+}
+.cursor-move{
+    cursor: url('cursors/move.png') 25 25, move;
+}
+
+.cursor-wait{
+    cursor: url('cursors/wait-1.png') 25 25, wait; /*there are 6 slides wait-1 to wait-6*/
+}
+
+
+
+
+
 body{
     font-family: Artifika;
-    cursor: url('cursors/cursor-fight.png'), pointer;
 }
 
 h1, h2, h3, h4, h5, h6{
