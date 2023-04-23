@@ -85,17 +85,12 @@ export class UnitMoveAnimation extends StepAnimation {
                 if (this.path.length) {
                     this.unit.position = this.path.last()
                 }
-                console.log('before attack', this.unit.position)
                 await this.meleeAttack(enemy)
             } else {
-                console.log('before last move', this.unit.position)
                 await this.smoothMove(this.unit.position, this.destination, true)
-                console.log('after last move', this.unit.position)
             }
         } else {
-            console.log('before move', this.unit.position)
             await this.smoothMove(this.unit.position, this.path[stepNo], false)
-            console.log('after move', this.unit.position)
         }
     }
 

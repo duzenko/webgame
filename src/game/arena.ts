@@ -64,7 +64,6 @@ class Arena {
             return
         }
         let destination = target!.position
-        // toGameLog(this.activeUnit.name + ' targets ' + target.name)
         while (this.activeUnit.actionPoints < path.length + 1) {
             destination = path.pop()!
         }
@@ -137,7 +136,7 @@ class Arena {
         const path: GridCell[] = []
         let nextCell = new GridCell(unit.position.x, unit.position.y)
         while (path.length < 33) {
-            const neighbors = nextCell.getNeighbors().filter(c => c.isSameAs(destination) || !this.getUnitAt(c))
+            const neighbors = nextCell.getNeighbors().filter(c => (c.isSameAs(destination) || !this.getUnitAt(c)) && this.isCellValid(c))
             if (!neighbors.length) return null
             neighbors.sort((a, b) => a.squareDistanceTo(destination) - b.squareDistanceTo(destination))
             nextCell = neighbors[0]
