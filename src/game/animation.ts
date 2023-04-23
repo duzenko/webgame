@@ -1,8 +1,6 @@
 import { GridCell } from "../util/classes";
-import { addTime, lerp } from "../util/functions";
-import { toGameLog } from "../util/log";
+import { lerp } from "../util/functions";
 import { arena } from "./arena";
-import { Unit } from "./unit";
 import { UnitStack } from "./unit-stack";
 
 export abstract class AbstractAnimation {
@@ -11,7 +9,6 @@ export abstract class AbstractAnimation {
     constructor(length: number) {
         this.length = length
     }
-
 
     onFinish() { }
 }
@@ -45,34 +42,21 @@ export abstract class VSyncAnimation extends AbstractAnimation {
 }
 
 export abstract class StepAnimation extends AbstractAnimation {
-    constructor(length: number, interval: number) {
+    constructor(length: number) {
         super(length)
-        if (length < 1) return
-        setTimeout(() => this.firstFrame(interval))
+        setTimeout(() => this.run())
     }
 
-    abstract doStep(stepNo: number): void
+    abstract doStep(stepNo: number): Promise<void>
 
-    firstFrame(interval: number) {
-        let frameNo = 0
+    private async run() {
         try {
-            this.doStep(frameNo++)
+            for (let frameNo = 0; frameNo < this.length; frameNo++) {
+                await this.doStep(frameNo)
+            }
         } finally {
-            if (frameNo >= this.length) {
-                this.onFinish()
-                return
-            }
+            this.onFinish()
         }
-        const id = setInterval(() => {
-            try {
-                this.doStep(frameNo++)
-            } finally {
-                if (frameNo >= this.length) {
-                    clearInterval(id)
-                    this.onFinish()
-                }
-            }
-        }, interval)
     }
 }
 
@@ -87,12 +71,12 @@ export class UnitMoveAnimation extends StepAnimation {
     }
 
     constructor(private unit: UnitStack, destination: GridCell, path: GridCell[]) {
-        super(path.length + 1, UnitMoveAnimation.cellMoveTime)
+        super(path.length + 1)
         this.path = path
         this.destination = destination
     }
 
-    doStep(stepNo: number): void {
+    async doStep(stepNo: number): Promise<void> {
         this.unit.actionPoints--
         const lastStep = stepNo == this.path.length
         if (lastStep) {
@@ -101,28 +85,33 @@ export class UnitMoveAnimation extends StepAnimation {
                 if (this.path.length) {
                     this.unit.position = this.path.last()
                 }
-                this.meleeAttack(enemy)
+                console.log('before attack', this.unit.position)
+                await this.meleeAttack(enemy)
             } else {
-                this.smoothMove(this.unit.position, this.destination, true)
+                console.log('before last move', this.unit.position)
+                await this.smoothMove(this.unit.position, this.destination, true)
+                console.log('after last move', this.unit.position)
             }
         } else {
-            this.smoothMove(this.unit.position, this.path[stepNo], false)
+            console.log('before move', this.unit.position)
+            await this.smoothMove(this.unit.position, this.path[stepNo], false)
+            console.log('after move', this.unit.position)
         }
     }
 
-    meleeAttack(target: UnitStack) {
+    async meleeAttack(target: UnitStack) {
         this.unit.actionPoints = 0
         this.unit.attack(target)
-        new MeleeAttackAnimation(this.unit, target).onFinish = () => {
-            arena.animationEnded()
-        }
+        const animation = new MeleeAttackAnimation(this.unit, target)
+        await animation.promise
+        arena.animationEnded()
     }
 
-    smoothMove(from: GridCell, to: GridCell, lastStep: boolean) {
-        new SmoothMoveAnimation(this.unit, from, to).onFinish = () => {
-            if (lastStep) {
-                arena.animationEnded()
-            }
+    async smoothMove(from: GridCell, to: GridCell, lastStep: boolean) {
+        const animation = new SmoothMoveAnimation(this.unit, from, to)
+        await animation.promise
+        if (lastStep) {
+            arena.animationEnded()
         }
     }
 }
@@ -130,6 +119,8 @@ export class UnitMoveAnimation extends StepAnimation {
 class SmoothMoveAnimation extends VSyncAnimation {
     from: GridCell
     to: GridCell
+    private resolve!: (value: void) => void
+    promise = new Promise((resolve) => this.resolve = resolve)
 
     constructor(private unit: UnitStack, from: GridCell, to: GridCell) {
         super(UnitMoveAnimation.cellMoveTime)
@@ -142,11 +133,17 @@ class SmoothMoveAnimation extends VSyncAnimation {
         const alpha = timeElapsed / UnitMoveAnimation.cellMoveTime
         this.unit.position = new GridCell(lerp(this.from.x, this.to.x, alpha), lerp(this.from.y, this.to.y, alpha))
     }
+
+    onFinish(): void {
+        this.resolve()
+    }
 }
 
 class MeleeAttackAnimation extends VSyncAnimation {
     savedAttacker: GridCell
     savedDefender: GridCell
+    private resolve!: (value: void) => void
+    promise = new Promise((resolve) => this.resolve = resolve)
 
     constructor(private attacker: UnitStack, private defender: UnitStack) {
         super(600)
@@ -163,4 +160,7 @@ class MeleeAttackAnimation extends VSyncAnimation {
         this.defender.position = new GridCell(lerp(this.savedDefender.x, this.savedAttacker.x, phase2), lerp(this.savedDefender.y, this.savedAttacker.y, phase2))
     }
 
+    onFinish(): void {
+        this.resolve()
+    }
 }
