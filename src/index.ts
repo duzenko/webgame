@@ -4,16 +4,24 @@ import { Point } from "./util/classes"
 import { VSyncAnimation } from "./game/animation";
 
 export let debugLines: { color: string, p1: Point, p2: Point }[] = [];
+const powerSavingMode = false // notebooks on battery
 
 canvas.addEventListener('mousemove', onMouseMove, false)
 canvas.addEventListener('mousedown', onMouseDown, false)
 window.addEventListener('keydown', onKeyDown, false)
 window.addEventListener('resize', present, false)
-window.setInterval(present, 8)
+if (powerSavingMode) {
+    window.setInterval(present, 100)
+} else {
+    window.requestAnimationFrame(present)
+}
 
 function present() {
     checkSize()
     drawAll()
+    if (!powerSavingMode) {
+        window.requestAnimationFrame(present)
+    }
 }
 
 function drawAll() {
