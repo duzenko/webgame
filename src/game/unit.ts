@@ -35,19 +35,13 @@ export class Wolf extends Unit {
     imageName = 'wolf.png'
 }
 
-const playerArmy = [
+export const playerArmy = [
     new UnitStack(Swordsman, 1),
     new UnitStack(Peasant, 1),
     new UnitStack(Peasant, 1),
 ]
-const enemyArmy = [
+export const enemyArmy = [
     new UnitStack(Wolf, 1),
     new UnitStack(Wolf, 1),
     new UnitStack(Wolf, 1),
 ]
-export const arenaStacks = [...playerArmy, ...enemyArmy].sort((a, b) => {
-    const r = b.type.speed - a.type.speed
-    if (r) return r
-    return b.position.y - a.position.y
-})
-arenaStacks.forEach(us => us.onPlayerTeam = playerArmy.includes(us))

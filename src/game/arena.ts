@@ -2,13 +2,13 @@ import { GridCell } from "../util/classes"
 import { range } from "../util/functions"
 import { setHintText, toGameLog } from "../util/log"
 import { AbstractAnimation, UnitMoveAnimation } from "./animation"
-import { Unit, arenaStacks } from "./unit"
+import { Unit, enemyArmy, playerArmy } from "./unit"
 import { UnitStack } from "./unit-stack"
 
 class Arena {
     columns = range(-9, 9)
     rows = range(-4, 4)
-    stacks = arenaStacks
+    stacks = [...playerArmy, ...enemyArmy]
     selectedCell?: GridCell
     selectedCellSide = 0
     animation?: AbstractAnimation
@@ -19,13 +19,19 @@ class Arena {
 
     constructor() {
         toGameLog('Battle has started!')
-        arenaStacks.forEach((us) => this.setDefaultPosition(us))
+        this.stacks.forEach((us) => us.onPlayerTeam = playerArmy.includes(us))
+        this.stacks.forEach((us) => this.setDefaultPosition(us))
+        this.stacks.sort((a, b) => {
+            const r = b.type.speed - a.type.speed
+            if (r) return r
+            return b.position.y - a.position.y
+        })
         setTimeout(() => this.nextMove())
         this.stacks.forEach(u => u.resetActionPoints())
     }
 
     setDefaultPosition(stack: UnitStack) {
-        const mates = arenaStacks.filter((us) => this.isCellValid(us.position) && us.onPlayerTeam == stack.onPlayerTeam)
+        const mates = this.stacks.filter((us) => this.isCellValid(us.position) && us.onPlayerTeam == stack.onPlayerTeam)
         if (!mates.length) {
             stack.position.x = stack.onPlayerTeam ? this.columns.first() : this.columns.last()
             stack.position.y = 0
@@ -60,6 +66,7 @@ class Arena {
         }
         const path = this.getPathForUnit(this.activeUnit, target.position)
         if (!path) {
+            toGameLog(`${this.activeUnit.name} can't get to enemy`)
             this.endMove()
             return
         }
@@ -136,7 +143,7 @@ class Arena {
         const path: GridCell[] = []
         let nextCell = new GridCell(unit.position.x, unit.position.y)
         while (path.length < 33) {
-            const neighbors = nextCell.getNeighbors().filter(c => (c.isSameAs(destination) || !this.getUnitAt(c)) && this.isCellValid(c))
+            const neighbors = nextCell.getNeighbors().filter(c => (c.isSameAs(destination) || !this.getUnitAt(c)) && this.isCellValid(c) && !path.some(pc => pc.isSameAs(c)))
             if (!neighbors.length) return null
             neighbors.sort((a, b) => a.squareDistanceTo(destination) - b.squareDistanceTo(destination))
             nextCell = neighbors[0]

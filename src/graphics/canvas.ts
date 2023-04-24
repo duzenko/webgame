@@ -117,22 +117,23 @@ export function drawUnit(unit: UnitStack) {
 function drawUnitBadge(x: number, y: number, unit: UnitStack) {
     const index = arena.stacks.filter(u => u.isAlive).indexOf(unit) + 1
     if (index < 1) return
-    context.fillStyle = 'DeepSkyBlue'
+    context.fillStyle = 'green'
     context.fillRect(x - cellRadius / 2, y - cellRadius * 0.1, cellRadius * unit.health / unit.type.health, cellRadius * 0.08)
-    context.fillStyle = 'Red'
+    context.fillStyle = 'black'
     context.fillRect(x - cellRadius / 2 + cellRadius * unit.health / unit.type.health, y - cellRadius * 0.12, cellRadius * (1 - unit.health / unit.type.health), cellRadius * 0.1)
     const fontSize = Math.round(cellRadius * isometricAspect / 16) * 4
-    context.beginPath()
-    context.rect(x - fontSize * 0.8, y, fontSize * 1.6, fontSize * 1.2);
-    context.closePath()
-    context.fillStyle = unit.onPlayerTeam ? 'Blue' : 'Crimson'
-    context.fill()
-    context.strokeStyle = 'white'
-    context.stroke()
     context.font = `${fontSize}px Artifika`
+
+    context.fillStyle = 'black'
+    context.fillRect(x + fontSize * 0.8, y, fontSize * 1.4, fontSize * 1.2)
+    context.fillStyle = 'gold'
+    context.fillText(index.toString(), x + fontSize * 1.5, y + fontSize * 0.95)
+
+    context.fillStyle = unit.onPlayerTeam ? 'Blue' : 'Crimson'
+    context.fillRect(x - fontSize * 0.8, y, fontSize * 1.6, fontSize * 1.2)
     context.fillStyle = 'white'
     context.textAlign = 'center'
-    context.fillText(index.toString(), x, y + fontSize * 0.95);
+    context.fillText(unit.qty.toString(), x, y + fontSize * 0.95)
 }
 
 export function drawPossiblePath() {

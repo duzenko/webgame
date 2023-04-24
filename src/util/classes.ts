@@ -8,7 +8,7 @@ export class Point {
     }
 
     squareDistanceTo(p: Point): number {
-        return (this.x - p.x) * (this.x - p.x) + (this.y - p.y) * (this.y - p.y)
+        return (this.x - p.x) * (this.x - p.x) * 3 / 4 + (this.y - p.y) * (this.y - p.y) * 9 / 4
     }
 
     isSameAs(cell: Point): boolean {
