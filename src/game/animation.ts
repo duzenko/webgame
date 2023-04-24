@@ -4,10 +4,10 @@ import { arena } from "./arena";
 import { UnitStack } from "./unit-stack";
 
 export abstract class AbstractAnimation {
-    length: number // in msec
+    duration: number // in msec
 
     constructor(length: number) {
-        this.length = length
+        this.duration = length
     }
 
     onFinish() { }
@@ -29,10 +29,10 @@ export abstract class VSyncAnimation extends AbstractAnimation {
         const finished: VSyncAnimation[] = []
         for (const animation of VSyncAnimation.list) {
             const timeElapsed = now.getTime() - animation.startTime.getTime()
-            if (timeElapsed < animation.length) {
+            if (timeElapsed < animation.duration) {
                 animation.frame(timeElapsed)
             } else {
-                animation.frame(animation.length)
+                animation.frame(animation.duration)
                 animation.onFinish()
                 finished.push(animation)
             }
@@ -51,7 +51,7 @@ export abstract class StepAnimation extends AbstractAnimation {
 
     private async run() {
         try {
-            for (let frameNo = 0; frameNo < this.length; frameNo++) {
+            for (let frameNo = 0; frameNo < this.duration; frameNo++) {
                 await this.doStep(frameNo)
             }
         } finally {
@@ -149,8 +149,9 @@ class MeleeAttackAnimation extends VSyncAnimation {
     frame(timeElapsed: number): void {
         const lag = 200
         const bumpLength = 0.2
-        const phase1 = Math.max(0, Math.sin(timeElapsed / (this.length - lag) * Math.PI)) * bumpLength
-        const phase2 = -Math.max(0, Math.sin((timeElapsed - lag) / (this.length - lag) * Math.PI)) * bumpLength
+        const epsilon = 1e-11
+        const phase1 = Math.max(0, Math.sin(timeElapsed / (this.duration - lag) * Math.PI) - epsilon) * bumpLength * 2
+        const phase2 = -Math.max(0, Math.sin((timeElapsed - lag) / (this.duration - lag) * Math.PI) - epsilon) * bumpLength
         this.attacker.position = new GridCell(lerp(this.savedAttacker.x, this.savedDefender.x, phase1), lerp(this.savedAttacker.y, this.savedDefender.y, phase1))
         this.defender.position = new GridCell(lerp(this.savedDefender.x, this.savedAttacker.x, phase2), lerp(this.savedDefender.y, this.savedAttacker.y, phase2))
     }
