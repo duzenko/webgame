@@ -55,9 +55,13 @@ function onMouseMove(ev: MouseEvent) {
             let side = Math.round(angle)
             side = vector.y > 0 ? side : (6 - side) % 6
             const neighborCell = cell.getNeighbor(side)
-            const moves = arena.getMovesForUnit(arena.activeUnit)
-            if (moves.some(m => m.isSameAs(neighborCell) && m.step < arena.activeUnit.actionPoints && (!arena.getStackInCell(m) || arena.getStackInCell(m) == arena.activeUnit)))
+            if (neighborCell.isSameAs(arena.activeUnit.position))
                 arena.selectedCellSide = neighborCell
+            else {
+                const moves = arena.getMovesForUnit(arena.activeUnit)
+                if (moves.some(m => m.isSameAs(neighborCell) && m.step < arena.activeUnit.actionPoints && (!arena.getStackInCell(m) || arena.getStackInCell(m) == arena.activeUnit)))
+                    arena.selectedCellSide = neighborCell
+            }
         }
     } else {
         arena.selectedCell = undefined
