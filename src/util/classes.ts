@@ -1,8 +1,5 @@
 export class Point {
-    x: number
-    y: number
-
-    constructor(x: number, y: number) {
+    constructor(public x: number, public y: number) {
         this.x = x
         this.y = y
     }
@@ -33,22 +30,36 @@ export class Point {
     }
 }
 
-function isValidCell(x: number, y: number): boolean {
-    return (x & 1) == (y & 1)
-}
-
 export class GridCell extends Point {
+    private static readonly sides = [[2, 0], [1, -1], [-1, -1], [-2, 0], [-1, 1], [1, 1]]
 
     get isValid(): boolean {
-        return isValidCell(this.x, this.y)
+        return (this.x & 1) == (this.y & 1)
     }
 
     isInRange(rangeX: number[], rangeY: number[]): boolean {
         return rangeX.includes(this.x) && rangeY.includes(this.y)
     }
 
-    getNeighbors(): GridCell[] {
-        return [[-2, 0], [2, 0], [-1, -1], [-1, 1], [1, -1], [1, 1]].map(xy => new GridCell(this.x + xy[0], this.y + xy[1]))
+    getNeighbor(side: number): GridCellNeighbor {
+        const xy = GridCell.sides[side]
+        return new GridCellNeighbor(this.x + xy[0], this.y + xy[1], side)
+    }
+
+    getNeighbors(): GridCellNeighbor[] {
+        return GridCell.sides.map((xy, index) => new GridCellNeighbor(this.x + xy[0], this.y + xy[1], index))
+    }
+}
+
+export class GridCellNeighbor extends GridCell {
+    constructor(x: number, y: number, public side: number) {
+        super(x, y)
+    }
+}
+
+export class PathCell extends GridCell {
+    constructor(cell: GridCell, public step: number) {
+        super(cell.x, cell.y)
     }
 }
 

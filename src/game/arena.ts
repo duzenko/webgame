@@ -1,4 +1,4 @@
-import { GridCell } from "../util/classes"
+import { GridCell, GridCellNeighbor, PathCell } from "../util/classes"
 import { range } from "../util/functions"
 import { setHintText, toGameLog } from "../util/log"
 import { AbstractAnimation, UnitMoveAnimation } from "./animation"
@@ -10,7 +10,7 @@ class Arena {
     rows = range(-4, 4)
     stacks = [...playerArmy, ...enemyArmy]
     selectedCell?: GridCell
-    selectedCellSide = 0
+    selectedCellSide?: GridCellNeighbor
     animation?: AbstractAnimation
 
     get activeUnit() {
@@ -24,7 +24,7 @@ class Arena {
         this.stacks.sort((a, b) => {
             const r = b.type.speed - a.type.speed
             if (r) return r
-            return b.position.y - a.position.y
+            return a.position.y - b.position.y
         })
         setTimeout(() => this.nextMove())
         this.stacks.forEach(u => u.resetActionPoints())
@@ -38,12 +38,23 @@ class Arena {
             if (!this.isCellValid(stack.position)) {
                 stack.position.x -= Math.sign(stack.position.x)
             }
+            // if (stack.name == 'Swordsman') stack.position = new GridCell(1, -1)
             return
         }
         const possibleCells = mates.map(us => us.position.getNeighbors().filter(cell => {
-            return this.isCellValid(cell) && !this.getUnitAt(cell)
+            return this.isCellValid(cell) && !this.getStackInCell(cell)
         })).flat().sort((a, b) => a.x - b.x)
         stack.position = stack.onPlayerTeam ? possibleCells.first() : possibleCells.last()
+    }
+
+    canOccupyCell(stack: UnitStack, cell: GridCell): boolean {
+        const stackInCell = this.getStackInCell(cell)
+        if (!stackInCell) return true
+        return stackInCell == stack
+    }
+
+    get canActiveOccupySelected() {
+        return this.canOccupyCell(this.activeUnit, this.selectedCell!)
     }
 
     nextMove() {
@@ -106,11 +117,14 @@ class Arena {
         }
     }
 
-    moveUnit(unit: UnitStack, destination: GridCell) {
-        this.animation = UnitMoveAnimation.create(unit, destination)
+    moveActiveUnit() {
+        if (this.getStackInCell(this.selectedCell!))
+            this.animation = UnitMoveAnimation.create(this.activeUnit, this.selectedCell!, this.selectedCellSide)
+        else
+            this.animation = UnitMoveAnimation.create(this.activeUnit, this.selectedCell!)
     }
 
-    getUnitAt(destination: GridCell) {
+    getStackInCell(destination: GridCell) {
         return this.stacks.find(u => u.isAlive && u.position.isSameAs(destination))
     }
 
@@ -118,19 +132,19 @@ class Arena {
         return cell.isValid && cell.isInRange(this.columns, this.rows)
     }
 
-    getMovesForUnit(unit: UnitStack): GridCell[] {
-        const cells = [unit.position]
-        let lastBatch = cells
+    getMovesForUnit(unit: UnitStack): PathCell[] {
+        const cells: PathCell[] = []
+        let lastBatch = [unit.position]
         for (let i = 0; i < unit.actionPoints; i++) {
-            const nextBatch: GridCell[] = []
+            const nextBatch: PathCell[] = []
             for (const lastCell of lastBatch) {
-                const unitInCell = arena.getUnitAt(lastCell)
+                const unitInCell = arena.getStackInCell(lastCell)
                 if (unitInCell && unitInCell != unit) continue
                 for (const nextCell of lastCell.getNeighbors()) {
                     if (!arena.isCellValid(nextCell)) continue
                     if (nextBatch.some(c => c.isSameAs(nextCell))) continue
                     if (cells.some(c => c.isSameAs(nextCell))) continue
-                    nextBatch.push(nextCell)
+                    nextBatch.push(new PathCell(nextCell, i + 1))
                 }
             }
             cells.push(...nextBatch)
@@ -139,18 +153,26 @@ class Arena {
         return cells
     }
 
-    getPathForUnit(unit: UnitStack, destination: GridCell): GridCell[] | null {
-        const path: GridCell[] = []
-        let nextCell = new GridCell(unit.position.x, unit.position.y)
+    getPathForUnit(unit: UnitStack, destination: GridCell): PathCell[] | null {
+        const path: PathCell[] = []
+        let currentCell = new PathCell(unit.position, 0)
         while (path.length < 33) {
-            const neighbors = nextCell.getNeighbors().filter(c => (c.isSameAs(destination) || !this.getUnitAt(c)) && this.isCellValid(c) && !path.some(pc => pc.isSameAs(c)))
+            const neighbors = currentCell.getNeighbors().filter(c => (c.isSameAs(destination) || !this.getStackInCell(c)) && this.isCellValid(c) && !path.some(pc => pc.isSameAs(c)))
             if (!neighbors.length) return null
             neighbors.sort((a, b) => a.squareDistanceTo(destination) - b.squareDistanceTo(destination))
-            nextCell = neighbors[0]
-            if (nextCell.isSameAs(destination)) return path
-            path.push(nextCell)
+            currentCell = new PathCell(neighbors[0], path.length + 1)
+            if (currentCell.isSameAs(destination)) return path
+            path.push(currentCell)
         }
         return null
+    }
+
+    getPathForUnitAndSide(unit: UnitStack, destination: GridCell, side?: GridCell): PathCell[] | null {
+        if (!side) return this.getPathForUnit(unit, destination)
+        if (side.isSameAs(unit.position)) return []
+        const path = this.getPathForUnit(unit, side)
+        if (!path) return null
+        return [...path, new PathCell(side, path.length + 1)]
     }
 
     unitCanMoveTo(unit: UnitStack, destination: GridCell): GridCell[] | false {

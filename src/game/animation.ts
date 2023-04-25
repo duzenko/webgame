@@ -65,9 +65,9 @@ export class UnitMoveAnimation extends StepAnimation {
     path: GridCell[]
     static readonly cellMoveTime = 300
 
-    static create(unit: UnitStack, destination: GridCell): UnitMoveAnimation {
-        const path = arena.getPathForUnit(unit, destination)!
-        return new UnitMoveAnimation(unit, destination, path)
+    static create(unit: UnitStack, destination: GridCell, selectedCellSide?: GridCell): UnitMoveAnimation {
+        const path = selectedCellSide ? arena.getPathForUnitAndSide(unit, destination, selectedCellSide) : arena.getPathForUnit(unit, destination)
+        return new UnitMoveAnimation(unit, destination, path!)
     }
 
     constructor(private unit: UnitStack, destination: GridCell, path: GridCell[]) {
@@ -80,7 +80,7 @@ export class UnitMoveAnimation extends StepAnimation {
         this.unit.actionPoints--
         const lastStep = stepNo == this.path.length
         if (lastStep) {
-            const enemy = arena.getUnitAt(this.destination)
+            const enemy = arena.getStackInCell(this.destination)
             if (enemy) {
                 if (this.path.length) {
                     this.unit.position = this.path.last()

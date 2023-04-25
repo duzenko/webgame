@@ -47,23 +47,29 @@ function onMouseMove(ev: MouseEvent) {
     cursorPosition.y = ev.offsetY
     const cell = screenToCell(cursorPosition)
     if (arena.isCellValid(cell)) {
-        const vector = cursorPosition.subtract(cellToScreen(cell)).normalize()
-        const angle = Math.acos(vector.x) / Math.PI * 3
-        const side = Math.round(angle)
-        arena.selectedCellSide = vector.y > 0 ? side : (6 - side) % 6
         arena.selectedCell = cell
+        arena.selectedCellSide = undefined
+        if (arena.activeUnit.onPlayerTeam && arena.getStackInCell(cell)) {
+            const vector = cursorPosition.subtract(cellToScreen(cell)).normalize()
+            const angle = Math.acos(vector.x) / Math.PI * 3
+            let side = Math.round(angle)
+            side = vector.y > 0 ? side : (6 - side) % 6
+            const neighborCell = cell.getNeighbor(side)
+            const moves = arena.getMovesForUnit(arena.activeUnit)
+            if (moves.some(m => m.isSameAs(neighborCell) && m.step < arena.activeUnit.actionPoints && (!arena.getStackInCell(m) || arena.getStackInCell(m) == arena.activeUnit)))
+                arena.selectedCellSide = neighborCell
+        }
     } else {
         arena.selectedCell = undefined
     }
 }
 
 function onMouseDown(ev: MouseEvent) {
-    if (arena.animation) return
-    const cell = screenToCell(new Point(ev.offsetX, ev.offsetY))
-    if (!arena.isCellValid(cell) || !arena.unitCanMoveTo(arena.activeUnit, cell)) {
+    if (arena.animation || !arena.selectedCell) return
+    if (!arena.unitCanMoveTo(arena.activeUnit, arena.selectedCell)) {
         return
     }
-    arena.moveUnit(arena.activeUnit, cell)
+    arena.moveActiveUnit()
 }
 
 function onKeyDown(ev: KeyboardEvent) {

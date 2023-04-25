@@ -15,14 +15,14 @@ let isometricAspect: number
 let arenaZoom: number
 
 export function cellToScreen(cell: GridCell): Point {
-    const x = cell.x * cellStepX + canvas.width / 2
-    const y = cell.y * cellRadius * 1.5 * isometricAspect + canvas.height / 2
+    const x = canvas.width / 2 + cell.x * cellStepX
+    const y = canvas.height / 2 - cell.y * cellRadius * 1.5 * isometricAspect
     return new Point(x, y)
 }
 
 export function screenToCell(p: Point): GridCell {
     let x0 = Math.floor((p.x - canvas.width / 2) / cellStepX)
-    let y0 = Math.floor((p.y - canvas.height / 2) / cellStepY)
+    let y0 = Math.floor((canvas.height / 2 - p.y) / cellStepY)
     const corners = [
         new GridCell(x0, y0),
         new GridCell(x0 + 1, y0),
@@ -93,7 +93,7 @@ export function drawUnit(unit: UnitStack) {
     const center = cellToScreen(unit.position)
     context.save()
     try {
-        if (unit == arena.activeUnit) {
+        if (unit == arena.activeUnit && unit.onPlayerTeam) {
             context.lineWidth = 15
             context.strokeStyle = 'rgba(232,253,1, 0.5)'
             strokeHexagon(arena.activeUnit.position, 0.9)
@@ -143,11 +143,10 @@ export function drawPossiblePath() {
     try {
         context.globalAlpha = 0.75
         context.fillStyle = "Khaki"
-        const canMoveTo = arena.unitCanMoveTo(arena.activeUnit, destination)
-        if (!arena.activeUnit.isEnemy && canMoveTo) {
-            const path = arena.getPathForUnit(arena.activeUnit, destination)!
+        const canMoveTo = arena.unitCanMoveTo(arena.activeUnit, destination) && (arena.canActiveOccupySelected || arena.selectedCellSide)
+        if (arena.activeUnit.onPlayerTeam && canMoveTo) {
+            const path = arena.getPathForUnitAndSide(arena.activeUnit, destination, arena.selectedCellSide!)!
             for (const cell of [...path, destination]) {
-                // fillHexagon(cell)
                 const p = cellToScreen(cell)
                 context.beginPath()
                 context.ellipse(p.x, p.y, 0.2 * cellRadius * isometricAspect, 0.2 * cellRadius * isometricAspect, 0, 2 * Math.PI, 0)
@@ -174,7 +173,7 @@ export function drawMoveableCells() {
         context.fillStyle = "black"
         context.globalAlpha = 0.2
         if (arena.selectedCell && !arena.selectedCell.isSameAs(arena.activeUnit.position)) {
-            const selectedUnit = arena.getUnitAt(arena.selectedCell)
+            const selectedUnit = arena.getStackInCell(arena.selectedCell)
             if (selectedUnit) {
                 const cells = arena.getMovesForUnit(selectedUnit)
                 for (const cell of cells) {
@@ -217,7 +216,7 @@ export function drawBackground() {
     const backgroundImage = getImageByName('field/green-terrain.jpg')
     context.fillStyle = "black"
     if (backgroundImage) {
-        const p = cellToScreen(new GridCell(arena.columns[0], arena.rows[0]))
+        const p = cellToScreen(new GridCell(arena.columns.first(), arena.rows.last()))
         const w = (canvas.width / 2 - p.x) * 1.6
         const h = (canvas.height / 2 - p.y) * 1.3
         context.drawImage(backgroundImage, canvas.width / 2 - w, canvas.height / 2 - h, 2 * w, 2 * h)
@@ -236,8 +235,11 @@ export function drawCursor() {
     } else {
         if (arena.selectedCell) {
             if (arena.unitCanMoveTo(arena.activeUnit, arena.selectedCell)) {
-                if (arena.getUnitAt(arena.selectedCell)) {
-                    cursorImage = `attack-${['w', 'nnw', 'nne', 'e', 'sse', 'ssw'][arena.selectedCellSide]}-${animationTick % 3 + 1}`
+                if (arena.getStackInCell(arena.selectedCell)) {
+                    if (arena.selectedCellSide)
+                        cursorImage = `attack-${['w', 'nnw', 'nne', 'e', 'sse', 'ssw'][arena.selectedCellSide.side]}-${animationTick % 3 + 1}`
+                    else
+                        cursorImage = 'not-allowed'
                 } else
                     cursorImage = 'move'
             }
