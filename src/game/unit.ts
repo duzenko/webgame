@@ -35,12 +35,45 @@ export class Wolf extends Unit {
     imageName = 'wolf.png'
 }
 
+export class Archer extends Unit {
+    name = 'Archer'
+    imageName = 'ladyarcher.png'
+    health = 12
+    speed = 1
+}
+export class Pikeman extends Unit {
+    name = 'Pikeman'
+    imageName = 'pikeman.png'
+    health = 12
+    speed = 1
+}
+export class Slinger extends Unit {
+    name = 'Slinger'
+    imageName = 'ladyslinger.png'
+    health = 12
+    speed = 1
+}
+export class Villain extends Unit {
+    name = 'Villain'
+    imageName = 'villain.png'
+    health = 12
+    speed = 1
+}
+
+
 export const playerArmy = [
     new UnitStack(Swordsman, 1),
     new UnitStack(Peasant, 1),
-    new UnitStack(Peasant, 1),
+    new UnitStack(Archer, 1),
+    new UnitStack(Pikeman, 1),
+    new UnitStack(Slinger, 1),
+    new UnitStack(Villain, 1),
 ]
 export const enemyArmy = [
+    new UnitStack(Wolf, 1),
+    new UnitStack(Wolf, 1),
+    new UnitStack(Wolf, 1),
+    new UnitStack(Wolf, 1),
     new UnitStack(Wolf, 1),
     new UnitStack(Wolf, 1),
     new UnitStack(Wolf, 1),
