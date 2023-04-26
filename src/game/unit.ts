@@ -1,4 +1,3 @@
-import { GridCell } from "../util/classes"
 import { UnitStack } from "./unit-stack"
 
 export abstract class Unit {
@@ -6,6 +5,7 @@ export abstract class Unit {
     health = 1
     name = 'none'
     imageName = 'none'
+    rangedAttack = false
 
     constructor() { }
 
@@ -39,6 +39,7 @@ export class Archer extends Unit {
     name = 'Archer'
     imageName = 'ladyarcher'
     health = 34
+    rangedAttack = true
 }
 
 export class Pikeman extends Unit {
@@ -51,6 +52,7 @@ export class Slinger extends Unit {
     name = 'Slinger'
     imageName = 'ladyslinger'
     health = 12
+    rangedAttack = true
 }
 
 export class Robber extends Unit {

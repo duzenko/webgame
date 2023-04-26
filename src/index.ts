@@ -49,17 +49,17 @@ function onMouseMove(ev: MouseEvent) {
     if (arena.isCellValid(cell)) {
         arena.selectedCell = cell
         arena.selectedCellSide = undefined
-        if (arena.activeUnit.onPlayerTeam && arena.getStackInCell(cell)) {
+        if (arena.activeStack.onPlayerTeam && arena.getStackInCell(cell)) {
             const vector = cursorPosition.subtract(cellToScreen(cell)).normalize()
             const angle = Math.acos(vector.x) / Math.PI * 3
             let side = Math.round(angle)
             side = vector.y > 0 ? side : (6 - side) % 6
             const neighborCell = cell.getNeighbor(side)
-            if (neighborCell.isSameAs(arena.activeUnit.position))
+            if (neighborCell.isSameAs(arena.activeStack.position))
                 arena.selectedCellSide = neighborCell
             else {
-                const moves = arena.getMovesForUnit(arena.activeUnit)
-                if (moves.some(m => m.isSameAs(neighborCell) && m.step < arena.activeUnit.actionPoints && (!arena.getStackInCell(m) || arena.getStackInCell(m) == arena.activeUnit)))
+                const moves = arena.getMovesForUnit(arena.activeStack)
+                if (moves.some(m => m.isSameAs(neighborCell) && m.step < arena.activeStack.actionPoints && (!arena.getStackInCell(m) || arena.getStackInCell(m) == arena.activeStack)))
                     arena.selectedCellSide = neighborCell
             }
         }
@@ -70,7 +70,10 @@ function onMouseMove(ev: MouseEvent) {
 
 function onMouseDown(ev: MouseEvent) {
     if (arena.animation || !arena.selectedCell) return
-    if (!arena.unitCanMoveTo(arena.activeUnit, arena.selectedCell)) {
+    if (!arena.unitCanMoveTo(arena.activeStack, arena.selectedCell)) {
+        if (arena.selectedStack && arena.activeStack.type.rangedAttack) {
+            arena.rangedAttack(arena.selectedStack)
+        }
         return
     }
     arena.moveActiveUnit()
@@ -78,6 +81,6 @@ function onMouseDown(ev: MouseEvent) {
 
 function onKeyDown(ev: KeyboardEvent) {
     if (arena.animation) return
-    if (arena.activeUnit.isEnemy) return
+    if (arena.activeStack.isEnemy) return
     if (ev.key == ' ') arena.endMove()
 }

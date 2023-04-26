@@ -1,16 +1,15 @@
 import { GridCell } from "../util/classes";
 import { toGameLog } from "../util/log";
-import { Unit as UnitType } from "./unit";
+import { Unit } from "./unit";
 
 export class UnitStack {
-
-    type: UnitType
+    type: Unit
     actionPoints = 0
     position = new GridCell(NaN, NaN)
     onPlayerTeam = false
     health: number
 
-    constructor(unitType: new () => UnitType, public qty: number = 1) {
+    constructor(unitType: new () => Unit, public qty: number = 1) {
         this.type = new unitType()
         this.qty = qty
         this.health = this.type.health

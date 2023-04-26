@@ -13,7 +13,7 @@ class Arena {
     selectedCellSide?: GridCellNeighbor
     animation?: AbstractAnimation
 
-    get activeUnit() {
+    get activeStack() {
         return this.stacks.first()
     }
 
@@ -54,19 +54,19 @@ class Arena {
     }
 
     get canActiveOccupySelected() {
-        return this.canOccupyCell(this.activeUnit, this.selectedCell!)
+        return this.canOccupyCell(this.activeStack, this.selectedCell!)
     }
 
     nextMove() {
-        if (this.activeUnit.isEnemy) {
+        if (this.activeStack.isEnemy) {
             this.makeEnemyMove()
         } else {
-            setHintText(`${this.activeUnit.name}'s move`)
+            setHintText(`${this.activeStack.name}'s move`)
         }
     }
 
     makeEnemyMove() {
-        if (!this.activeUnit.isAlive) {
+        if (!this.activeStack.isAlive) {
             this.endMove()
             return
         }
@@ -75,17 +75,17 @@ class Arena {
             this.endMove()
             return
         }
-        const path = this.getPathForUnit(this.activeUnit, target.position)
+        const path = this.getPathForUnit(this.activeStack, target.position)
         if (!path) {
-            toGameLog(`${this.activeUnit.name} can't get to enemy`)
+            toGameLog(`${this.activeStack.name} can't get to enemy`)
             this.endMove()
             return
         }
         let destination = target!.position
-        while (this.activeUnit.actionPoints < path.length + 1) {
+        while (this.activeStack.actionPoints < path.length + 1) {
             destination = path.pop()!
         }
-        this.animation = UnitMoveAnimation.create(this.activeUnit, destination)
+        this.animation = UnitMoveAnimation.create(this.activeStack, destination)
     }
 
     endMove() {
@@ -103,29 +103,34 @@ class Arena {
             }, 99);
             return
         }
-        this.activeUnit.resetActionPoints()
+        this.activeStack.resetActionPoints()
         do {
             this.stacks.push(this.stacks.shift()!)
-        } while (!this.activeUnit.isAlive)
+        } while (!this.activeStack.isAlive)
         setTimeout(() => this.nextMove())
     }
 
     animationEnded() {
         arena.animation = undefined
-        if (!arena.activeUnit.actionPoints || !arena.activeUnit.onPlayerTeam) {
+        if (!arena.activeStack.actionPoints || !arena.activeStack.onPlayerTeam) {
             arena.endMove()
         }
     }
 
     moveActiveUnit() {
         if (this.getStackInCell(this.selectedCell!))
-            this.animation = UnitMoveAnimation.create(this.activeUnit, this.selectedCell!, this.selectedCellSide)
+            this.animation = UnitMoveAnimation.create(this.activeStack, this.selectedCell!, this.selectedCellSide)
         else
-            this.animation = UnitMoveAnimation.create(this.activeUnit, this.selectedCell!)
+            this.animation = UnitMoveAnimation.create(this.activeStack, this.selectedCell!)
     }
 
-    getStackInCell(destination: GridCell) {
+    getStackInCell(destination: GridCell): UnitStack | undefined {
         return this.stacks.find(u => u.isAlive && u.position.isSameAs(destination))
+    }
+
+    get selectedStack(): UnitStack | undefined {
+        if (!this.selectedCell) return undefined
+        return this.getStackInCell(this.selectedCell)
     }
 
     isCellValid(cell: GridCell): boolean {
@@ -182,6 +187,11 @@ class Arena {
         return this.getPathForUnit(unit, destination) ?? false
     }
 
+    rangedAttack(stack: UnitStack) {
+        // TODO add animation
+        this.activeStack.attack(stack)
+        this.endMove()
+    }
 }
 
 export const arena = new Arena()

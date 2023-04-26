@@ -93,10 +93,10 @@ export function drawUnit(stack: UnitStack) {
     const center = cellToScreen(stack.position)
     context.save()
     try {
-        if (stack == arena.activeUnit && stack.onPlayerTeam) {
+        if (stack == arena.activeStack && stack.onPlayerTeam) {
             context.lineWidth = 15
             context.strokeStyle = 'rgba(232,253,1, 0.5)'
-            strokeHexagon(arena.activeUnit.position, 0.9)
+            strokeHexagon(arena.activeStack.position, 0.9)
         }
         const image = getImageForStack(stack)
         if (image) {
@@ -147,9 +147,9 @@ export function drawPossiblePath() {
     try {
         context.globalAlpha = 0.75
         context.fillStyle = "Khaki"
-        const canMoveTo = arena.unitCanMoveTo(arena.activeUnit, destination) && (arena.canActiveOccupySelected || arena.selectedCellSide)
-        if (arena.activeUnit.onPlayerTeam && canMoveTo) {
-            const path = arena.getPathForUnitAndSide(arena.activeUnit, destination, arena.selectedCellSide!)!
+        const canMoveTo = arena.unitCanMoveTo(arena.activeStack, destination) && (arena.canActiveOccupySelected || arena.selectedCellSide)
+        if (arena.activeStack.onPlayerTeam && canMoveTo) {
+            const path = arena.getPathForUnitAndSide(arena.activeStack, destination, arena.selectedCellSide!)!
             for (const cell of [...path, destination]) {
                 const p = cellToScreen(cell)
                 context.beginPath()
@@ -170,13 +170,13 @@ export function drawPossiblePath() {
 }
 
 export function drawMoveableCells() {
-    const unit = arena.activeUnit
+    const unit = arena.activeStack
     if (arena.animation || !unit.onPlayerTeam) return
     context.save()
     try {
         context.fillStyle = "black"
         context.globalAlpha = 0.2
-        if (arena.selectedCell && !arena.selectedCell.isSameAs(arena.activeUnit.position)) {
+        if (arena.selectedCell && !arena.selectedCell.isSameAs(arena.activeStack.position)) {
             const selectedUnit = arena.getStackInCell(arena.selectedCell)
             if (selectedUnit) {
                 const cells = arena.getMovesForUnit(selectedUnit)
@@ -234,11 +234,13 @@ export function drawBackground() {
 export function drawCursor() {
     let cursorImage = 'not-allowed'
     const animationTick = Math.round(new Date().getTime() / 200)
-    if (arena.animation || !arena.activeUnit.onPlayerTeam) {
+    if (arena.animation || !arena.activeStack.onPlayerTeam) {
         cursorImage = 'wait-' + (animationTick % 6 + 1)
     } else {
         if (arena.selectedCell) {
-            if (arena.unitCanMoveTo(arena.activeUnit, arena.selectedCell)) {
+            if (arena.selectedStack && arena.activeStack.type.rangedAttack && arena.selectedStack != arena.activeStack)
+                cursorImage = 'attack'
+            else if (arena.unitCanMoveTo(arena.activeStack, arena.selectedCell)) {
                 if (arena.getStackInCell(arena.selectedCell)) {
                     if (arena.selectedCellSide)
                         cursorImage = `attack-${['w', 'nnw', 'nne', 'e', 'sse', 'ssw'][arena.selectedCellSide.side]}-${animationTick % 3 + 1}`
