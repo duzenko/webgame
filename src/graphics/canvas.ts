@@ -104,7 +104,7 @@ export function drawUnit(stack: UnitStack) {
             const width = image.width * imageScale
             const height = image.height * imageScale
             if (!stack.isAlive) {
-                context.globalAlpha = 0.5
+                context.globalAlpha = 0.7
             }
             if (!stack.onPlayerTeam) {
                 context.scale(-1, 1)
