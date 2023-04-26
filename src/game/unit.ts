@@ -62,19 +62,15 @@ export class Villain extends Unit {
 
 
 export const playerArmy = [
-    new UnitStack(Swordsman, 1),
-    new UnitStack(Peasant, 1),
-    new UnitStack(Archer, 1),
-    new UnitStack(Pikeman, 1),
-    new UnitStack(Slinger, 1),
-    new UnitStack(Villain, 1),
+    new UnitStack(Swordsman),
+    new UnitStack(Peasant),
+    new UnitStack(Archer),
+    new UnitStack(Pikeman),
+    new UnitStack(Slinger),
+    new UnitStack(Villain),
 ]
 export const enemyArmy = [
-    new UnitStack(Wolf, 1),
-    new UnitStack(Wolf, 1),
-    new UnitStack(Wolf, 1),
-    new UnitStack(Wolf, 1),
-    new UnitStack(Wolf, 1),
-    new UnitStack(Wolf, 1),
-    new UnitStack(Wolf, 1),
+    new UnitStack(Wolf, 3),
+    new UnitStack(Wolf),
+    new UnitStack(Wolf),
 ]

@@ -10,7 +10,7 @@ export class UnitStack {
     onPlayerTeam = false
     health: number
 
-    constructor(unitType: new () => UnitType, public qty: number) {
+    constructor(unitType: new () => UnitType, public qty: number = 1) {
         this.type = new unitType()
         this.qty = qty
         this.health = this.type.health

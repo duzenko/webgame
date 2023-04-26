@@ -106,7 +106,11 @@ export function drawUnit(unit: UnitStack) {
             if (!unit.isAlive) {
                 context.globalAlpha = 0.5
             }
-            context.drawImage(image, center.x - width / 2, center.y + cellRadius - height, width, height)
+            if (!unit.onPlayerTeam) {
+                context.scale(-1, 1)
+                context.drawImage(image, -center.x + width / 2, center.y + cellRadius - height, -width, height)
+            } else
+                context.drawImage(image, center.x - width / 2, center.y + cellRadius - height, width, height)
         }
     } finally {
         context.restore()
