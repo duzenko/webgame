@@ -1,7 +1,7 @@
 import { Point, GridCell } from "../util/classes"
 import { arena } from "../game/arena"
 import { Unit } from "../game/unit"
-import { getImageByName, getImageForUnit } from "./image"
+import { getImageByName, getImageForStack } from "./image"
 import { UnitStack } from "../game/unit-stack"
 
 export const canvas = document.getElementById("canvas") as HTMLCanvasElement
@@ -89,24 +89,24 @@ export function strokeHexagon(cell: GridCell, scale: number = 1) {
     context.stroke()
 }
 
-export function drawUnit(unit: UnitStack) {
-    const center = cellToScreen(unit.position)
+export function drawUnit(stack: UnitStack) {
+    const center = cellToScreen(stack.position)
     context.save()
     try {
-        if (unit == arena.activeUnit && unit.onPlayerTeam) {
+        if (stack == arena.activeUnit && stack.onPlayerTeam) {
             context.lineWidth = 15
             context.strokeStyle = 'rgba(232,253,1, 0.5)'
             strokeHexagon(arena.activeUnit.position, 0.9)
         }
-        const image = getImageForUnit(unit.type)
+        const image = getImageForStack(stack)
         if (image) {
             const imageScale = 2 * cellStepX / image.width
             const width = image.width * imageScale
             const height = image.height * imageScale
-            if (!unit.isAlive) {
+            if (!stack.isAlive) {
                 context.globalAlpha = 0.5
             }
-            if (!unit.onPlayerTeam) {
+            if (!stack.onPlayerTeam) {
                 context.scale(-1, 1)
                 context.drawImage(image, -center.x + width / 2, center.y + cellRadius - height, -width, height)
             } else
@@ -115,7 +115,7 @@ export function drawUnit(unit: UnitStack) {
     } finally {
         context.restore()
     }
-    drawUnitBadge(center.x, center.y + cellRadius * isometricAspect * 0.3, unit)
+    drawUnitBadge(center.x, center.y + cellRadius * isometricAspect * 0.3, stack)
 }
 
 function drawUnitBadge(x: number, y: number, unit: UnitStack) {
@@ -187,7 +187,7 @@ export function drawMoveableCells() {
         }
         context.fillStyle = "black"
         context.globalAlpha = 0.3
-        if (!unit.isEnemy && !arena.animation) {
+        if (unit.onPlayerTeam && !arena.animation) {
             const cells = arena.getMovesForUnit(unit)
             for (const cell of cells) {
                 fillHexagon(cell)

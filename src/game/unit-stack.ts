@@ -51,12 +51,15 @@ export class UnitStack {
             this.health -= damage
         } else {
             const totalHealth = (this.qty - 1) * this.type.health + this.health - damage
+            let killed = this.qty
             if (totalHealth > 0) {
                 this.qty = Math.ceil(totalHealth / this.type.health)
-                this.health = (totalHealth + 1) % this.type.health - 1
+                killed -= this.qty
+                this.health = (totalHealth - 1) % this.type.health + 1
+                toGameLog(`${this.name}s killed: ${killed}`)
             } else {
                 this.qty = 0
-                toGameLog(`${this.name} eliminated`)
+                toGameLog(`${this.name}s killed: ${killed}. The troop is killed.`)
             }
         }
 

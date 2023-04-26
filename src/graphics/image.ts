@@ -1,4 +1,5 @@
 import { Unit } from "../game/unit";
+import { UnitStack } from "../game/unit-stack";
 
 const loadingImages = new Map(), loadedImages = new Map()
 
@@ -15,6 +16,6 @@ export function getImageByName(imageName: string): ImageBitmap | undefined {
     return undefined
 }
 
-export function getImageForUnit(unit: Unit): ImageBitmap | undefined {
-    return getImageByName('unit/' + unit.imageName)
+export function getImageForStack(stack: UnitStack): ImageBitmap | undefined {
+    return getImageByName(`unit/${stack.type.imageName}${stack.isAlive ? '' : '-dead'}.png`)
 }
