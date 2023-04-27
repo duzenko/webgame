@@ -137,14 +137,14 @@ class Arena {
         return cell.isValid && cell.isInRange(this.columns, this.rows)
     }
 
-    getMovesForUnit(unit: UnitStack): PathCell[] {
+    getMovesForStack(stack: UnitStack): PathCell[] {
         const cells: PathCell[] = []
-        let lastBatch = [unit.position]
-        for (let i = 0; i < unit.actionPoints; i++) {
+        let lastBatch = [stack.position]
+        for (let i = 0; i < stack.actionPoints; i++) {
             const nextBatch: PathCell[] = []
             for (const lastCell of lastBatch) {
                 const unitInCell = arena.getStackInCell(lastCell)
-                if (unitInCell && unitInCell != unit) continue
+                if (unitInCell && unitInCell != stack) continue
                 for (const nextCell of lastCell.getNeighbors()) {
                     if (!arena.isCellValid(nextCell)) continue
                     if (nextBatch.some(c => c.isSameAs(nextCell))) continue
@@ -155,7 +155,14 @@ class Arena {
             cells.push(...nextBatch)
             lastBatch = nextBatch
         }
+        if (stack.type.rangedAttack) {
+            cells.push(...this.stacks.filter(s => s != stack && !cells.some(cs => cs.isSameAs(s.position))).map(s => new PathCell(s.position, 0)))
+        }
         return cells
+    }
+
+    get movesForActiveStack() {
+        return this.getMovesForStack(this.activeStack)
     }
 
     getPathForUnit(unit: UnitStack, destination: GridCell): PathCell[] | null {
@@ -182,7 +189,7 @@ class Arena {
 
     unitCanMoveTo(unit: UnitStack, destination: GridCell): GridCell[] | false {
         if (destination.isSameAs(unit.position)) return false
-        const moves = this.getMovesForUnit(unit)
+        const moves = this.getMovesForStack(unit)
         if (!moves.some(c => c.isSameAs(destination))) return false
         return this.getPathForUnit(unit, destination) ?? false
     }

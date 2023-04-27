@@ -58,7 +58,7 @@ function onMouseMove(ev: MouseEvent) {
             if (neighborCell.isSameAs(arena.activeStack.position))
                 arena.selectedCellSide = neighborCell
             else {
-                const moves = arena.getMovesForUnit(arena.activeStack)
+                const moves = arena.movesForActiveStack
                 if (moves.some(m => m.isSameAs(neighborCell) && m.step < arena.activeStack.actionPoints && (!arena.getStackInCell(m) || arena.getStackInCell(m) == arena.activeStack)))
                     arena.selectedCellSide = neighborCell
             }
@@ -70,13 +70,13 @@ function onMouseMove(ev: MouseEvent) {
 
 function onMouseDown(ev: MouseEvent) {
     if (arena.animation || !arena.selectedCell) return
-    if (!arena.unitCanMoveTo(arena.activeStack, arena.selectedCell)) {
-        if (arena.selectedStack && arena.activeStack.type.rangedAttack) {
-            arena.rangedAttack(arena.selectedStack)
-        }
+    if (arena.selectedStack && arena.activeStack.type.rangedAttack) {
+        arena.rangedAttack(arena.selectedStack)
         return
     }
-    arena.moveActiveUnit()
+    if (arena.unitCanMoveTo(arena.activeStack, arena.selectedCell)) {
+        arena.moveActiveUnit()
+    }
 }
 
 function onKeyDown(ev: KeyboardEvent) {

@@ -179,7 +179,7 @@ export function drawMoveableCells() {
         if (arena.selectedCell && !arena.selectedCell.isSameAs(arena.activeStack.position)) {
             const selectedUnit = arena.getStackInCell(arena.selectedCell)
             if (selectedUnit) {
-                const cells = arena.getMovesForUnit(selectedUnit)
+                const cells = arena.getMovesForStack(selectedUnit)
                 for (const cell of cells) {
                     fillHexagon(cell)
                 }
@@ -188,7 +188,7 @@ export function drawMoveableCells() {
         context.fillStyle = "black"
         context.globalAlpha = 0.3
         if (unit.onPlayerTeam && !arena.animation) {
-            const cells = arena.getMovesForUnit(unit)
+            const cells = arena.getMovesForStack(unit)
             for (const cell of cells) {
                 fillHexagon(cell)
             }
