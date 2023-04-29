@@ -1,5 +1,6 @@
 import { GridCell, Point } from "../util/classes";
 import { lerp } from "../util/functions";
+import { Projectile } from "./projectile";
 import { UnitStack } from "./unit-stack";
 
 export abstract class AbstractAnimation {
@@ -87,10 +88,12 @@ export class MeleeAttackAnimation extends VSyncAnimation {
 
 export class RangedAttackAnimation extends VSyncAnimation {
     position: GridCell
+    projectile: Projectile
 
-    constructor(private attacker: UnitStack, private defender: UnitStack) {
-        super(600)
+    constructor(public attacker: UnitStack, public defender: UnitStack) {
+        super(900)
         this.position = GridCell.from(attacker.position)
+        this.projectile = new this.attacker.type.rangedAttack!()
     }
 
     frame(timeElapsed: number): void {

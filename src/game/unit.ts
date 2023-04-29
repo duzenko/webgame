@@ -1,3 +1,4 @@
+import { ArrowProjectile, Projectile, StoneProjectile } from "./projectile"
 import { UnitStack } from "./unit-stack"
 
 export abstract class Unit {
@@ -5,7 +6,7 @@ export abstract class Unit {
     health = 1
     name = 'none'
     imageName = 'none'
-    rangedAttack = false
+    rangedAttack?: new () => Projectile
 
     constructor() { }
 
@@ -39,7 +40,7 @@ export class Archer extends Unit {
     name = 'Archer'
     imageName = 'ladyarcher'
     health = 34
-    rangedAttack = true
+    rangedAttack = ArrowProjectile
 }
 
 export class Pikeman extends Unit {
@@ -52,7 +53,7 @@ export class Slinger extends Unit {
     name = 'Slinger'
     imageName = 'ladyslinger'
     health = 12
-    rangedAttack = true
+    rangedAttack = StoneProjectile
 }
 
 export class Robber extends Unit {

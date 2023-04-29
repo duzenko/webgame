@@ -1,10 +1,8 @@
 import { Point, GridCell } from "../util/classes"
 import { arena } from "../game/arena"
-import { Unit } from "../game/unit"
-import { getImageByName, getImageForStack } from "./image"
+import { getImageByName, getImageForProjectile, getImageForStack } from "./image"
 import { UnitStack } from "../game/unit-stack"
 import { RangedAttackAnimation } from "../game/animation"
-import { drawProjectile } from "./animation"
 
 export const canvas = document.getElementById("canvas") as HTMLCanvasElement
 export const context = canvas.getContext("2d") as CanvasRenderingContext2D
@@ -268,4 +266,11 @@ export function drawAnimations() {
     if (arena.animation instanceof RangedAttackAnimation) {
         drawProjectile(arena.animation as RangedAttackAnimation)
     }
+}
+
+export function drawProjectile(animation: RangedAttackAnimation) {
+    const image = getImageForProjectile(animation.projectile)
+    if (!image) return
+    const p = cellToScreen(animation.position)
+    context.drawImage(image, p.x, p.y)
 }
