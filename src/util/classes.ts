@@ -1,3 +1,5 @@
+import { lerp } from "./functions"
+
 export class Point {
     constructor(public x: number, public y: number) {
         this.x = x
@@ -12,8 +14,13 @@ export class Point {
         return this.x == cell.x && this.y == cell.y
     }
 
-    clone(): GridCell {
-        return new GridCell(this.x, this.y)
+    clone(): Point {
+        return new Point(this.x, this.y)
+    }
+
+    copyFrom(p: Point) {
+        this.x = p.x
+        this.y = p.y
     }
 
     subtract(p: Point) {
@@ -27,6 +34,13 @@ export class Point {
 
     squareLength() {
         return this.x * this.x + this.y * this.y
+    }
+
+    lerp(to: Point, gradient: number): Point {
+        return new Point(
+            lerp(this.x, to.x, gradient),
+            lerp(this.y, to.y, gradient)
+        )
     }
 }
 
@@ -48,6 +62,10 @@ export class GridCell extends Point {
 
     getNeighbors(): GridCellNeighbor[] {
         return GridCell.sides.map((xy, index) => new GridCellNeighbor(this.x + xy[0], this.y + xy[1], index))
+    }
+
+    static from(cell: GridCell) {
+        return new GridCell(cell.x, cell.y)
     }
 }
 

@@ -3,6 +3,8 @@ import { arena } from "../game/arena"
 import { Unit } from "../game/unit"
 import { getImageByName, getImageForStack } from "./image"
 import { UnitStack } from "../game/unit-stack"
+import { RangedAttackAnimation } from "../game/animation"
+import { drawProjectile } from "./animation"
 
 export const canvas = document.getElementById("canvas") as HTMLCanvasElement
 export const context = canvas.getContext("2d") as CanvasRenderingContext2D
@@ -259,4 +261,11 @@ export function drawCursor() {
 export function drawUnits() {
     arena.stacks.filter(u => !u.isAlive).forEach(drawUnit)
     arena.stacks.filter(u => u.isAlive).forEach(drawUnit)
+}
+
+export function drawAnimations() {
+    if (!arena.animation) return
+    if (arena.animation instanceof RangedAttackAnimation) {
+        drawProjectile(arena.animation as RangedAttackAnimation)
+    }
 }

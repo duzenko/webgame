@@ -1,4 +1,4 @@
-import { canvas, checkSize, context, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell, drawBackground, cursorPosition, drawCursor, drawUnits, cellToScreen } from "./graphics/canvas"
+import { canvas, checkSize, context, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell, drawBackground, cursorPosition, drawCursor, drawUnits, cellToScreen, drawAnimations } from "./graphics/canvas"
 import { arena } from "./game/arena";
 import { Point } from "./util/classes"
 import { VSyncAnimation } from "./game/animation";
@@ -31,6 +31,7 @@ function drawAll() {
     drawMoveableCells()
     drawGrid()
     drawUnits()
+    drawAnimations()
     for (let debugLine of debugLines) {
         context.beginPath()
         context.moveTo(debugLine.p1.x, debugLine.p1.y)
@@ -76,11 +77,12 @@ function onMouseDown(ev: MouseEvent) {
     }
     if (arena.unitCanMoveTo(arena.activeStack, arena.selectedCell)) {
         arena.moveActiveUnit()
+        return
     }
 }
 
 function onKeyDown(ev: KeyboardEvent) {
     if (arena.animation) return
-    if (arena.activeStack.isEnemy) return
+    if (!arena.activeStack.onPlayerTeam) return
     if (ev.key == ' ') arena.endMove()
 }

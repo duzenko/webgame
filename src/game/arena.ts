@@ -1,7 +1,8 @@
 import { GridCell, GridCellNeighbor, PathCell } from "../util/classes"
 import { range } from "../util/functions"
 import { setHintText, toGameLog } from "../util/log"
-import { AbstractAnimation, UnitMoveAnimation } from "./animation"
+import { AbstractAnimation, RangedAttackAnimation } from "./animation"
+import { UnitMoveAnimation } from "./stepAnimation"
 import { Unit, enemyArmy, playerArmy } from "./unit"
 import { UnitStack } from "./unit-stack"
 
@@ -194,9 +195,10 @@ class Arena {
         return this.getPathForUnit(unit, destination) ?? false
     }
 
-    rangedAttack(stack: UnitStack) {
-        // TODO add animation
-        this.activeStack.attack(stack)
+    async rangedAttack(stack: UnitStack) {
+        const animation = this.animation = new RangedAttackAnimation(this.activeStack, stack)
+        await animation.promise
+        this.animation = undefined
         this.endMove()
     }
 }
