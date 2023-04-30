@@ -85,7 +85,10 @@ h2 {
     font-size: 300%;
 }
 
-h3,
+h3 {
+    font-size: 250%;
+}
+
 h4,
 h5,
 h6 {

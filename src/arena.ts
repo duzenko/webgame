@@ -39,7 +39,6 @@ function drawAll() {
 }
 
 function onMouseMove(ev: MouseEvent) {
-    console.log('mouse move')
     cursorPosition = new Point(ev.offsetX, ev.offsetY)
     const cell = screenToCell(cursorPosition)
     if (arena.isCellValid(cell)) {

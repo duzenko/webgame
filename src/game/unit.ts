@@ -71,7 +71,7 @@ export const playerArmy = [
     new UnitStack(Robber),
 ]
 export const enemyArmy = [
-    new UnitStack(Wolf, 3),
-    new UnitStack(Wolf),
+    // new UnitStack(Wolf, 3),
+    // new UnitStack(Wolf),
     new UnitStack(Wolf),
 ]

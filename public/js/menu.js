@@ -1,0 +1,1 @@
+localStorage.setItem("arena", "quick")

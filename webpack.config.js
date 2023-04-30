@@ -6,15 +6,6 @@ const config = (env, argv) => {
   return {
     entry: './src/arena.ts',
     devtool: argv.mode == 'production' ? 'source-map' : 'eval-source-map',
-    devServer: {
-      historyApiFallback: {
-        rewrites: [
-          { from: /^\/arena$/, to: '/arena.html' },
-          { from: /^\/subpage/, to: '/views/subpage.html' },
-          { from: /./, to: '/views/404.html' },
-        ],
-      },
-    },
     output: {
       path: path.resolve(__dirname, 'public'),
       filename: 'js/bundle.js',

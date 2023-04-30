@@ -92,18 +92,17 @@ class Arena {
     }
 
     endMove() {
-        if (!this.stacks.find(u => u.isAlive && !u.isEnemy)) {
-            setTimeout(() => {
-                alert('You lost! Game will restart now')
-                window.location.reload()
-            }, 99);
+        const redirect = (won: boolean) => {
+            const arenaType = localStorage.getItem("arena") ?? ''
+            const url = { 'campaign': '/campaign' }[arenaType] ?? '/'
+            window.location.href = url + `?won=${won}`
+        }
+        if (!this.stacks.find(u => u.isAlive && u.onPlayerTeam)) {
+            redirect(false)
             return
         }
-        if (!this.stacks.find(u => u.isAlive && u.isEnemy)) {
-            setTimeout(() => {
-                alert('You won! Game will restart now')
-                window.location.reload()
-            }, 99);
+        if (!this.stacks.find(u => u.isAlive && !u.onPlayerTeam)) {
+            redirect(true)
             return
         }
         this.activeStack.resetActionPoints()

@@ -5,130 +5,132 @@
     <title>Menu</title>
     <meta charset="utf-8">
     <link rel="icon" href="data:,">
-    <link rel="stylesheet" type="text/css" href="styles-basic.css" />
+    <link rel="stylesheet" type="text/css" href="/styles-basic.css" />
 </head>
 
+<style>
+    body {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background-color: black;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        margin: 0;
+    }
+
+    a:link,
+    a:visited {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .content {
+        display: flex;
+        justify-content: space-between;
+        width: 100vh;
+        height: 90vh;
+        margin: auto;
+    }
+
+    .column-1 {
+        width: 62%;
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+    }
+
+    .column-2 {
+        width: 34%;
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+    }
+
+    .block {
+        width: 100%;
+        height: 66%;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+    }
+
+    .cover {
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        width: 100%;
+        display: flex;
+    }
+
+    .disabled-cover {
+        filter: grayscale(100%);
+    }
+
+    .cover>div {
+        width: 100%;
+    }
+
+    .text {
+        width: 100%;
+        padding: 0.5em 1em;
+        background-color: #0008;
+        align-self: flex-end;
+    }
+
+    .text>h2 {
+        margin: 0.2em 0;
+    }
+
+    .to-battle {
+        height: 30%;
+        background-image: url('img/menu/Vitaliy_knight_style_of_heroes_of_might_and_magic_high_detailed_6b84fadf-0a86-4732-8baa-a9178c7c4c26.png');
+    }
+
+    .campaign {
+        height: 66%;
+        background-image: url('img/menu/Vitaliy_extraterrestrial_landscape_terrain_grass_meadow_empty_a_4b336389-62b6-41ac-abf3-920b13d0f915.png');
+    }
+
+    .single {
+        height: 48%;
+        background-image: url('img/menu/Vitaliy_knight_game_asset_isometric_photorealistic_43019a47-9b40-4ab2-82aa-759fd1a3b72d.png');
+    }
+
+    .random {
+        height: 48%;
+        background-image: url('img/menu/Vitaliy_bear_game_asset_sprite_pc_game_isometric_realistic_high_d0fc5cc1-3410-47f1-9f52-00f3e3794441.png');
+    }
+
+    .credits {
+        height: 30%;
+        background-image: url('img/menu/Vitaliy_peasant_game_character_590cf96a-43aa-4b01-9045-60c0da18407d.png');
+    }
+</style>
+
 <body>
-    <style>
-        body {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            background-color: black;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-        }
-
-        a:link,
-        a:visited {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        .content {
-            display: flex;
-            justify-content: space-between;
-            width: 90vh;
-            height: 90vh;
-            margin: auto;
-        }
-
-        .column-1 {
-            width: 66%;
-            height: 100%;
-            display: flex;
-            justify-content: space-between;
-            flex-direction: column;
-        }
-
-        .column-2 {
-            width: 30%;
-            height: 100%;
-            display: flex;
-            justify-content: space-between;
-            flex-direction: column;
-        }
-
-        .block {
-            width: 100%;
-            height: 66%;
-            display: flex;
-            justify-content: space-between;
-            flex-direction: column;
-        }
-
-        .cover {
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            width: 100%;
-            display: flex;
-        }
-
-        .disabled-cover {
-            filter: grayscale(100%);
-        }
-
-        .cover>div {
-            width: 100%;
-        }
-
-        .text {
-            width: 100%;
-            padding: 0.5em 1em;
-            background-color: #0008;
-            align-self: flex-end;
-        }
-
-        .text>h2 {
-            margin: 0.2em 0;
-        }
-
-        .to-battle {
-            height: 66%;
-            background-image: url('img/menu/Vitaliy_knight_style_of_heroes_of_might_and_magic_high_detailed_6b84fadf-0a86-4732-8baa-a9178c7c4c26.png');
-        }
-
-        .campaign {
-            height: 30%;
-            background-image: url('img/menu/Vitaliy_extraterrestrial_landscape_terrain_grass_meadow_empty_a_4b336389-62b6-41ac-abf3-920b13d0f915.png');
-        }
-
-        .single {
-            height: 48%;
-            background-image: url('img/menu/Vitaliy_knight_game_asset_isometric_photorealistic_43019a47-9b40-4ab2-82aa-759fd1a3b72d.png');
-        }
-
-        .random {
-            height: 48%;
-            background-image: url('img/menu/Vitaliy_bear_game_asset_sprite_pc_game_isometric_realistic_high_d0fc5cc1-3410-47f1-9f52-00f3e3794441.png');
-        }
-
-        .credits {
-            height: 30%;
-            background-image: url('img/menu/Vitaliy_peasant_game_character_590cf96a-43aa-4b01-9045-60c0da18407d.png');
-        }
-    </style>
     <div class="content">
         <div class="column-1">
+            <a class="campaign cover" href='campaign'>
+                <div class="text">
+                    <h2>Campaign</h2>
+                    <span>Let us march forward, steadfast in our commitment to our cause</span>
+                </div>
+            </a>
             <a class="to-battle cover" href='arena'>
                 <div class="text">
                     <h2>To Battle!</h2>
                     <span>Charge forward! Victory and glory await those who dare to seize them!</span>
                 </div>
             </a>
-            <div class="campaign cover disabled-cover">
-                <div class="text">
-                    <h2>Campaign</h2>
-                    <span>Let us march forward, steadfast in our commitment to our cause</span>
-                </div>
-            </div>
         </div>
         <div class="column-2">
             <div class="block">
@@ -153,8 +155,8 @@
             </div>
         </div>
     </div>
-
-    <script src="js/menu.js"></script>
 </body>
+
+<script src="/js/menu.js"></script>
 
 </html>
