@@ -8,74 +8,78 @@
     <link rel="stylesheet" type="text/css" href="styles-basic.css" />
 </head>
 
+<style>
+    body {
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        background-color: black;
+        color: white;
+        position: absolute;
+        font-size: 1rem;
+    }
+
+    canvas {
+        width: 100%;
+        height: 100%;
+        cursor: none;
+    }
+
+    .top {
+        width: 100%;
+        height: 2em;
+        top: 0;
+        position: absolute;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1em;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .bottom {
+        width: 100%;
+        height: 2rem;
+        bottom: 0;
+        position: absolute;
+        display: flex;
+        justify-content: right;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .bottom>span {
+        padding-right: 1em;
+        flex-shrink: 0;
+    }
+
+    #logN {
+        color: lightgray;
+    }
+
+    a:link,
+    a:visited {
+        color: inherit;
+        text-decoration: none;
+    }
+</style>
+
 <body class="cursor-default">
-    <style>
-        body {
-            margin: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            background-color: black;
-            color: white;
-            position: absolute;
-            font-size: 1.2em;
-        }
-
-        canvas {
-            width: 100vw;
-            height: 90vh;
-            cursor: none;
-        }
-
-        .top {
-            width: 100%;
-            height: 5vh;
-            top: 0;
-            position: absolute;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 1em;
-        }
-
-        .bottom {
-            width: 100%;
-            height: 5vh;
-            bottom: 0;
-            position: absolute;
-            display: flex;
-            justify-content: right;
-            align-items: center;
-        }
-
-        .bottom>span {
-            padding-right: 1em;
-            flex-shrink: 0;
-        }
-
-        #logN {
-            color: gray;
-        }
-
-        a:link,
-        a:visited {
-            color: inherit;
-            text-decoration: none;
-        }
-    </style>
+    <canvas id="canvas"></canvas>
     <div class="top">
         <a href='.'>☰</a>
         <span id="hint" class="hint">Hint: hover mouse over cells to preview unit path, click to move</span>
         <a></a>
     </div>
-    <canvas id="canvas"></canvas>
     <div class="bottom">
         <span id="logN"></span>
         <span id="log"></span>
     </div>
-    <script src="js/bundle.js"></script>
 </body>
+
+<script src="js/bundle.js"></script>
 
 </html>

@@ -49,7 +49,7 @@ export function checkSize() {
     const height = Math.round(canvas.clientHeight)
     if (canvas.width != width || canvas.height != height) {
         let xScale = width / (arena.columns.length + 3) / Math.sin(Math.PI / 3)
-        let yScale = height / (arena.rows.length + 2) / 1.5
+        let yScale = height / (arena.rows.length + 3) / 1.5
         if (yScale < xScale) { // dynamic aspect ratio
             xScale = Math.min(yScale / 0.7, xScale)
             isometricAspect = yScale / xScale
@@ -64,7 +64,7 @@ export function checkSize() {
         cellRadius = arenaZoom
         cellStepX = cellRadius * Math.sin(Math.PI / 3)
         cellStepY = cellRadius * 1.5 * isometricAspect
-        gridCenterY = height * 0.59
+        gridCenterY = height * 0.6
     }
 }
 

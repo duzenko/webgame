@@ -9,16 +9,13 @@ export function toGameLog(msg: string) {
 }
 
 function setText(msg: string) {
-    if (log.textContent?.length) {
-        lastMessages.push(log.textContent)
-        if (lastMessages.length > 5) {
-            lastMessages.shift()
-        }
-        logN.textContent = lastMessages.join(`\u00A0`.repeat(3))
+    lastMessages.push(msg)
+    if (lastMessages.length > 5) {
+        lastMessages.shift()
     }
-    log.textContent = msg
+    logN.textContent = lastMessages.join(`\u00A0`.repeat(3))
 }
 
 export function setHintText(msg: string) {
-    hint.textContent = msg
+    log.textContent = msg
 }
