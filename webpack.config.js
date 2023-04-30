@@ -4,7 +4,7 @@ const path = require('path');
 
 const config = (env, argv) => {
   return {
-    entry: './src/index.ts',
+    entry: './src/arena.ts',
     devtool: argv.mode == 'production' ? 'source-map' : 'eval-source-map',
     devServer: {
       historyApiFallback: {

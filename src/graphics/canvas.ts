@@ -3,10 +3,7 @@ import { arena } from "../game/arena"
 import { getImageByName, getImageForProjectile, getImageForStack } from "./image"
 import { UnitStack } from "../game/unit-stack"
 import { RangedAttackAnimation } from "../game/animation"
-
-export const canvas = document.getElementById("canvas") as HTMLCanvasElement
-export const context = canvas.getContext("2d") as CanvasRenderingContext2D
-export const cursorPosition = new Point(NaN, NaN)
+import { canvas, context, cursorPosition } from "../arena"
 
 let cellRadius: number
 let cellStepX: number
@@ -231,6 +228,7 @@ export function drawBackground() {
 }
 
 export function drawCursor() {
+    if (!cursorPosition) return
     let cursorImage = 'not-allowed'
     const animationTick = Math.round(new Date().getTime() / 200)
     if (arena.animation || !arena.activeStack.onPlayerTeam) {

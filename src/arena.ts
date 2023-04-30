@@ -1,15 +1,19 @@
-import { canvas, checkSize, context, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell, drawBackground, cursorPosition, drawCursor, drawUnits, cellToScreen, drawAnimations } from "./graphics/canvas"
+import { checkSize, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell, drawBackground, drawCursor, drawUnits, cellToScreen, drawAnimations } from "./graphics/canvas"
 import { arena } from "./game/arena";
-import { Point } from "./util/classes"
 import { VSyncAnimation } from "./game/animation";
+import { Point } from "./util/classes";
 
-export let debugLines: { color: string, p1: Point, p2: Point }[] = [];
+export const canvas = document.getElementById("canvas") as HTMLCanvasElement
+export const context = canvas.getContext("2d") as CanvasRenderingContext2D
 const powerSavingMode = false // notebooks on battery
+export let cursorPosition: Point | undefined
 
 canvas.addEventListener('mousemove', onMouseMove, false)
 canvas.addEventListener('mousedown', onMouseDown, false)
 window.addEventListener('keydown', onKeyDown, false)
 window.addEventListener('resize', present, false)
+canvas.addEventListener('mouseenter', onMouseEnter, false)
+canvas.addEventListener('mouseleave', onMouseLeave, false)
 if (powerSavingMode) {
     window.setInterval(present, 100)
 } else {
@@ -32,20 +36,12 @@ function drawAll() {
     drawGrid()
     drawUnits()
     drawAnimations()
-    for (let debugLine of debugLines) {
-        context.beginPath()
-        context.moveTo(debugLine.p1.x, debugLine.p1.y)
-        context.lineTo(debugLine.p2.x, debugLine.p2.y)
-        context.closePath()
-        context.stroke()
-    }
     drawCursor()
-    debugLines = []
 }
 
 function onMouseMove(ev: MouseEvent) {
-    cursorPosition.x = ev.offsetX
-    cursorPosition.y = ev.offsetY
+    console.log('mouse move')
+    cursorPosition = new Point(ev.offsetX, ev.offsetY)
     const cell = screenToCell(cursorPosition)
     if (arena.isCellValid(cell)) {
         arena.selectedCell = cell
@@ -85,4 +81,13 @@ function onKeyDown(ev: KeyboardEvent) {
     if (arena.animation) return
     if (!arena.activeStack.onPlayerTeam) return
     if (ev.key == ' ') arena.endMove()
+}
+
+function onMouseEnter(ev: MouseEvent) {
+    console.log('mouse enter')
+}
+
+function onMouseLeave(ev: MouseEvent) {
+    console.log('mouse leave')
+    cursorPosition = undefined
 }
