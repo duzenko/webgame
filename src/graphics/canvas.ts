@@ -13,16 +13,17 @@ let cellStepX: number
 let cellStepY: number
 let isometricAspect: number
 let arenaZoom: number
+let gridCenterY: number
 
 export function cellToScreen(cell: GridCell): Point {
     const x = canvas.width / 2 + cell.x * cellStepX
-    const y = canvas.height / 2 - cell.y * cellRadius * 1.5 * isometricAspect
+    const y = gridCenterY - cell.y * cellRadius * 1.5 * isometricAspect
     return new Point(x, y)
 }
 
 export function screenToCell(p: Point): GridCell {
     let x0 = Math.floor((p.x - canvas.width / 2) / cellStepX)
-    let y0 = Math.floor((canvas.height / 2 - p.y) / cellStepY)
+    let y0 = Math.floor((gridCenterY - p.y) / cellStepY)
     const corners = [
         new GridCell(x0, y0),
         new GridCell(x0 + 1, y0),
@@ -48,7 +49,7 @@ export function checkSize() {
     const height = Math.round(canvas.clientHeight)
     if (canvas.width != width || canvas.height != height) {
         let xScale = width / (arena.columns.length + 3) / Math.sin(Math.PI / 3)
-        let yScale = height / (arena.rows.length + 1) / 1.5
+        let yScale = height / (arena.rows.length + 2) / 1.5
         if (yScale < xScale) { // dynamic aspect ratio
             xScale = Math.min(yScale / 0.7, xScale)
             isometricAspect = yScale / xScale
@@ -63,6 +64,7 @@ export function checkSize() {
         cellRadius = arenaZoom
         cellStepX = cellRadius * Math.sin(Math.PI / 3)
         cellStepY = cellRadius * 1.5 * isometricAspect
+        gridCenterY = height * 0.59
     }
 }
 
@@ -217,17 +219,14 @@ export function drawGrid() {
 }
 
 export function drawBackground() {
-    const backgroundImage = getImageByName('field/green-terrain.jpg')
+    const backgroundImage = getImageByName('field/green-terrain-v2.jpg')
     context.fillStyle = "black"
+    context.fillRect(0, 0, canvas.width, canvas.height)
     if (backgroundImage) {
-        const p = cellToScreen(new GridCell(arena.columns.first(), arena.rows.last()))
+        const p = cellToScreen(new GridCell(arena.columns.first(), arena.rows.first()))
         const w = (canvas.width / 2 - p.x) * 1.6
-        const h = (canvas.height / 2 - p.y) * 1.3
+        const h = (p.y - canvas.height / 2) * 1.25
         context.drawImage(backgroundImage, canvas.width / 2 - w, canvas.height / 2 - h, 2 * w, 2 * h)
-        context.fillRect(0, 0, canvas.width, canvas.height / 2 - h)
-        context.fillRect(0, canvas.height / 2 + h, canvas.width, canvas.height / 2 - h)
-    } else {
-        context.fillRect(0, 0, canvas.width, canvas.height)
     }
 }
 

@@ -8,7 +8,7 @@ import { UnitStack } from "./unit-stack"
 
 class Arena {
     columns = range(-9, 9)
-    rows = range(-4, 4)
+    rows = range(-3, 3)
     stacks = [...playerArmy, ...enemyArmy]
     selectedCell?: GridCell
     selectedCellSide?: GridCellNeighbor
