@@ -12,7 +12,6 @@ canvas.addEventListener('mousemove', onMouseMove, false)
 canvas.addEventListener('mousedown', onMouseDown, false)
 window.addEventListener('keydown', onKeyDown, false)
 window.addEventListener('resize', present, false)
-canvas.addEventListener('mouseenter', onMouseEnter, false)
 canvas.addEventListener('mouseleave', onMouseLeave, false)
 if (powerSavingMode) {
     window.setInterval(present, 100)
@@ -83,11 +82,6 @@ function onKeyDown(ev: KeyboardEvent) {
     if (ev.key == ' ') arena.endMove()
 }
 
-function onMouseEnter(ev: MouseEvent) {
-    console.log('mouse enter')
-}
-
 function onMouseLeave(ev: MouseEvent) {
-    console.log('mouse leave')
     cursorPosition = undefined
 }

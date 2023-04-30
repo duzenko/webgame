@@ -157,7 +157,7 @@ class Arena {
             lastBatch = nextBatch
         }
         if (stack.type.rangedAttack) {
-            cells.push(...this.stacks.filter(s => s != stack && !cells.some(cs => cs.isSameAs(s.position))).map(s => new PathCell(s.position, 0)))
+            cells.push(...this.stacks.filter(s => s.isAlive && s != stack && !cells.some(cs => cs.isSameAs(s.position))).map(s => new PathCell(s.position, 0)))
         }
         return cells
     }
