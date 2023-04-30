@@ -91,7 +91,7 @@ export class RangedAttackAnimation extends VSyncAnimation {
     projectile: Projectile
 
     constructor(public attacker: UnitStack, public defender: UnitStack) {
-        super(900)
+        super(defender.position.distanceTo(attacker.position) * 99)
         this.position = GridCell.from(attacker.position)
         this.projectile = new this.attacker.type.rangedAttack!()
     }

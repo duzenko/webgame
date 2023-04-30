@@ -6,10 +6,6 @@ export class Point {
         this.y = y
     }
 
-    squareDistanceTo(p: Point): number {
-        return (this.x - p.x) * (this.x - p.x) * 3 / 4 + (this.y - p.y) * (this.y - p.y) * 9 / 4
-    }
-
     isSameAs(cell: Point): boolean {
         return this.x == cell.x && this.y == cell.y
     }
@@ -42,6 +38,10 @@ export class Point {
             lerp(this.y, to.y, gradient)
         )
     }
+
+    squareDistanceTo(p: Point): any {
+        return (this.x - p.x) * (this.x - p.x) + (this.y - p.y) * (this.y - p.y)
+    }
 }
 
 export class GridCell extends Point {
@@ -49,6 +49,14 @@ export class GridCell extends Point {
 
     get isValid(): boolean {
         return (this.x & 1) == (this.y & 1)
+    }
+
+    squareDistanceTo(cell: GridCell): number {
+        return (this.x - cell.x) * (this.x - cell.x) * 3 / 4 + (this.y - cell.y) * (this.y - cell.y) * 9 / 4
+    }
+
+    distanceTo(cell: GridCell): number {
+        return Math.sqrt(this.squareDistanceTo(cell))
     }
 
     isInRange(rangeX: number[], rangeY: number[]): boolean {
