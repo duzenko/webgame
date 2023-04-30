@@ -105,7 +105,7 @@ export function drawUnit(stack: UnitStack) {
             if (!stack.isAlive) {
                 context.globalAlpha = 0.7
             }
-            if (!stack.onPlayerTeam) {
+            if (stack.xMirrored) {
                 context.scale(-1, 1)
                 context.drawImage(image, -center.x + width / 2, center.y + cellRadius - height, -width, height)
             } else

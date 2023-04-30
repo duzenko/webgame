@@ -52,16 +52,17 @@ export class SmoothMoveAnimation extends VSyncAnimation {
     to: GridCell
     static readonly cellMoveTime = 300
 
-    constructor(private unit: UnitStack, from: GridCell, to: GridCell) {
+    constructor(private stack: UnitStack, from: GridCell, to: GridCell) {
         super(SmoothMoveAnimation.cellMoveTime)
-        this.unit = unit
+        this.stack = stack
         this.from = from
         this.to = to
+        stack.xMirrored = to.x < from.x
     }
 
     frame(timeElapsed: number): void {
         const alpha = timeElapsed / SmoothMoveAnimation.cellMoveTime
-        this.unit.position = new GridCell(lerp(this.from.x, this.to.x, alpha), lerp(this.from.y, this.to.y, alpha))
+        this.stack.position = new GridCell(lerp(this.from.x, this.to.x, alpha), lerp(this.from.y, this.to.y, alpha))
     }
 }
 
@@ -73,6 +74,7 @@ export class MeleeAttackAnimation extends VSyncAnimation {
         super(600)
         this.savedAttacker = attacker.position.clone()
         this.savedDefender = defender.position.clone()
+        attacker.xMirrored = defender.position.x < attacker.position.x
     }
 
     frame(timeElapsed: number): void {
@@ -94,6 +96,7 @@ export class RangedAttackAnimation extends VSyncAnimation {
         super(defender.position.distanceTo(attacker.position) * 99)
         this.position = GridCell.from(attacker.position)
         this.projectile = new this.attacker.type.rangedAttack!()
+        attacker.xMirrored = defender.position.x < attacker.position.x
     }
 
     frame(timeElapsed: number): void {

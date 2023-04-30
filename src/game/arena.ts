@@ -20,7 +20,10 @@ class Arena {
 
     constructor() {
         toGameLog('Battle has started!')
-        this.stacks.forEach((us) => us.onPlayerTeam = playerArmy.includes(us))
+        this.stacks.forEach((us) => {
+            us.onPlayerTeam = playerArmy.includes(us)
+            us.xMirrored = !us.onPlayerTeam
+        })
         this.stacks.forEach((us) => this.setDefaultPosition(us))
         this.stacks.sort((a, b) => {
             const r = b.type.speed - a.type.speed
@@ -39,7 +42,6 @@ class Arena {
             if (!this.isCellValid(stack.position)) {
                 stack.position.x -= Math.sign(stack.position.x)
             }
-            // if (stack.name == 'Swordsman') stack.position = new GridCell(1, -1)
             return
         }
         const possibleCells = mates.map(us => us.position.getNeighbors().filter(cell => {

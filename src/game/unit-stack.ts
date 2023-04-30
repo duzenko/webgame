@@ -7,6 +7,7 @@ export class UnitStack {
     actionPoints = 0
     position = new GridCell(NaN, NaN)
     onPlayerTeam = false
+    xMirrored = false // looking left instead of right
     health: number
 
     constructor(unitType: new () => Unit, public qty: number = 1) {
