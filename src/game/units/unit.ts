@@ -25,4 +25,3 @@ export class Wolf extends Unit {
     imageName = 'wolf'
 }
 knownUnits['Wolf'] = Wolf
-console.log(knownUnits)

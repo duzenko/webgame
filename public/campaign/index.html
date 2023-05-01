@@ -19,7 +19,7 @@
         flex-direction: column;
         justify-content: space-around;
         margin: 0;
-        background-color: rgba(0,0,0,0.6);
+        background-color: rgba(0, 0, 0, 0.6);
         background-image: url('/img/menu/campaing_bg.jpg');
         background-blend-mode: multiply;
         background-size: cover;
@@ -51,6 +51,7 @@
         margin: 10vh 0;
         text-align: center;
     }
+
     .column-1 {
         width: 43%;
         height: 100%;
@@ -79,7 +80,7 @@
     .picture {
         height: 100%;
         background-image: url('/img/menu/campaing_cover.jpg');
-        box-shadow: 0px 0px 57px rgba(0,0,0, 0.3);
+        box-shadow: 0px 0px 57px rgba(0, 0, 0, 0.3);
     }
 
     .buttons {
@@ -90,18 +91,19 @@
         margin-right: 1em;
     }
 
-    a.button{
+    a.button {
         border: 1px solid white;
         padding: 15px 30px 10px 30px;
-    box-shadow: 1px 1px 5px black;
+        box-shadow: 1px 1px 5px black;
 
     }
-        a.button:hover{
+
+    a.button:hover {
         text-decoration: none;
         text-shadow: 0 0 3px yellow;
-    box-shadow: nonek;
+        box-shadow: nonek;
 
-    border: 1px solid #FEF04F;
+        border: 1px solid #FEF04F;
         color: #FEF04F;
 
     }
@@ -110,7 +112,9 @@
 <body>
     <div class="content">
         <div class="column-0">
-            <a href='/'><h2>☰</h2></a>
+            <a href='/'>
+                <h2>☰</h2>
+            </a>
         </div>
         <div class="column-1">
             <div class="picture cover">
@@ -138,21 +142,16 @@
                 </p>
             </div>
             <div class="buttons">
-         
-                <a  class="button" href="/arena">
+
+                <a class="button" href="/arena">
                     <h2>To Battle!</h2>
                 </a>
             </div>
         </div>
     </div>
 </body>
-<!--
-    
-       <a href="/">
-                    <h2>
-                        < To Menu</h2>
-                </a>
--->
+
+<script src="/js/bundle.js"></script>
 <script src="/js/campaign.js"></script>
 
 </html>

@@ -1,24 +1,27 @@
-import { checkSize, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, drawUnit, screenToCell, drawBackground, drawCursor, drawUnits, cellToScreen, drawAnimations } from "./graphics/canvas"
+import { checkSize, drawGrid, drawMoveableCells, drawPossiblePath, screenToCell, drawBackground, drawCursor, drawUnits, cellToScreen, drawAnimations } from "./graphics/canvas"
 import { arena } from "./game/arena";
 import { VSyncAnimation } from "./game/animation";
 import { Point } from "./util/classes";
 import { hideModal, showModal } from "./util/modal";
 
-export const canvas = document.getElementById("canvas") as HTMLCanvasElement
-export const context = canvas.getContext("2d") as CanvasRenderingContext2D
+export let canvas: HTMLCanvasElement
+export let context: CanvasRenderingContext2D
 const powerSavingMode = false // notebooks on battery
 export let cursorPosition: Point | undefined
 
-canvas.addEventListener('mousemove', onMouseMove, false)
-canvas.addEventListener('mousedown', onMouseDown, false)
-window.addEventListener('keydown', onKeyDown, false)
-window.addEventListener('resize', present, false)
-canvas.addEventListener('mouseleave', onMouseLeave, false)
-
-loadArena()
+canvas = document.getElementById("canvas") as HTMLCanvasElement
+if (canvas) {
+    loadArena()
+}
 
 async function loadArena() {
     showModal('Loading...')
+    context = canvas.getContext("2d") as CanvasRenderingContext2D
+    canvas.addEventListener('mousemove', onMouseMove, false)
+    canvas.addEventListener('mousedown', onMouseDown, false)
+    window.addEventListener('keydown', onKeyDown, false)
+    window.addEventListener('resize', present, false)
+    canvas.addEventListener('mouseleave', onMouseLeave, false)
     await arena.load()
     if (powerSavingMode) {
         window.setInterval(present, 100)

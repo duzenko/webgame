@@ -1,1 +1,1 @@
-localStorage.setItem("arena", "quick")
+setCampaignMode(false)

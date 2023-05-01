@@ -3,9 +3,11 @@ import { range } from "../util/functions"
 import { setHintText, toGameLog } from "../util/log"
 import { showModal, showModalOk } from "../util/modal"
 import { IArmiesModel } from "../web-models/armies"
+import { getCurrentMission, isInCampaign, processCampaignGame } from "../util/campaign"
 import { AbstractAnimation, RangedAttackAnimation } from "./animation"
 import { UnitMoveAnimation } from "./stepAnimation"
 import { UnitStack } from "./unit-stack"
+import { storage } from "../util/storage"
 
 class Arena {
     columns = range(-9, 9)
@@ -22,7 +24,13 @@ class Arena {
     constructor() { }
 
     async load() {
-        const response = await fetch('/data/campaign/first-farm/army.json')
+        if (isInCampaign()) {
+            const mission = await getCurrentMission()
+            storage.setMission(mission.name)
+            var response = await fetch(`/data/campaign/${mission.name}/army.json`)
+        } else {
+            var response = await fetch('/data/campaign/first-farm/army.json')
+        }
         const armies = await response.json() as IArmiesModel
         for (const model of [...armies.player, ...armies.enemy]) {
             const stack = UnitStack.from(model)
@@ -68,10 +76,10 @@ class Arena {
     }
 
     nextMove() {
-        if (this.activeStack.isEnemy) {
-            this.makeEnemyMove()
-        } else {
+        if (this.activeStack.onPlayerTeam) {
             setHintText(`${this.activeStack.name}'s move`)
+        } else {
+            this.makeEnemyMove()
         }
     }
 
@@ -101,9 +109,10 @@ class Arena {
     endMove() {
         const redirect = async (won: boolean) => {
             await showModalOk(won ? 'You won!' : 'You lost!')
-            const arenaType = localStorage.getItem("arena") ?? ''
-            const url = { 'campaign': '/campaign' }[arenaType] ?? '/'
-            window.location.href = url + `?won=${won}`
+            if (isInCampaign()) {
+                processCampaignGame(won)
+            } else
+                window.location.href = '/'
         }
         if (!this.stacks.find(u => u.isAlive && u.onPlayerTeam)) {
             redirect(false)

@@ -3,7 +3,7 @@ const modalText = document.getElementById("modalText") as HTMLParagraphElement
 const modalClose = document.getElementById("modalClose") as HTMLSpanElement
 let promiseResolve: ((value: unknown) => void) | undefined
 
-export function showModal(message: string) {
+export function showModal(message: string = 'Loading...') {
     promiseResolve = undefined
     modal.style.display = "block"
     modalText.textContent = message
@@ -20,7 +20,9 @@ export async function showModalOk(message: string) {
     await new Promise(r => promiseResolve = r)
 }
 
-modalClose.onclick = function () {
-    hideModal()
-    promiseResolve?.call(undefined, undefined)
+if (modalClose) {
+    modalClose.onclick = function () {
+        hideModal()
+        promiseResolve?.call(undefined, undefined)
+    }
 }
