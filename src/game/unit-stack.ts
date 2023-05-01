@@ -1,6 +1,8 @@
 import { GridCell } from "../util/classes";
 import { toGameLog } from "../util/log";
-import { Unit } from "./unit";
+import { IStackModel } from "../web-models/armies";
+import { Unit, knownUnits } from "./units/unit";
+import "./units/humans"
 
 export class UnitStack {
     type: Unit
@@ -9,6 +11,11 @@ export class UnitStack {
     onPlayerTeam = false
     xMirrored = false // looking left instead of right
     health: number
+
+    static from(stack: IStackModel): UnitStack {
+        const unitType = knownUnits[stack.unit]
+        return new UnitStack(unitType, stack.qty ?? 1)
+    }
 
     constructor(unitType: new () => Unit, public qty: number = 1) {
         this.type = new unitType()
@@ -62,6 +69,5 @@ export class UnitStack {
                 toGameLog(`${this.name}s killed: ${killed}. The troop is killed.`)
             }
         }
-
     }
 }

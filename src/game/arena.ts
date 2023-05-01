@@ -1,15 +1,15 @@
 import { GridCell, GridCellNeighbor, PathCell } from "../util/classes"
 import { range } from "../util/functions"
 import { setHintText, toGameLog } from "../util/log"
+import { IArmiesModel } from "../web-models/armies"
 import { AbstractAnimation, RangedAttackAnimation } from "./animation"
 import { UnitMoveAnimation } from "./stepAnimation"
-import { Unit, enemyArmy, playerArmy } from "./unit"
 import { UnitStack } from "./unit-stack"
 
 class Arena {
     columns = range(-9, 9)
     rows = range(-3, 3)
-    stacks = [...playerArmy, ...enemyArmy]
+    stacks: UnitStack[] = []
     selectedCell?: GridCell
     selectedCellSide?: GridCellNeighbor
     animation?: AbstractAnimation
@@ -18,20 +18,26 @@ class Arena {
         return this.stacks.first()
     }
 
-    constructor() {
-        toGameLog('Battle has started!')
-        this.stacks.forEach((us) => {
-            us.onPlayerTeam = playerArmy.includes(us)
-            us.xMirrored = !us.onPlayerTeam
-        })
+    constructor() { }
+
+    async load() {
+        const response = await fetch('/data/campaign/first-farm/army.json')
+        const armies = await response.json() as IArmiesModel
+        for (const model of [...armies.player, ...armies.enemy]) {
+            const stack = UnitStack.from(model)
+            stack.onPlayerTeam = armies.player.includes(model)
+            stack.xMirrored = !stack.onPlayerTeam
+            this.stacks.push(stack)
+        }
         this.stacks.forEach((us) => this.setDefaultPosition(us))
         this.stacks.sort((a, b) => {
             const r = b.type.speed - a.type.speed
             if (r) return r
             return a.position.y - b.position.y
         })
-        setTimeout(() => this.nextMove())
         this.stacks.forEach(u => u.resetActionPoints())
+        toGameLog('Battle has started!')
+        this.nextMove()
     }
 
     setDefaultPosition(stack: UnitStack) {

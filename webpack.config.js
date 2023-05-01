@@ -4,7 +4,7 @@ const path = require('path');
 
 const config = (env, argv) => {
   return {
-    entry: './src/arena.ts',
+    entry: './src/index.ts',
     devtool: argv.mode == 'production' ? 'source-map' : 'eval-source-map',
     output: {
       path: path.resolve(__dirname, 'public'),

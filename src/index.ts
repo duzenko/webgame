@@ -2,6 +2,7 @@ import { checkSize, drawGrid, fillHexagon, drawMoveableCells, drawPossiblePath, 
 import { arena } from "./game/arena";
 import { VSyncAnimation } from "./game/animation";
 import { Point } from "./util/classes";
+import { hideModal, showModal } from "./util/modal";
 
 export const canvas = document.getElementById("canvas") as HTMLCanvasElement
 export const context = canvas.getContext("2d") as CanvasRenderingContext2D
@@ -13,10 +14,19 @@ canvas.addEventListener('mousedown', onMouseDown, false)
 window.addEventListener('keydown', onKeyDown, false)
 window.addEventListener('resize', present, false)
 canvas.addEventListener('mouseleave', onMouseLeave, false)
-if (powerSavingMode) {
-    window.setInterval(present, 100)
-} else {
-    window.requestAnimationFrame(present)
+
+loadArena()
+
+async function loadArena() {
+    showModal()
+    await arena.load()
+    await new Promise(r => setTimeout(r, 2000));
+    if (powerSavingMode) {
+        window.setInterval(present, 100)
+    } else {
+        window.requestAnimationFrame(present)
+    }
+    hideModal()
 }
 
 function present() {
