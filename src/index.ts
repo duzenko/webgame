@@ -18,9 +18,8 @@ canvas.addEventListener('mouseleave', onMouseLeave, false)
 loadArena()
 
 async function loadArena() {
-    showModal()
+    showModal('Loading...')
     await arena.load()
-    await new Promise(r => setTimeout(r, 2000));
     if (powerSavingMode) {
         window.setInterval(present, 100)
     } else {

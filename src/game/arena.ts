@@ -1,6 +1,7 @@
 import { GridCell, GridCellNeighbor, PathCell } from "../util/classes"
 import { range } from "../util/functions"
 import { setHintText, toGameLog } from "../util/log"
+import { showModal, showModalOk } from "../util/modal"
 import { IArmiesModel } from "../web-models/armies"
 import { AbstractAnimation, RangedAttackAnimation } from "./animation"
 import { UnitMoveAnimation } from "./stepAnimation"
@@ -98,7 +99,8 @@ class Arena {
     }
 
     endMove() {
-        const redirect = (won: boolean) => {
+        const redirect = async (won: boolean) => {
+            await showModalOk(won ? 'You won!' : 'You lost!')
             const arenaType = localStorage.getItem("arena") ?? ''
             const url = { 'campaign': '/campaign' }[arenaType] ?? '/'
             window.location.href = url + `?won=${won}`
