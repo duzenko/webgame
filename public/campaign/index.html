@@ -20,7 +20,7 @@
         justify-content: space-around;
         margin: 0;
         background-color: rgba(0, 0, 0, 0.6);
-        background-image: url('/img/menu/campaing_bg.jpg');
+        background-image: url('/img/campaign/mission-1/campaing_bg.jpg');
         background-blend-mode: multiply;
         background-size: cover;
     }
@@ -79,7 +79,7 @@
 
     .picture {
         height: 100%;
-        background-image: url('/img/menu/campaing_cover.jpg');
+        background-image: url('/img/campaign/mission-1/campaing_cover.jpg');
         box-shadow: 0px 0px 57px rgba(0, 0, 0, 0.3);
     }
 
@@ -121,28 +121,10 @@
             </div>
         </div>
         <div class="column-2">
-            <h1>A New Start )</h1>
-            <div>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                    labore et
-                    dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                    commodo
-                    consequat. Duis
-                    aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                </p>
-                <p>Quam quisque id diam vel quam elementum pulvinar etiam non. Interdum velit laoreet id donec
-                    ultrices
-                    tincidunt. Vel
-                    facilisis volutpat est velit egestas. Egestas congue quisque egestas diam in arcu cursus. Sodales ut
-                    eu
-                    sem integer
-                    vitae justo eget magna. Diam in arcu cursus euismod quis viverra. Eu facilisis sed odio morbi quis
-                    commodo odio.
-                </p>
+            <h1 id="title"></h1>
+            <div id="story">
             </div>
             <div class="buttons">
-
                 <a class="button" href="/arena">
                     <h2>To Battle!</h2>
                 </a>
@@ -152,6 +134,8 @@
 </body>
 
 <script src="/js/bundle.js"></script>
-<script src="/js/campaign.js"></script>
+<script>
+    loadCampaignPage()
+</script>
 
 </html>

@@ -1,11 +1,14 @@
 [
     {
-        "name": "first-farm"
+        "name": "first-farm",
+        "title": "Sloppy Start"
     },
     {
-        "name": "second-server"
+        "name": "second-server",
+        "title": "Disastrous Development"
     },
     {
-        "name": "third-theory"
+        "name": "third-theory",
+        "title": "Frightening Final"
     }
 ]

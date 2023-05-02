@@ -26,7 +26,6 @@ class Arena {
     async load() {
         if (isInCampaign()) {
             const mission = await getCurrentMission()
-            storage.setMission(mission.name)
             var response = await fetch(`/data/campaign/${mission.name}/army.json`)
         } else {
             var response = await fetch('/data/campaign/first-farm/army.json')

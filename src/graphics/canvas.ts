@@ -3,7 +3,7 @@ import { arena } from "../game/arena"
 import { getImageByName, getImageForProjectile, getImageForStack } from "./image"
 import { UnitStack } from "../game/unit-stack"
 import { RangedAttackAnimation } from "../game/animation"
-import { canvas, context, cursorPosition } from ".."
+import { canvas, context, cursorPosition } from "../pages/arena"
 
 let cellRadius: number
 let cellStepX: number

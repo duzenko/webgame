@@ -42,6 +42,3 @@ export async function processCampaignGame(won: boolean) {
 export function setCampaignMode(on: boolean) {
     localStorage.setItem("gameType", on ? 'campaign' : '')
 }
-
-const _global = (window /* browser */ || global /* node */) as any
-_global.setCampaignMode = setCampaignMode
