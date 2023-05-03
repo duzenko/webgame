@@ -33,7 +33,10 @@ class GameImages {
 
     allLoaded(): Promise<void> {
         return new Promise(resolve => {
-            this.doneCallback = resolve
+            if (this.loadingImages.size)
+                this.doneCallback = resolve
+            else
+                resolve()
         })
     }
 }
