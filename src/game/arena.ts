@@ -44,6 +44,9 @@ class Arena {
             return a.position.y - b.position.y
         })
         this.stacks.forEach(u => u.resetActionPoints())
+    }
+
+    start() {
         toGameLog('Battle has started!')
         this.nextMove()
     }

@@ -3,6 +3,7 @@ import { arena } from "../game/arena";
 import { VSyncAnimation } from "../game/animation";
 import { Point } from "../util/classes";
 import { hideModal, showModal } from "../util/modal";
+import { gameImages } from "../graphics/image";
 
 export let canvas: HTMLCanvasElement
 export let context: CanvasRenderingContext2D
@@ -28,7 +29,11 @@ async function loadArena() {
     } else {
         window.requestAnimationFrame(present)
     }
-    hideModal()
+    setTimeout(async () => {
+        await gameImages.allLoaded()
+        hideModal()
+        arena.start()
+    }, 99)
 }
 
 function present() {

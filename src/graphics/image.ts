@@ -1,25 +1,42 @@
 import { Projectile } from "../game/projectile";
 import { UnitStack } from "../game/unit-stack";
 
-const loadingImages = new Map(), loadedImages = new Map()
 
-export function getImageByName(imageName: string): ImageBitmap | undefined {
-    if (loadedImages.has(imageName)) return loadedImages.get(imageName)
-    if (loadingImages.has(imageName)) return undefined
-    const image = new Image()
-    image.src = '/img/' + imageName
-    image.onload = () => {
-        loadingImages.delete(imageName)
-        loadedImages.set(imageName, image)
+class GameImages {
+    loadingImages = new Map()
+    loadedImages = new Map()
+    private doneCallback: (() => void) | undefined
+
+    getByName(imageName: string): ImageBitmap | undefined {
+        if (this.loadedImages.has(imageName)) return this.loadedImages.get(imageName)
+        if (this.loadingImages.has(imageName)) return undefined
+        const image = new Image()
+        image.src = '/img/' + imageName
+        image.onload = () => {
+            this.loadingImages.delete(imageName)
+            this.loadedImages.set(imageName, image)
+            if (!this.loadingImages.size) {
+                this.doneCallback?.()
+            }
+        }
+        this.loadingImages.set(imageName, image)
+        return undefined
     }
-    loadingImages.set(imageName, image)
-    return undefined
+
+    getForStack(stack: UnitStack): ImageBitmap | undefined {
+        return this.getByName(`unit/${stack.type.imageName}${stack.isAlive ? '' : '-dead'}.png`)
+    }
+
+    getForProjectile(projectile: Projectile): ImageBitmap | undefined {
+        return this.getByName(`projectile/${projectile.imageName}.png`)
+    }
+
+    allLoaded(): Promise<void> {
+        return new Promise(resolve => {
+            this.doneCallback = resolve
+        })
+    }
 }
 
-export function getImageForStack(stack: UnitStack): ImageBitmap | undefined {
-    return getImageByName(`unit/${stack.type.imageName}${stack.isAlive ? '' : '-dead'}.png`)
-}
+export const gameImages = new GameImages()
 
-export function getImageForProjectile(projectile: Projectile): ImageBitmap | undefined {
-    return getImageByName(`projectile/${projectile.imageName}.png`)
-}

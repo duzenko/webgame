@@ -1,9 +1,9 @@
 import { Point, GridCell } from "../util/classes"
 import { arena } from "../game/arena"
-import { getImageByName, getImageForProjectile, getImageForStack } from "./image"
 import { UnitStack } from "../game/unit-stack"
 import { RangedAttackAnimation } from "../game/animation"
 import { canvas, context, cursorPosition } from "../pages/arena"
+import { gameImages } from "./image"
 
 let cellRadius: number
 let cellStepX: number
@@ -97,7 +97,7 @@ export function drawUnit(stack: UnitStack) {
             context.strokeStyle = 'rgba(232,253,1, 0.5)'
             strokeHexagon(arena.activeStack.position, 0.9)
         }
-        const image = getImageForStack(stack)
+        const image = gameImages.getForStack(stack)
         if (image) {
             const imageScale = 2 * cellStepX / image.width
             const width = image.width * imageScale
@@ -216,7 +216,7 @@ export function drawGrid() {
 }
 
 export function drawBackground() {
-    const backgroundImage = getImageByName('field/green-terrain-v2.jpg')
+    const backgroundImage = gameImages.getByName('field/green-terrain-v2.jpg')
     context.fillStyle = "black"
     context.fillRect(0, 0, canvas.width, canvas.height)
     if (backgroundImage) {
@@ -248,7 +248,7 @@ export function drawCursor() {
             }
         }
     }
-    const image = getImageByName(`cursors/${cursorImage}.png`)
+    const image = gameImages.getByName(`cursors/${cursorImage}.png`)
     if (!image) return
     context.drawImage(image, cursorPosition.x - image.width / 2, cursorPosition.y - image.height / 2)
 }
@@ -266,7 +266,7 @@ export function drawAnimations() {
 }
 
 export function drawProjectile(animation: RangedAttackAnimation) {
-    const image = getImageForProjectile(animation.projectile)
+    const image = gameImages.getForProjectile(animation.projectile)
     if (!image) return
     const p = cellToScreen(animation.position)
     context.drawImage(image, p.x, p.y)
