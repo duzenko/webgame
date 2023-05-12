@@ -5,7 +5,7 @@ import { showModalOk } from "../util/modal"
 import { IArmiesModel } from "../web-models/armies"
 import { getCurrentMission, isInCampaign, processCampaignGame } from "../util/campaign"
 import { AbstractAnimation } from "./animation"
-import { RangedAttackAnimation, UnitMoveAnimation } from "./stepAnimation"
+import { RangedAttackAnimation, UnitMoveAnimation } from "./complex-animation"
 import { UnitStack } from "./unit-stack"
 import { ArenaObject } from "./projectile"
 
@@ -13,7 +13,6 @@ class Arena {
     columns = range(-9, 9)
     rows = range(-3, 3)
     stacks: UnitStack[] = []
-    otherObjects: ArenaObject[] = []
     selectedCell?: GridCell
     selectedCellSide?: GridCellNeighbor
     animation?: AbstractAnimation

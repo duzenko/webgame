@@ -4,23 +4,23 @@ import { ArenaObject } from "./projectile";
 import { UnitStack } from "./unit-stack";
 
 export abstract class AbstractAnimation {
-    duration: number // in msec or steps
     protected resolve!: (value: void) => void
     readonly promise = new Promise((resolve) => this.resolve = resolve)
 
-    constructor(length: number) {
-        this.duration = length
+    constructor() {
     }
 
     onFinish() { }
 }
 
 export abstract class VSyncAnimation extends AbstractAnimation {
-    private static list: VSyncAnimation[] = []
+    static list: VSyncAnimation[] = []
     startTime = new Date()
+    duration: number // in msec or steps
 
     constructor(length: number) {
-        super(length)
+        super()
+        this.duration = length
         VSyncAnimation.list.push(this)
     }
 
@@ -50,7 +50,7 @@ export abstract class VSyncAnimation extends AbstractAnimation {
 export class SmoothMoveAnimation extends VSyncAnimation {
     from: GridCell
 
-    constructor(private object: ArenaObject, private to: GridCell) {
+    constructor(public object: ArenaObject, private to: GridCell) {
         super(144 * to.distanceTo(object.position))
         this.from = object.position.clone()
         this.to = to

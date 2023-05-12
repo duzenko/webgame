@@ -3,8 +3,9 @@ import { arena } from "../game/arena"
 import { UnitStack } from "../game/unit-stack"
 import { canvas, context, cursorPosition } from "../pages/arena"
 import { gameImages } from "./image"
-import { RangedAttackAnimation } from "../game/stepAnimation"
+import { RangedAttackAnimation } from "../game/complex-animation"
 import { Projectile } from "../game/projectile"
+import { SmoothMoveAnimation, VSyncAnimation } from "../game/animation"
 
 let cellRadius: number
 let cellStepX: number
@@ -260,10 +261,9 @@ export function drawUnits() {
 }
 
 export function drawAnimations() {
-    if (!arena.animation) return
-    for (const object of arena.otherObjects)
-        if (object instanceof Projectile) {
-            drawProjectile(object)
+    for (const animation of VSyncAnimation.list)
+        if (animation instanceof SmoothMoveAnimation && animation.object instanceof Projectile) {
+            drawProjectile(animation.object)
         }
 }
 
