@@ -1,4 +1,11 @@
-export abstract class Projectile {
+import { GridCell } from "../util/classes"
+
+export class ArenaObject {
+    position = new GridCell(NaN, NaN)
+    xMirrored = false // looking left instead of right
+}
+
+export abstract class Projectile extends ArenaObject {
     imageName!: string
 }
 

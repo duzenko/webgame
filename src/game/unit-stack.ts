@@ -3,13 +3,12 @@ import { toGameLog } from "../util/log";
 import { IStackModel } from "../web-models/armies";
 import { Unit, knownUnits } from "./units/unit";
 import "./units/humans"
+import { ArenaObject } from "./projectile";
 
-export class UnitStack {
+export class UnitStack extends ArenaObject {
     type: Unit
     actionPoints = 0
-    position = new GridCell(NaN, NaN)
     onPlayerTeam = false
-    xMirrored = false // looking left instead of right
     health: number
 
     static from(stack: IStackModel): UnitStack {
@@ -18,6 +17,7 @@ export class UnitStack {
     }
 
     constructor(unitType: new () => Unit, public qty: number = 1) {
+        super()
         this.type = new unitType()
         this.qty = qty
         this.health = this.type.health

@@ -1,6 +1,7 @@
 import { GridCell } from "../util/classes";
-import { AbstractAnimation, MeleeAttackAnimation, SmoothMoveAnimation } from "./animation";
+import { AbstractAnimation, MeleeAttackAnimation, SmoothMoveAnimation, UnitBounceAnimation } from "./animation";
 import { arena } from "./arena";
+import { Projectile } from "./projectile";
 import { UnitStack } from "./unit-stack";
 
 export abstract class StepAnimation extends AbstractAnimation {
@@ -19,6 +20,7 @@ export abstract class StepAnimation extends AbstractAnimation {
         } finally {
             this.onFinish()
         }
+        this.resolve()
     }
 }
 
@@ -37,7 +39,7 @@ export class UnitMoveAnimation extends StepAnimation {
         this.destination = destination
     }
 
-    async doStep(stepNo: number): Promise<void> {
+    async doStep(stepNo: number) {
         this.unit.actionPoints--
         const lastStep = stepNo == this.path.length
         if (lastStep) {
@@ -48,10 +50,10 @@ export class UnitMoveAnimation extends StepAnimation {
                 }
                 await this.meleeAttack(enemy)
             } else {
-                await this.smoothMove(this.unit.position, this.destination, true)
+                await this.smoothMove(this.destination, true)
             }
         } else {
-            await this.smoothMove(this.unit.position, this.path[stepNo], false)
+            await this.smoothMove(this.path[stepNo], false)
         }
     }
 
@@ -63,11 +65,64 @@ export class UnitMoveAnimation extends StepAnimation {
         arena.animationEnded()
     }
 
-    async smoothMove(from: GridCell, to: GridCell, lastStep: boolean) {
-        const animation = new SmoothMoveAnimation(this.unit, from, to)
+    async smoothMove(to: GridCell, lastStep: boolean) {
+        const animation = new SmoothMoveAnimation(this.unit, to)
         await animation.promise
         if (lastStep) {
             arena.animationEnded()
         }
     }
 }
+
+export class RangedAttackAnimation extends StepAnimation {
+    position: GridCell
+    direction: GridCell
+
+    constructor(public attacker: UnitStack, public defender: UnitStack) {
+        super(3)
+        this.position = attacker.position.clone()
+        attacker.xMirrored = defender.position.x < attacker.position.x
+        this.direction = this.defender.position.subtract(this.attacker.position).normalize()
+    }
+
+    async doStep(stepNo: number) {
+        switch (stepNo) {
+            case 0: return await this.shoot()
+            case 1: return await this.project()
+            case 2: return await this.hit()
+            default: throw Error('RangedAttackAnimation.doStep')
+        }
+    }
+
+    async shoot() {
+        const direction = this.defender.position.subtract(this.attacker.position).normalize()
+        const animation = new UnitBounceAnimation(this.attacker, direction)
+        await animation.promise
+    }
+
+    async project() {
+        const projectile = new this.attacker.type.rangedAttack!()
+        projectile.position = this.attacker.position.clone()
+        arena.otherObjects.push(projectile)
+        const animation = new SmoothMoveAnimation(projectile, this.defender.position)
+        await animation.promise
+        delete arena.otherObjects[arena.otherObjects.indexOf(projectile)]
+    }
+
+    async hit() {
+        const direction = this.defender.position.subtract(this.attacker.position).normalize()
+        const animation = new UnitBounceAnimation(this.defender, direction)
+        await animation.promise
+    }
+
+    frame(timeElapsed: number): void {
+        const p = this.attacker.position.lerp(this.defender.position, timeElapsed / this.duration)
+        this.position = p.as(GridCell)
+    }
+
+    onFinish(): void {
+        this.attacker.attack(this.defender)
+        super.onFinish()
+    }
+}
+

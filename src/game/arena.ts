@@ -1,18 +1,19 @@
 import { GridCell, GridCellNeighbor, PathCell } from "../util/classes"
 import { range } from "../util/functions"
 import { setHintText, toGameLog } from "../util/log"
-import { showModal, showModalOk } from "../util/modal"
+import { showModalOk } from "../util/modal"
 import { IArmiesModel } from "../web-models/armies"
 import { getCurrentMission, isInCampaign, processCampaignGame } from "../util/campaign"
-import { AbstractAnimation, RangedAttackAnimation } from "./animation"
-import { UnitMoveAnimation } from "./stepAnimation"
+import { AbstractAnimation } from "./animation"
+import { RangedAttackAnimation, UnitMoveAnimation } from "./stepAnimation"
 import { UnitStack } from "./unit-stack"
-import { storage } from "../util/storage"
+import { ArenaObject } from "./projectile"
 
 class Arena {
     columns = range(-9, 9)
     rows = range(-3, 3)
     stacks: UnitStack[] = []
+    otherObjects: ArenaObject[] = []
     selectedCell?: GridCell
     selectedCellSide?: GridCellNeighbor
     animation?: AbstractAnimation

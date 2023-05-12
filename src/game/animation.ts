@@ -1,10 +1,12 @@
 import { GridCell, Point } from "../util/classes";
 import { lerp } from "../util/functions";
-import { Projectile } from "./projectile";
+import { ArenaObject } from "./projectile";
 import { UnitStack } from "./unit-stack";
 
 export abstract class AbstractAnimation {
-    duration: number // in msec
+    duration: number // in msec or steps
+    protected resolve!: (value: void) => void
+    readonly promise = new Promise((resolve) => this.resolve = resolve)
 
     constructor(length: number) {
         this.duration = length
@@ -16,8 +18,6 @@ export abstract class AbstractAnimation {
 export abstract class VSyncAnimation extends AbstractAnimation {
     private static list: VSyncAnimation[] = []
     startTime = new Date()
-    protected resolve!: (value: void) => void
-    promise = new Promise((resolve) => this.resolve = resolve)
 
     constructor(length: number) {
         super(length)
@@ -49,20 +49,17 @@ export abstract class VSyncAnimation extends AbstractAnimation {
 
 export class SmoothMoveAnimation extends VSyncAnimation {
     from: GridCell
-    to: GridCell
-    static readonly cellMoveTime = 300
 
-    constructor(private stack: UnitStack, from: GridCell, to: GridCell) {
-        super(SmoothMoveAnimation.cellMoveTime)
-        this.stack = stack
-        this.from = from
+    constructor(private object: ArenaObject, private to: GridCell) {
+        super(144 * to.distanceTo(object.position))
+        this.from = object.position.clone()
         this.to = to
-        stack.xMirrored = to.x < from.x
+        object.xMirrored = to.x < this.from.x
     }
 
     frame(timeElapsed: number): void {
-        const alpha = timeElapsed / SmoothMoveAnimation.cellMoveTime
-        this.stack.position = new GridCell(lerp(this.from.x, this.to.x, alpha), lerp(this.from.y, this.to.y, alpha))
+        const alpha = timeElapsed / this.duration
+        this.object.position = this.from.lerp(this.to, alpha).as(GridCell)
     }
 }
 
@@ -83,29 +80,25 @@ export class MeleeAttackAnimation extends VSyncAnimation {
         const epsilon = 1e-11
         const phase1 = Math.max(0, Math.sin(timeElapsed / (this.duration - lag) * Math.PI) - epsilon) * bumpLength * 2
         const phase2 = -Math.max(0, Math.sin((timeElapsed - lag) / (this.duration - lag) * Math.PI) - epsilon) * bumpLength
-        this.attacker.position.copyFrom(this.savedAttacker.lerp(this.savedDefender, phase1))
-        this.defender.position.copyFrom(this.savedDefender.lerp(this.savedAttacker, phase2))
+        this.attacker.position = this.savedAttacker.lerp(this.savedDefender, phase1).as(GridCell)
+        this.defender.position = this.savedDefender.lerp(this.savedAttacker, phase2).as(GridCell)
     }
 }
 
-export class RangedAttackAnimation extends VSyncAnimation {
-    position: GridCell
-    projectile: Projectile
+export class UnitBounceAnimation extends VSyncAnimation {
+    savedPosition: Point
+    targetPostiopn: Point
 
-    constructor(public attacker: UnitStack, public defender: UnitStack) {
-        super(defender.position.distanceTo(attacker.position) * 99)
-        this.position = GridCell.from(attacker.position)
-        this.projectile = new this.attacker.type.rangedAttack!()
-        attacker.xMirrored = defender.position.x < attacker.position.x
+    constructor(private stack: UnitStack, direction: Point) {
+        super(444);
+        this.savedPosition = stack.position.clone()
+        this.targetPostiopn = this.savedPosition.add2(direction)
     }
 
     frame(timeElapsed: number): void {
-        const p = this.attacker.position.lerp(this.defender.position, timeElapsed / this.duration)
-        this.position.copyFrom(p)
-    }
-
-    onFinish(): void {
-        this.attacker.attack(this.defender)
-        super.onFinish()
+        const bumpLength = 0.2
+        const epsilon = 1e-11
+        const phase = Math.max(0, Math.sin(timeElapsed / this.duration * Math.PI) - epsilon)
+        this.stack.position = this.savedPosition.lerp(this.targetPostiopn, phase * bumpLength * 2).as(GridCell)
     }
 }

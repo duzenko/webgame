@@ -12,6 +12,15 @@
     "enemy": [
         {
             "unit": "Wolf"
+        },
+        {
+            "unit": "Wolf"
+        },
+        {
+            "unit": "Wolf"
+        },
+        {
+            "unit": "Wolf"
         }
     ]
 }

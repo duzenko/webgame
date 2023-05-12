@@ -1,9 +1,10 @@
 import { Point, GridCell } from "../util/classes"
 import { arena } from "../game/arena"
 import { UnitStack } from "../game/unit-stack"
-import { RangedAttackAnimation } from "../game/animation"
 import { canvas, context, cursorPosition } from "../pages/arena"
 import { gameImages } from "./image"
+import { RangedAttackAnimation } from "../game/stepAnimation"
+import { Projectile } from "../game/projectile"
 
 let cellRadius: number
 let cellStepX: number
@@ -260,14 +261,15 @@ export function drawUnits() {
 
 export function drawAnimations() {
     if (!arena.animation) return
-    if (arena.animation instanceof RangedAttackAnimation) {
-        drawProjectile(arena.animation as RangedAttackAnimation)
-    }
+    for (const object of arena.otherObjects)
+        if (object instanceof Projectile) {
+            drawProjectile(object)
+        }
 }
 
-export function drawProjectile(animation: RangedAttackAnimation) {
-    const image = gameImages.getForProjectile(animation.projectile)
+export function drawProjectile(projectile: Projectile) {
+    const image = gameImages.getForProjectile(projectile)
     if (!image) return
-    const p = cellToScreen(animation.position)
+    const p = cellToScreen(projectile.position)
     context.drawImage(image, p.x, p.y)
 }

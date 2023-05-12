@@ -14,10 +14,13 @@ export class Point {
         return new Point(this.x, this.y)
     }
 
-    copyFrom(p: Point) {
-        this.x = p.x
-        this.y = p.y
+    add1(p: Point): Point {
+        return new Point(this.x + p.x, this.y + p.y)
     }
+
+    add2 = (p: Point) => new Point(this.x + p.x, this.y + p.y)
+
+    // add3(p: Point) => new Point(this.x + p.x, this.y + p.y)
 
     subtract(p: Point) {
         return new GridCell(this.x - p.x, this.y - p.y)
@@ -32,11 +35,15 @@ export class Point {
         return this.x * this.x + this.y * this.y
     }
 
-    lerp(to: Point, gradient: number): Point {
+    lerp(to: Point, gradient: number) {
         return new Point(
             lerp(this.x, to.x, gradient),
             lerp(this.y, to.y, gradient)
         )
+    }
+
+    as<T extends Point>(type: new (x: number, y: number) => T) {
+        return new type(this.x, this.y)
     }
 
     squareDistanceTo(p: Point): any {
@@ -72,8 +79,8 @@ export class GridCell extends Point {
         return GridCell.sides.map((xy, index) => new GridCellNeighbor(this.x + xy[0], this.y + xy[1], index))
     }
 
-    static from(cell: GridCell) {
-        return new GridCell(cell.x, cell.y)
+    clone(): GridCell {
+        return new GridCell(this.x, this.y)
     }
 }
 
