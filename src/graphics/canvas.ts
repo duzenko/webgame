@@ -238,7 +238,7 @@ export function drawCursor() {
     } else {
         if (arena.selectedCell) {
             if (arena.selectedStack && arena.activeStack.type.rangedAttack && arena.selectedStack != arena.activeStack)
-                cursorImage = 'attack'
+                cursorImage = `ranged-${animationTick % 3 + 1}`
             else if (arena.unitCanMoveTo(arena.activeStack, arena.selectedCell)) {
                 if (arena.getStackInCell(arena.selectedCell)) {
                     if (arena.selectedCellSide)
@@ -250,7 +250,7 @@ export function drawCursor() {
             }
         }
     }
-    const image = gameImages.getByName(`cursors/${cursorImage}.png`)
+    const image = gameImages.getByName(`cursor/${cursorImage}.png`)
     if (!image) return
     context.drawImage(image, cursorPosition.x - image.width / 2, cursorPosition.y - image.height / 2)
 }

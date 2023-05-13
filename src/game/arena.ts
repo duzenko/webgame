@@ -28,7 +28,7 @@ class Arena {
             const mission = await getCurrentMission()
             var response = await fetch(`/data/campaign/${mission.name}/army.json`)
         } else {
-            var response = await fetch('/data/campaign/first-farm/army.json')
+            var response = await fetch('/data/quick/army.json')
         }
         const armies = await response.json() as IArmiesModel
         for (const model of [...armies.player, ...armies.enemy]) {

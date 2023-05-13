@@ -1,0 +1,22 @@
+{
+    "player": [
+        {
+            "unit": "Archer",
+            "qty": 9
+        },
+        {
+            "unit": "Wolf"
+        }
+    ],
+    "enemy": [
+        {
+            "unit": "Wolf"
+        },
+        {
+            "unit": "Wolf"
+        },
+        {
+            "unit": "Wolf"
+        }
+    ]
+}
