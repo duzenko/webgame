@@ -5,6 +5,10 @@ import { Unit, knownUnits } from "./units/unit";
 import "./units/humans"
 import { ArenaObject } from "./projectile";
 
+export class StackDamageStats {
+    constructor(public damage: number, public killed: number) { }
+}
+
 export class UnitStack extends ArenaObject {
     type: Unit
     actionPoints = 0
@@ -35,27 +39,21 @@ export class UnitStack extends ArenaObject {
         return this.qty > 0
     }
 
-    /**
-     * @deprecated use onPlayerTeam instead
-     */
-    get isEnemy() {
-        return !this.onPlayerTeam
-    }
-
     get name() {
         return this.type.name
     }
 
-    attack(enemy: UnitStack) {
+    attack(enemy: UnitStack): StackDamageStats {
         this.actionPoints = 0
         const damage = this.type.damage * this.qty
         toGameLog(`${this.name} deals ${damage} damage to ${enemy.name}`)
-        enemy.receiveDamage(damage)
+        return enemy.receiveDamage(damage)
     }
 
-    receiveDamage(damage: number) {
+    receiveDamage(damage: number): StackDamageStats {
         if (damage < this.health) {
             this.health -= damage
+            return new StackDamageStats(damage, 0)
         } else {
             const totalHealth = (this.qty - 1) * this.type.health + this.health - damage
             let killed = this.qty
@@ -68,6 +66,7 @@ export class UnitStack extends ArenaObject {
                 this.qty = 0
                 toGameLog(`${this.name}s killed: ${killed}. The troop is killed.`)
             }
+            return new StackDamageStats(damage, killed)
         }
     }
 }

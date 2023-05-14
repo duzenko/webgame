@@ -1,7 +1,7 @@
 import { GridCell } from "../util/classes";
-import { AbstractAnimation, SmoothMoveAnimation, UnitBounceAnimation } from "./animation";
+import { AbstractAnimation, DamageStatsAnimation, SmoothMoveAnimation, UnitBounceAnimation } from "./animation";
 import { arena } from "./arena";
-import { UnitStack } from "./unit-stack";
+import { StackDamageStats, UnitStack } from "./unit-stack";
 
 export abstract class ComplexAnimation extends AbstractAnimation {
     constructor() {
@@ -53,7 +53,8 @@ export class UnitMoveAnimation extends ComplexAnimation {
 
     async meleeAttack(target: UnitStack) {
         this.unit.actionPoints = 0
-        this.unit.attack(target)
+        const stats = this.unit.attack(target)
+        new DamageStatsAnimation(target, stats)
         const direction = target.position.subtract(this.unit.position)
         new UnitBounceAnimation(this.unit, direction)
         await new Promise<void>((resolve) => {
@@ -86,7 +87,8 @@ export class RangedAttackAnimation extends ComplexAnimation {
     async run() {
         await this.shoot()
         await this.project()
-        this.attacker.attack(this.defender)
+        const stats = this.attacker.attack(this.defender)
+        new DamageStatsAnimation(this.defender, stats)
         await this.hit()
     }
 

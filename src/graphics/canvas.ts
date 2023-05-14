@@ -5,7 +5,7 @@ import { canvas, context, cursorPosition } from "../pages/arena"
 import { gameImages } from "./image"
 import { RangedAttackAnimation } from "../game/complex-animation"
 import { Projectile } from "../game/projectile"
-import { SmoothMoveAnimation, VSyncAnimation } from "../game/animation"
+import { DamageStatsAnimation, SmoothMoveAnimation, VSyncAnimation } from "../game/animation"
 
 let cellRadius: number
 let cellStepX: number
@@ -261,15 +261,40 @@ export function drawUnits() {
 }
 
 export function drawAnimations() {
-    for (const animation of VSyncAnimation.list)
+    for (const animation of VSyncAnimation.list) {
         if (animation instanceof SmoothMoveAnimation && animation.object instanceof Projectile) {
             drawProjectile(animation.object)
         }
+        if (animation instanceof DamageStatsAnimation) {
+            drawDamageStats(animation)
+        }
+    }
 }
 
-export function drawProjectile(projectile: Projectile) {
+function drawProjectile(projectile: Projectile) {
     const image = gameImages.getForProjectile(projectile)
     if (!image) return
     const p = cellToScreen(projectile.position)
     context.drawImage(image, p.x, p.y)
+}
+
+function drawDamageStats(animation: DamageStatsAnimation) {
+    let { x, y } = cellToScreen(animation.stack.position)
+    y -= 1 * cellRadius
+    context.save()
+    try {
+        context.globalAlpha = animation.opacity
+        const fontSize = Math.round(cellRadius * isometricAspect * 0.5)
+        context.font = `${fontSize}px Artifika`
+
+        context.fillStyle = 'gold'
+        if (animation.stats.killed) {
+            context.fillText(animation.stats.damage.toString(), x - fontSize * 1.1, y + fontSize * 1 - animation.shift)
+            context.fillStyle = 'red'
+            context.fillText(animation.stats.killed.toString(), x + fontSize * 0.5, y + fontSize * 1.5 - animation.shift)
+        } else
+            context.fillText(animation.stats.damage.toString(), x, y - fontSize * 3 - animation.shift)
+    } finally {
+        context.restore()
+    }
 }

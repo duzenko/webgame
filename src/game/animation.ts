@@ -1,7 +1,7 @@
 import { GridCell, Point } from "../util/classes";
 import { lerp } from "../util/functions";
 import { ArenaObject } from "./projectile";
-import { UnitStack } from "./unit-stack";
+import { StackDamageStats, UnitStack } from "./unit-stack";
 
 export abstract class AbstractAnimation {
     protected resolve!: (value: void) => void
@@ -78,5 +78,19 @@ export class UnitBounceAnimation extends VSyncAnimation {
         const epsilon = 1e-11
         const phase = Math.max(0, Math.sin(timeElapsed / this.duration * Math.PI) - epsilon)
         this.stack.position = this.savedPosition.lerp(this.targetPostiopn, phase * this.scale * 2).as(GridCell)
+    }
+}
+
+export class DamageStatsAnimation extends VSyncAnimation {
+    shift = 0
+    opacity = 1
+
+    constructor(public stack: UnitStack, public stats: StackDamageStats) {
+        super(3333)
+    }
+
+    frame(timeElapsed: number): void {
+        this.shift = timeElapsed * 3e-2
+        this.opacity = 3 - 3 * timeElapsed / this.duration
     }
 }
