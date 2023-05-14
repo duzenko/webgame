@@ -1,8 +1,7 @@
 {
     "player": [
         {
-            "unit": "Archer",
-            "qty": 9
+            "unit": "Archer"
         },
         {
             "unit": "Wolf"

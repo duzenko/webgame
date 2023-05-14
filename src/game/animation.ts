@@ -51,7 +51,7 @@ export class SmoothMoveAnimation extends VSyncAnimation {
     from: GridCell
 
     constructor(public object: ArenaObject, private to: GridCell) {
-        super(144 * to.distanceTo(object.position))
+        super(object.animationSpeedInverse * to.distanceTo(object.position))
         this.from = object.position.clone()
         this.to = to
         object.xMirrored = to.x < this.from.x
@@ -63,31 +63,10 @@ export class SmoothMoveAnimation extends VSyncAnimation {
     }
 }
 
-export class MeleeAttackAnimation extends VSyncAnimation {
-    savedAttacker: Point
-    savedDefender: Point
-
-    constructor(private attacker: UnitStack, private defender: UnitStack) {
-        super(600)
-        this.savedAttacker = attacker.position.clone()
-        this.savedDefender = defender.position.clone()
-        attacker.xMirrored = defender.position.x < attacker.position.x
-    }
-
-    frame(timeElapsed: number): void {
-        const lag = 200
-        const bumpLength = 0.2
-        const epsilon = 1e-11
-        const phase1 = Math.max(0, Math.sin(timeElapsed / (this.duration - lag) * Math.PI) - epsilon) * bumpLength * 2
-        const phase2 = -Math.max(0, Math.sin((timeElapsed - lag) / (this.duration - lag) * Math.PI) - epsilon) * bumpLength
-        this.attacker.position = this.savedAttacker.lerp(this.savedDefender, phase1).as(GridCell)
-        this.defender.position = this.savedDefender.lerp(this.savedAttacker, phase2).as(GridCell)
-    }
-}
-
 export class UnitBounceAnimation extends VSyncAnimation {
     savedPosition: Point
     targetPostiopn: Point
+    scale = 0.2
 
     constructor(private stack: UnitStack, direction: Point) {
         super(444);
@@ -96,9 +75,8 @@ export class UnitBounceAnimation extends VSyncAnimation {
     }
 
     frame(timeElapsed: number): void {
-        const bumpLength = 0.2
         const epsilon = 1e-11
         const phase = Math.max(0, Math.sin(timeElapsed / this.duration * Math.PI) - epsilon)
-        this.stack.position = this.savedPosition.lerp(this.targetPostiopn, phase * bumpLength * 2).as(GridCell)
+        this.stack.position = this.savedPosition.lerp(this.targetPostiopn, phase * this.scale * 2).as(GridCell)
     }
 }

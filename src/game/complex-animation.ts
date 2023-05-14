@@ -1,5 +1,5 @@
 import { GridCell } from "../util/classes";
-import { AbstractAnimation, MeleeAttackAnimation, SmoothMoveAnimation, UnitBounceAnimation } from "./animation";
+import { AbstractAnimation, SmoothMoveAnimation, UnitBounceAnimation } from "./animation";
 import { arena } from "./arena";
 import { UnitStack } from "./unit-stack";
 
@@ -54,8 +54,16 @@ export class UnitMoveAnimation extends ComplexAnimation {
     async meleeAttack(target: UnitStack) {
         this.unit.actionPoints = 0
         this.unit.attack(target)
-        const animation = new MeleeAttackAnimation(this.unit, target)
-        await animation.promise
+        const direction = target.position.subtract(this.unit.position)
+        new UnitBounceAnimation(this.unit, direction)
+        await new Promise<void>((resolve) => {
+            setTimeout(async () => {
+                const defenderBounce = new UnitBounceAnimation(target, direction)
+                defenderBounce.scale *= 0.3
+                await defenderBounce.promise
+                resolve()
+            }, 222)
+        })
     }
 
     async smoothMove(to: GridCell) {
@@ -98,6 +106,7 @@ export class RangedAttackAnimation extends ComplexAnimation {
     async hit() {
         const direction = this.defender.position.subtract(this.attacker.position).normalize()
         const animation = new UnitBounceAnimation(this.defender, direction)
+        animation.scale *= 0.3
         await animation.promise
     }
 }
