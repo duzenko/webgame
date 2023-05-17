@@ -43,5 +43,8 @@ export class Swordsman extends Unit {
     imageName = 'swordsman'
     health = 35
     speed = 3
+    attack = 10
+    defence = 16
+    damage = 4.5
 }
 knownUnits['Swordsman'] = Swordsman

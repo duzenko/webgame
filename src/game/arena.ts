@@ -62,9 +62,9 @@ class Arena {
             return
         }
         const possibleCells = mates.map(us => us.position.getNeighbors().filter(cell => {
-            return this.isCellValid(cell) && !this.getStackInCell(cell)
-        })).flat().sort((a, b) => a.x - b.x)
-        stack.position = stack.onPlayerTeam ? possibleCells.first() : possibleCells.last()
+            return this.isCellValid(cell) && !this.getStackInCell(cell) && !this.isCellValid(cell.getNeighbor(stack.onPlayerTeam ? 3 : 0))
+        })).flat().sort((a, b) => Math.abs(a.y) - Math.abs(b.y))
+        stack.position = possibleCells.first()
     }
 
     canOccupyCell(stack: UnitStack, cell: GridCell): boolean {

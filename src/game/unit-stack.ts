@@ -40,13 +40,15 @@ export class UnitStack extends ArenaObject {
     }
 
     get name() {
-        return this.type.name
+        return this.qty > 1 ? this.type.plural : this.type.name
     }
 
     attack(enemy: UnitStack): StackDamageStats {
         this.actionPoints = 0
-        const damage = this.type.damage * this.qty
-        toGameLog(`${this.name} deals ${damage} damage to ${enemy.name}`)
+        let damageModifier = 1
+        damageModifier += (this.type.attack - enemy.type.defence) * 0.05
+        const damage = Math.round(this.type.damage * this.qty * damageModifier)
+        toGameLog(`${this.name} ${this.qty > 1 ? 'deal' : 'deals'} ${damage} damage to ${enemy.name}`)
         return enemy.receiveDamage(damage)
     }
 

@@ -1,0 +1,26 @@
+{
+    "player": [
+        {
+            "unit": "Swordsman"
+        },
+        {
+            "unit": "Peasant",
+            "qty": 5
+        },
+        {
+            "unit": "Peasant",
+            "qty": 5
+        }
+    ],
+    "enemy": [
+        {
+            "unit": "Wolf"
+        },
+        {
+            "unit": "Wolf"
+        },
+        {
+            "unit": "Wolf"
+        }
+    ]
+}

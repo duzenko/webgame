@@ -4,14 +4,16 @@ import { UnitStack } from "../unit-stack"
 export abstract class Unit {
     speed = 2
     health = 1
+    attack = 1
+    defence = 1
+    damage = 1
     name = 'none'
     imageName = 'none'
     rangedAttack?: new () => Projectile
 
-    constructor() { }
-
-    get damage(): number {
-        return Math.ceil(this.health / 3)
+    get plural() {
+        if (this.name.endsWith('f')) return this.name.replace(/.$/, "ves")
+        return this.name + 's'
     }
 }
 
@@ -23,5 +25,8 @@ export class Wolf extends Unit {
     name = 'Wolf'
     health = 24
     imageName = 'wolf'
+    attack = 10
+    defence = 6
+    damage = 4.5
 }
 knownUnits['Wolf'] = Wolf

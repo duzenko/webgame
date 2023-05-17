@@ -5,6 +5,11 @@
             "label": "dev-server",
             "type": "shell",
             "command": "npm run serve",
+        },
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "npm run build",
         }
     ]
 }
