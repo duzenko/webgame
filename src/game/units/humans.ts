@@ -27,6 +27,9 @@ export class Robber extends Unit {
     name = 'Robber'
     imageName = 'villain'
     health = 20
+    attack = 10
+    defence = 6
+    damage = 3
 }
 knownUnits['Robber'] = Robber
 
@@ -35,6 +38,9 @@ export class Archer extends Unit {
     imageName = 'ladyarcher'
     health = 34
     rangedAttack = ArrowProjectile
+    attack = 16
+    defence = 10
+    damage = 3.5
 }
 knownUnits['Archer'] = Archer
 

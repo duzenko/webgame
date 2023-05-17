@@ -1,4 +1,4 @@
-import { GridCell, GridCellNeighbor, PathCell } from "../util/classes"
+import { GridCell, PathCell } from "../util/classes"
 import { range } from "../util/functions"
 import { setHintText, toGameLog } from "../util/log"
 import { showModalOk } from "../util/modal"
@@ -7,14 +7,12 @@ import { getCurrentMission, isInCampaign, processCampaignGame } from "../util/ca
 import { AbstractAnimation } from "./animation"
 import { RangedAttackAnimation, UnitMoveAnimation } from "./complex-animation"
 import { UnitStack } from "./unit-stack"
-import { ArenaObject } from "./projectile"
+import { Enemy } from "./enemy"
 
 class Arena {
     columns = range(-9, 9)
     rows = range(-3, 3)
     stacks: UnitStack[] = []
-    selectedCell?: GridCell
-    selectedCellSide?: GridCellNeighbor
     animation?: AbstractAnimation
 
     get activeStack() {
@@ -73,39 +71,22 @@ class Arena {
         return stackInCell == stack
     }
 
-    get canActiveOccupySelected() {
-        return this.canOccupyCell(this.activeStack, this.selectedCell!)
-    }
-
-    nextMove() {
+    private nextMove() {
         if (this.activeStack.onPlayerTeam) {
             setHintText(`${this.activeStack.name}'s move`)
         } else {
-            this.makeEnemyMove()
+            this.animation = Enemy.turn()
+            this.waitAnimation()
         }
     }
 
-    makeEnemyMove() {
-        if (!this.activeStack.isAlive) {
+    async waitAnimation() {
+        if (this.animation)
+            await this.animation.promise
+        this.animation = undefined
+        if (!arena.activeStack.actionPoints || !arena.activeStack.onPlayerTeam) {
             this.endMove()
-            return
         }
-        const target = this.stacks.find(u => u.onPlayerTeam && u.isAlive)
-        if (!target) {
-            this.endMove()
-            return
-        }
-        const path = this.getPathForUnit(this.activeStack, target.position)
-        if (!path) {
-            toGameLog(`${this.activeStack.name} can't get to enemy`)
-            this.endMove()
-            return
-        }
-        let destination = target!.position
-        while (this.activeStack.actionPoints < path.length + 1) {
-            destination = path.pop()!
-        }
-        this.animation = UnitMoveAnimation.create(this.activeStack, destination)
     }
 
     endMove() {
@@ -131,28 +112,11 @@ class Arena {
         setTimeout(() => this.nextMove())
     }
 
-    animationEnded() {
-        arena.animation = undefined
-        if (!arena.activeStack.actionPoints || !arena.activeStack.onPlayerTeam) {
-            arena.endMove()
-        }
-    }
-
-    moveActiveUnit() {
-        if (this.getStackInCell(this.selectedCell!))
-            this.animation = UnitMoveAnimation.create(this.activeStack, this.selectedCell!, this.selectedCellSide)
-        else
-            this.animation = UnitMoveAnimation.create(this.activeStack, this.selectedCell!)
-    }
-
     getStackInCell(destination: GridCell): UnitStack | undefined {
         return this.stacks.find(u => u.isAlive && u.position.isSameAs(destination))
     }
 
-    get selectedStack(): UnitStack | undefined {
-        if (!this.selectedCell) return undefined
-        return this.getStackInCell(this.selectedCell)
-    }
+
 
     isCellValid(cell: GridCell): boolean {
         return cell.isValid && cell.isInRange(this.columns, this.rows)
@@ -216,10 +180,8 @@ class Arena {
     }
 
     async rangedAttack(stack: UnitStack) {
-        const animation = this.animation = new RangedAttackAnimation(this.activeStack, stack)
-        await animation.promise
-        this.animation = undefined
-        this.endMove()
+        this.animation = new RangedAttackAnimation(this.activeStack, stack)
+        this.waitAnimation()
     }
 }
 

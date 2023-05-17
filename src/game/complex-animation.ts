@@ -12,11 +12,7 @@ export abstract class ComplexAnimation extends AbstractAnimation {
     abstract run(): Promise<void>
 
     private async runInner() {
-        try {
-            await this.run()
-        } finally {
-            this.onFinish()
-        }
+        await this.run()
         this.resolve()
     }
 }
@@ -48,7 +44,6 @@ export class UnitMoveAnimation extends ComplexAnimation {
             await this.meleeAttack(enemy)
         } else
             await this.smoothMove(this.destination)
-        arena.animationEnded()
     }
 
     async meleeAttack(target: UnitStack) {

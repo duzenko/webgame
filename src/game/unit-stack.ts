@@ -47,6 +47,7 @@ export class UnitStack extends ArenaObject {
         this.actionPoints = 0
         let damageModifier = 1
         damageModifier += (this.type.attack - enemy.type.defence) * 0.05
+        // if (this.onPlayerTeam) damageModifier += 10
         const damage = Math.round(this.type.damage * this.qty * damageModifier)
         toGameLog(`${this.name} ${this.qty > 1 ? 'deal' : 'deals'} ${damage} damage to ${enemy.name}`)
         return enemy.receiveDamage(damage)

@@ -4,6 +4,7 @@ import { VSyncAnimation } from "../game/animation";
 import { Point } from "../util/classes";
 import { hideModal, showModal } from "../util/modal";
 import { gameImages } from "../graphics/image";
+import { Player } from "../game/player";
 
 export let canvas: HTMLCanvasElement
 export let context: CanvasRenderingContext2D
@@ -59,8 +60,8 @@ function onMouseMove(ev: MouseEvent) {
     cursorPosition = new Point(ev.offsetX, ev.offsetY)
     const cell = screenToCell(cursorPosition)
     if (arena.isCellValid(cell)) {
-        arena.selectedCell = cell
-        arena.selectedCellSide = undefined
+        Player.selectedCell = cell
+        Player.selectedCellSide = undefined
         if (arena.activeStack.onPlayerTeam && arena.getStackInCell(cell)) {
             const vector = cursorPosition.subtract(cellToScreen(cell)).normalize()
             const angle = Math.acos(vector.x) / Math.PI * 3
@@ -68,26 +69,26 @@ function onMouseMove(ev: MouseEvent) {
             side = vector.y > 0 ? side : (6 - side) % 6
             const neighborCell = cell.getNeighbor(side)
             if (neighborCell.isSameAs(arena.activeStack.position))
-                arena.selectedCellSide = neighborCell
+                Player.selectedCellSide = neighborCell
             else {
                 const moves = arena.movesForActiveStack
                 if (moves.some(m => m.isSameAs(neighborCell) && m.step < arena.activeStack.actionPoints && (!arena.getStackInCell(m) || arena.getStackInCell(m) == arena.activeStack)))
-                    arena.selectedCellSide = neighborCell
+                    Player.selectedCellSide = neighborCell
             }
         }
     } else {
-        arena.selectedCell = undefined
+        Player.selectedCell = undefined
     }
 }
 
 function onMouseDown(ev: MouseEvent) {
-    if (arena.animation || !arena.selectedCell) return
-    if (arena.selectedStack && arena.activeStack.type.rangedAttack) {
-        arena.rangedAttack(arena.selectedStack)
+    if (arena.animation || !Player.selectedCell) return
+    if (Player.selectedStack && arena.activeStack.type.rangedAttack) {
+        arena.rangedAttack(Player.selectedStack)
         return
     }
-    if (arena.unitCanMoveTo(arena.activeStack, arena.selectedCell)) {
-        arena.moveActiveUnit()
+    if (arena.unitCanMoveTo(arena.activeStack, Player.selectedCell)) {
+        Player.moveActiveUnit()
         return
     }
 }

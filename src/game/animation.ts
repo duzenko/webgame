@@ -1,22 +1,16 @@
 import { GridCell, Point } from "../util/classes";
-import { lerp } from "../util/functions";
 import { ArenaObject } from "./projectile";
 import { StackDamageStats, UnitStack } from "./unit-stack";
 
 export abstract class AbstractAnimation {
     protected resolve!: (value: void) => void
     readonly promise = new Promise((resolve) => this.resolve = resolve)
-
-    constructor() {
-    }
-
-    onFinish() { }
 }
 
 export abstract class VSyncAnimation extends AbstractAnimation {
     static list: VSyncAnimation[] = []
     startTime = new Date()
-    duration: number // in msec or steps
+    duration: number // in msec
 
     constructor(length: number) {
         super()
@@ -35,15 +29,11 @@ export abstract class VSyncAnimation extends AbstractAnimation {
                 animation.frame(timeElapsed)
             } else {
                 animation.frame(animation.duration)
-                animation.onFinish()
+                animation.resolve()
                 finished.push(animation)
             }
         }
         VSyncAnimation.list = VSyncAnimation.list.filter(a => !finished.includes(a))
-    }
-
-    onFinish(): void {
-        this.resolve()
     }
 }
 

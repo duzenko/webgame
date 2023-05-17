@@ -6,6 +6,7 @@ import { gameImages } from "./image"
 import { RangedAttackAnimation } from "../game/complex-animation"
 import { Projectile } from "../game/projectile"
 import { DamageStatsAnimation, SmoothMoveAnimation, VSyncAnimation } from "../game/animation"
+import { Player } from "../game/player"
 
 let cellRadius: number
 let cellStepX: number
@@ -142,15 +143,15 @@ function drawUnitBadge(x: number, y: number, unit: UnitStack) {
 }
 
 export function drawPossiblePath() {
-    const destination = arena.selectedCell
+    const destination = Player.selectedCell
     if (!destination) return
     context.save()
     try {
         context.globalAlpha = 0.75
         context.fillStyle = "Khaki"
-        const canMoveTo = arena.unitCanMoveTo(arena.activeStack, destination) && (arena.canActiveOccupySelected || arena.selectedCellSide)
+        const canMoveTo = arena.unitCanMoveTo(arena.activeStack, destination) && (Player.canActiveOccupySelected || Player.selectedCellSide)
         if (arena.activeStack.onPlayerTeam && canMoveTo) {
-            const path = arena.getPathForUnitAndSide(arena.activeStack, destination, arena.selectedCellSide!)!
+            const path = arena.getPathForUnitAndSide(arena.activeStack, destination, Player.selectedCellSide!)!
             for (const cell of [...path, destination]) {
                 const p = cellToScreen(cell)
                 context.beginPath()
@@ -177,8 +178,8 @@ export function drawMoveableCells() {
     try {
         context.fillStyle = "black"
         context.globalAlpha = 0.2
-        if (arena.selectedCell && !arena.selectedCell.isSameAs(arena.activeStack.position)) {
-            const selectedUnit = arena.getStackInCell(arena.selectedCell)
+        if (Player.selectedCell && !Player.selectedCell.isSameAs(arena.activeStack.position)) {
+            const selectedUnit = arena.getStackInCell(Player.selectedCell)
             if (selectedUnit) {
                 const cells = arena.getMovesForStack(selectedUnit)
                 for (const cell of cells) {
@@ -236,13 +237,13 @@ export function drawCursor() {
     if (arena.animation || !arena.activeStack.onPlayerTeam) {
         cursorImage = 'wait-' + (animationTick % 6 + 1)
     } else {
-        if (arena.selectedCell) {
-            if (arena.selectedStack && arena.activeStack.type.rangedAttack && arena.selectedStack != arena.activeStack)
+        if (Player.selectedCell) {
+            if (Player.selectedStack && arena.activeStack.type.rangedAttack && Player.selectedStack != arena.activeStack)
                 cursorImage = `ranged-${animationTick % 3 + 1}`
-            else if (arena.unitCanMoveTo(arena.activeStack, arena.selectedCell)) {
-                if (arena.getStackInCell(arena.selectedCell)) {
-                    if (arena.selectedCellSide)
-                        cursorImage = `attack-${['w', 'nnw', 'nne', 'e', 'sse', 'ssw'][arena.selectedCellSide.side]}-${animationTick % 3 + 1}`
+            else if (arena.unitCanMoveTo(arena.activeStack, Player.selectedCell)) {
+                if (arena.getStackInCell(Player.selectedCell)) {
+                    if (Player.selectedCellSide)
+                        cursorImage = `attack-${['w', 'nnw', 'nne', 'e', 'sse', 'ssw'][Player.selectedCellSide.side]}-${animationTick % 3 + 1}`
                     else
                         cursorImage = 'not-allowed'
                 } else

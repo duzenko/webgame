@@ -1,0 +1,28 @@
+{
+    "player": [
+        {
+            "unit": "Swordsman"
+        },
+        {
+            "unit": "Robber",
+            "qty": 5
+        },
+        {
+            "unit": "Robber",
+            "qty": 5
+        }
+    ],
+    "enemy": [
+        {
+            "unit": "Archer"
+        },
+        {
+            "qty": 5,
+            "unit": "Peasant"
+        },
+        {
+            "qty": 5,
+            "unit": "Peasant"
+        }
+    ]
+}
