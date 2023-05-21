@@ -22,40 +22,40 @@
 
 
 .cursor-attack {
-    cursor: url('img/cursors/attack.png') 40 0, pointer;
+    cursor: url('img/cursor/attack.png') 40 0, pointer;
 
 }
 
 .cursor-default {
-    cursor: url('img/cursors/default.png') 19 15, default;
+    cursor: url('img/cursor/default.png') 19 15, default;
 
 }
 
 .cursor-pointer {
-    cursor: url('img/cursors/pointer.png') 17 10, pointer;
+    cursor: url('img/cursor/pointer.png') 17 10, pointer;
 
 }
 
 .cursor-grab {
-    cursor: url('img/cursors/grab.png') 25 25, grab;
+    cursor: url('img/cursor/grab.png') 25 25, grab;
 
 }
 
 .cursor-grabbing {
-    cursor: url('img/cursors/grabbing.png') 25 25, grabbing;
+    cursor: url('img/cursor/grabbing.png') 25 25, grabbing;
 
 }
 
 .cursor-not-allowed {
-    cursor: url('img/cursors/not-allowed.png') 25 25, not-allowed;
+    cursor: url('img/cursor/not-allowed.png') 25 25, not-allowed;
 }
 
 .cursor-move {
-    cursor: url('img/cursors/move.png') 25 25, move;
+    cursor: url('img/cursor/move.png') 25 25, move;
 }
 
 .cursor-wait {
-    cursor: url('img/cursors/wait-1.png') 25 25, wait;
+    cursor: url('img/cursor/wait-1.png') 25 25, wait;
     /*there are 6 slides wait-1 to wait-6*/
 }
 
@@ -65,12 +65,12 @@
 
 body {
     font-family: Artifika;
-    cursor: url('img/cursors/default.png') 19 15, default;
+    cursor: url('img/cursor/default.png') 19 15, default;
 }
 
 a:hover,
 a:visited:hover {
-    cursor: url('img/cursors/pointer.png') 17 10, pointer;
+    cursor: url('img/cursor/pointer.png') 17 10, pointer;
     text-decoration: none;
     color: #FEF04F;
 }
