@@ -1,10 +1,10 @@
 import { getCurrentMission, setCampaignMode } from "../util/campaign"
 import { storage } from "../util/storage"
 
-export let titleHeading = document.getElementById('title') as HTMLHeadingElement
-export let storyDiv = document.getElementById('story') as HTMLDivElement
+const titleHeading = document.getElementById('title') as HTMLHeadingElement
+const storyDiv = document.getElementById('story') as HTMLDivElement
 
-async function loadCampaignPage() {
+export async function loadCampaignPage() {
     setCampaignMode(true)
     const mission = await getCurrentMission()
     storage.setMission(mission.name)
@@ -13,6 +13,3 @@ async function loadCampaignPage() {
     const story = await response.text()
     storyDiv.innerHTML = story
 }
-
-const _global = (window /* browser */ || global /* node */) as any
-_global.loadCampaignPage = loadCampaignPage

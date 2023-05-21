@@ -6,19 +6,13 @@ import { hideModal, showModal } from "../util/modal";
 import { gameImages } from "../graphics/image";
 import { Player } from "../game/player";
 
-export let canvas: HTMLCanvasElement
-export let context: CanvasRenderingContext2D
+export const canvas = document.getElementById("canvas") as HTMLCanvasElement
+export const context = canvas?.getContext("2d") as CanvasRenderingContext2D
 const powerSavingMode = false // notebooks on battery
 export let cursorPosition: Point | undefined
 
-canvas = document.getElementById("canvas") as HTMLCanvasElement
-if (canvas) {
-    loadArena()
-}
-
-async function loadArena() {
+export async function loadArena() {
     showModal('Loading...')
-    context = canvas.getContext("2d") as CanvasRenderingContext2D
     canvas.addEventListener('mousemove', onMouseMove, false)
     canvas.addEventListener('mousedown', onMouseDown, false)
     window.addEventListener('keydown', onKeyDown, false)
