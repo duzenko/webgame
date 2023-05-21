@@ -2,7 +2,7 @@ import { Point, GridCell } from "../util/classes"
 import { arena } from "../game/arena"
 import { UnitStack } from "../game/unit-stack"
 import { canvas, context, cursorPosition } from "../pages/arena"
-import { gameImages } from "./image"
+import { GameImages } from "./image"
 import { RangedAttackAnimation } from "../game/complex-animation"
 import { Projectile } from "../game/projectile"
 import { DamageStatsAnimation, SmoothMoveAnimation, VSyncAnimation } from "../game/animation"
@@ -100,7 +100,7 @@ export function drawUnit(stack: UnitStack) {
             context.strokeStyle = 'rgba(232,253,1, 0.5)'
             strokeHexagon(arena.activeStack.position, 0.9)
         }
-        const image = gameImages.getForStack(stack)
+        const image = GameImages.getForStack(stack)
         if (image) {
             const imageScale = 2 * cellStepX / image.width
             const width = image.width * imageScale
@@ -219,7 +219,7 @@ export function drawGrid() {
 }
 
 export function drawBackground() {
-    const backgroundImage = gameImages.getByName('field/green-terrain-v2.jpg')
+    const backgroundImage = GameImages.getByName('field/green-terrain-v2.jpg')
     context.fillStyle = "black"
     context.fillRect(0, 0, canvas.width, canvas.height)
     if (backgroundImage) {
@@ -251,7 +251,7 @@ export function drawCursor() {
             }
         }
     }
-    const image = gameImages.getByName(`cursor/${cursorImage}.png`)
+    const image = GameImages.getByName(`cursor/${cursorImage}.png`)
     if (!image) return
     context.drawImage(image, cursorPosition.x - image.width / 2, cursorPosition.y - image.height / 2)
 }
@@ -273,7 +273,7 @@ export function drawAnimations() {
 }
 
 function drawProjectile(projectile: Projectile) {
-    const image = gameImages.getForProjectile(projectile)
+    const image = GameImages.getForProjectile(projectile)
     if (!image) return
     const p = cellToScreen(projectile.position)
     context.drawImage(image, p.x, p.y)

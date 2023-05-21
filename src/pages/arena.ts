@@ -3,8 +3,8 @@ import { arena } from "../game/arena";
 import { VSyncAnimation } from "../game/animation";
 import { Point } from "../util/classes";
 import { hideModal, showModal } from "../util/modal";
-import { gameImages } from "../graphics/image";
 import { Player } from "../game/player";
+import { GameImages } from "../graphics/image";
 
 export const canvas = document.getElementById("canvas") as HTMLCanvasElement
 export const context = canvas?.getContext("2d") as CanvasRenderingContext2D
@@ -18,6 +18,7 @@ export async function loadArena() {
     window.addEventListener('keydown', onKeyDown, false)
     window.addEventListener('resize', present, false)
     canvas.addEventListener('mouseleave', onMouseLeave, false)
+    GameImages.loadCursors()
     await arena.load()
     if (powerSavingMode) {
         window.setInterval(present, 100)
@@ -25,7 +26,7 @@ export async function loadArena() {
         window.requestAnimationFrame(present)
     }
     setTimeout(async () => {
-        await gameImages.allLoaded()
+        await GameImages.allLoaded()
         hideModal()
         arena.start()
     }, 99)
